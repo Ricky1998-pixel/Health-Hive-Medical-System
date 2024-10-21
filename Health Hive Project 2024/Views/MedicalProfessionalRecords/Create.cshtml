@@ -7,7 +7,7 @@
 <style>
     /* Custom Styles */
     body {
-        background-image: url('/images/pexels-thirdman-5327647.jpg');
+        background-image: url('~/images/pexels-thirdman-5327647.jpg');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -125,14 +125,14 @@
 <div class="modern-form-container">
     <div class="modern-form">
         <h4>
-            <img src="/images/medical professional registration.png" alt="Registration Icon" />
+            <img src="~/images/medical professional registration.png" alt="Registration Icon" />
             Medical Professional Registration
         </h4>
         <form id="createForm" asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label">
-                    <img src="/images/name registration.png" alt="Name Icon" class="label-icon" />
+                    <img src="~/images/name registration.png" alt="Name Icon" class="label-icon" />
                     Name
                 </label>
                 <input asp-for="Name" class="form-control" />
@@ -140,7 +140,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Surname" class="control-label">
-                    <img src="/images/name registration.png" alt="Surname Icon" class="label-icon" />
+                    <img src="~/images/name registration.png" alt="Surname Icon" class="label-icon" />
                     Surname
                 </label>
                 <input asp-for="Surname" class="form-control" />
@@ -149,7 +149,7 @@
 
             <div class="form-group">
                 <label asp-for="ContactNumber" class="control-label">
-                    <img src="/images/contact number.png" alt="Contact Number Icon" class="label-icon" />
+                    <img src="~/images/contact number.png" alt="Contact Number Icon" class="label-icon" />
                     Contact Number
                 </label>
                 <input asp-for="ContactNumber" class="form-control" />
@@ -157,7 +157,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="EmailAddress" class="control-label">
-                    <img src="/images/email.png" alt="Email Address Icon" class="label-icon" />
+                    <img src="~/images/email.png" alt="Email Address Icon" class="label-icon" />
                     Email Address
                 </label>
                 <input asp-for="EmailAddress" class="form-control" />
@@ -165,7 +165,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Specialization" class="control-label">
-                    <img src="/images/specialization.png" alt="Specialization Icon" class="label-icon" />
+                    <img src="~/images/specialization.png" alt="Specialization Icon" class="label-icon" />
                     Specialization
                 </label>
                 <select asp-for="Specialization" asp-items="Html.GetEnumSelectList<Health_Hive_Project_2024.Models.SpecializationType>()" class="form-control">
@@ -176,7 +176,7 @@
 
             <div class="form-group">
                 <label asp-for="HealthCouncilRegistrationNumber" class="control-label">
-                    <img src="/images/hc registration number.png" alt="Health Council Icon" class="label-icon" />
+                    <img src="~/images/hc registration number.png" alt="Health Council Icon" class="label-icon" />
                     Health Council Registration Number
                 </label>
                 <input asp-for="HealthCouncilRegistrationNumber" class="form-control" />

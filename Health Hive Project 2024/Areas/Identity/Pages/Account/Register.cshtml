@@ -10,7 +10,7 @@
 
 <style>
     body {
-        background-image: url('/images/pexels-karolina-grabowska-4467739.jpg');
+        background-image: url('~/images/pexels-karolina-grabowska-4467739.jpg');
         background-size: cover;
         background-position: center;
     }
@@ -166,7 +166,7 @@
 
 
 <div class="title-container text-center">
-    <img src="/images/admin registration.png" alt="Your Image" class="title-image" />
+    <img src="~/images/admin registration.png" alt="Your Image" class="title-image" />
     <h1 class="title-text">@ViewData["Title"]</h1>
 </div>
 
@@ -180,13 +180,13 @@
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="needs-validation" novalidate>
             <div class="step active" id="step1">
                 <div class="section-title text-center mb-4">
-                    <img src="/images/personal information.png" alt="Your Image" class="section-image" />
+                    <img src="~/images/personal information.png" alt="Your Image" class="section-image" />
                     <h2 class="section-text">Personal Information</h2>
                 </div>
 
                 <div class="form-group mb-3">
                     <label asp-for="Input.Title" class="control-label">
-                        <img src="/images/title.png" alt="Title Icon" style="width: 20px; height: 20px; margin-right: 5px;" />
+                        <img src="~/images/title.png" alt="Title Icon" style="width: 20px; height: 20px; margin-right: 5px;" />
                         Title
                     </label>
 
@@ -220,14 +220,14 @@
 
             <div class="step" id="step2">
                 <div class="address-title text-center mb-4">
-                    <img src="/images/address information.png" alt="Your Image" class="address-image" />
+                    <img src="~/images/address information.png" alt="Your Image" class="address-image" />
                     <h2 class="address-text">Address Information</h2>
                 </div>
 
                 <div class="form-floating mb-3">
                     <input asp-for="Input.Address" class="form-control" aria-required="true" placeholder="Address" required />
                     <label asp-for="Input.Address">
-                        <img src="/images/address.png" alt="Address Icon" style="width: 20px; height: 20px; margin-right: 5px;" />
+                        <img src="~/images/address.png" alt="Address Icon" style="width: 20px; height: 20px; margin-right: 5px;" />
                         Address
                     </label>
 
@@ -236,7 +236,7 @@
                 <div class="form-floating mb-3">
                     <input id="PostalCode" asp-for="Input.PostalCode" class="form-control" aria-required="true" placeholder="Postal Code" required />
                     <label asp-for="Input.PostalCode">
-                        <img src="/images/postal code.png" alt="Postal Code Icon" style="width: 20px; height: 20px; margin-right: 5px;" />
+                        <img src="~/images/postal code.png" alt="Postal Code Icon" style="width: 20px; height: 20px; margin-right: 5px;" />
                         Postal Code
 
                     </label>
@@ -250,7 +250,7 @@
                 <div class="form-floating mb-3">
                 <input id="ContactNumber" asp-for="Input.ContactNumber" class="form-control" aria-required="true" placeholder="" required />
                 <label asp-for="Input.ContactNumber">
-                    <img src="/images/Cell.png" alt="Postal Code Icon" style="width: 20px; height: 20px; margin-right: 5px;" />
+                    <img src="~/images/Cell.png" alt="Postal Code Icon" style="width: 20px; height: 20px; margin-right: 5px;" />
                     ContactNumber
                 </label>
                 </div>
@@ -270,7 +270,7 @@
                         <div class="form-floating mb-3">
                             <input id="City" asp-for="Input.City" class="form-control" aria-required="true" placeholder="City" required />
                             <label asp-for="Input.City">
-                                <img src="/images/city.png" alt="City Icon" style="width: 20px; height: 20px; margin-right: 5px;" />
+                                <img src="~/images/city.png" alt="City Icon" style="width: 20px; height: 20px; margin-right: 5px;" />
                                 City
                             </label>
 
@@ -281,7 +281,7 @@
                         <div class="form-floating mb-3">
                             <input id="Province" asp-for="Input.Province" class="form-control" aria-required="true" placeholder="Province" required />
                             <label asp-for="Input.Province">
-                                <img src="/images/province.png" alt="Province Icon" style="width: 20px; height: 20px; margin-right: 5px;" />
+                                <img src="~/images/province.png" alt="Province Icon" style="width: 20px; height: 20px; margin-right: 5px;" />
                                 Province
                             </label>
 
@@ -299,7 +299,7 @@
 
             <div class="step" id="step3">
                 <div class="account-title text-center mb-4">
-                    <img src="/images/account information.png" alt="Your Image" class="account-image" />
+                    <img src="~/images/account information.png" alt="Your Image" class="account-image" />
                     <h2 class="account-text">Account Information</h2>
                 </div>
 
