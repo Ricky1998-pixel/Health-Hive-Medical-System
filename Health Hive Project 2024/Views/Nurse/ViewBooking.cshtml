@@ -1,0 +1,51 @@
+﻿@model Health_Hive_Project_2024.Models.SurgeryBooking
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div>
+    <h4>Surgery Booking</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Surgeon)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Surgeon.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Patient)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Patient.Name) @Html.DisplayFor(model => model.Patient.Surname)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SurgeryDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SurgeryDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Session)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Session)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Anaesthesiologist)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Anaesthesiologist.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Theatre)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Theatre.TheatreName)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Admitted">Back to List</a>
+</div>

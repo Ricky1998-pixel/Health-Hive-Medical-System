@@ -1,0 +1,13 @@
+﻿@model Health_Hive_Project_2024.Models.OrderMedications
+
+
+<form asp-action="CreateOrder" asp-controller="OrderMedication" method="post">
+    <input type="hidden" name="PatientID" value="@Model.PatientID" />
+
+    <div class="form-group">
+        <label for="OrderDetails">Order Details</label>
+        <input type="text" name="OrderDetails" class="form-control" value="" required />
+    </div>
+
+    <button type="submit" class="btn btn-success">Submit Order</button>
+</form>

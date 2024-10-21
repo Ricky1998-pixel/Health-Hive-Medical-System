@@ -1,0 +1,60 @@
+﻿@* @model Health_Hive_Project_2024.Models.VitalPatient
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Edit Vital Patient</h2>
+
+<form asp-action="Edit">
+    <div class="form-group">
+        <label asp-for="PatientName" class="control-label">Patient Name</label>
+        <input asp-for="PatientName" class="form-control" />
+        <span asp-validation-for="PatientName" class="text-danger"></span>
+    </div>
+
+    <div id="vitalsContainer">
+        <h3>Vitals</h3>
+        @for (var i = 0; i < Model.Vitals.Count; i++)
+        {
+            <div class="vital-entry">
+                <div class="form-group">
+                    <label for="Vitals_@i__VitalName">Vital Name</label>
+                    <select name="Vitals[@i].VitalName" class="form-control">
+                        @foreach (var vitalName in ViewBag.VitalNames as List<string>)
+                        {
+                            <option value="@vitalName" @(Model.Vitals[i].VitalName != null && Model.Vitals[i].VitalName.Equals(vitalName) ? "selected" : "")>
+                                @vitalName
+                            </option>
+                        }
+                    </select>
+                    <span asp-validation-for="Vitals[@i].VitalName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Vitals[@i].MinValue" class="control-label">Minimum Vital Value</label>
+                    <input asp-for="Vitals[@i].MinValue" class="form-control" type="number" step="any" />
+                    <span asp-validation-for="Vitals[@i].MinValue" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Vitals[@i].MaxValue" class="control-label">Maximum Vital Value</label>
+                    <input asp-for="Vitals[@i].MaxValue" class="form-control" type="number" step="any" />
+                    <span asp-validation-for="Vitals[@i].MaxValue" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Vitals[@i].CurrentValue" class="control-label">Current Vital Value</label>
+                    <input asp-for="Vitals[@i].CurrentValue" class="form-control" type="number" step="any" />
+                    <span asp-validation-for="Vitals[@i].CurrentValue" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Vitals[@i].DateRecorded" class="control-label">Date Recorded</label>
+                    <input asp-for="Vitals[@i].DateRecorded" class="form-control" type="date" />
+                    <span asp-validation-for="Vitals[@i].DateRecorded" class="text-danger"></span>
+                </div>
+            </div>
+        }
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+</form>
+ *@

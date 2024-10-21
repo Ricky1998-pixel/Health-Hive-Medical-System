@@ -1,0 +1,301 @@
+﻿@* @{
+    ViewData["Title"] = "Dispensed Prescriptions Report";
+    var dispensedPrescriptions = ViewBag.DispensedPrescriptions;
+    var medicationSummaries = ViewBag.MedicationSummaries;
+    var pharmacistName = ViewBag.PharmacistName;
+    var startDate = ViewBag.StartDate;
+    var endDate = ViewBag.EndDate;
+}
+
+<h2>Dispensed Prescriptions Report</h2>
+<p>Pharmacist: @pharmacistName</p>
+<p>Date Range: @startDate.ToString("MM/dd/yyyy") - @endDate.ToString("MM/dd/yyyy")</p>
+
+<h3>Dispensed Prescriptions</h3>
+@if (dispensedPrescriptions != null && dispensedPrescriptions.Count > 0)
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Patient Name</th>
+                <th>Surgeon Name</th>
+                <th>Status</th>
+                <th>Medication</th>
+                <th>Quantity</th>
+                <th>Instructions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var prescription in dispensedPrescriptions)
+            {
+                <tr>
+                    <td>@prescription.Date.ToString("MM/dd/yyyy hh:mm tt")</td>
+                    <td>@prescription.PatientName</td>
+                    <td>@prescription.SurgeonName</td>
+                    <td>@prescription.PrescriptionStatus</td>
+                    <td>@prescription.MedicationName</td>
+                    <td>@prescription.Quantity</td>
+                    <td>@prescription.Instructions</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No prescriptions dispensed within the selected date range.</p>
+}
+
+<h3>Medication Summary</h3>
+@if (medicationSummaries != null && medicationSummaries.Count > 0)
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Medication Name</th>
+                <th>Total Dispensed</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var summary in medicationSummaries)
+            {
+                <tr>
+                    <td>@summary.MedicationName</td>
+                    <td>@summary.TotalDispensed</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No medication dispensed summary available.</p>
+} *@
+
+
+@{
+    ViewData["Title"] = "Dispensed Prescriptions Report";
+    var dispensedPrescriptions = ViewBag.DispensedPrescriptions;
+    var medicationSummaries = ViewBag.MedicationSummaries;
+    var pharmacistName = ViewBag.PharmacistName;
+    var startDate = ViewBag.StartDate;
+    var endDate = ViewBag.EndDate;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispensed Prescriptions Report</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+        }
+
+        h2, h3 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        table {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 15px;
+            border: 1px solid #007bff;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: blue;
+        }
+
+        tr:nth-child(even) {
+            background-color: #007bff;
+        }
+
+        #downloadButton {
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+<h2>Dispensed Prescriptions Report</h2>
+<p>Pharmacist: @pharmacistName</p>
+    <p>Date Range: @startDate?.ToString("MM/dd/yyyy") - @endDate?.ToString("MM/dd/yyyy")</p>
+
+
+
+    <!-- Date Range Selection Form -->
+    <form method="get" action="/DispensedPrescriptions/Report" class="text-center">
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDateInput" name="startDate" value="@ViewBag.StartDate?.ToString("yyyy-MM-dd")" />
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDateInput" name="endDate" value="@ViewBag.EndDate?.ToString("yyyy-MM-dd")" />
+        <input type="submit" value="Generate Report" class="btn btn-primary" />
+    </form>
+
+<h3>Dispensed Prescriptions</h3>
+@if (dispensedPrescriptions != null && dispensedPrescriptions.Count > 0)
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Patient Name</th>
+                <th>Surgeon Name</th>
+                <th>Status</th>
+                <th>Medication</th>
+                <th>Quantity</th>
+                <th>Instructions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var prescription in dispensedPrescriptions)
+            {
+                <tr>
+                    <td>@prescription.Date.ToString("MM/dd/yyyy hh:mm tt")</td>
+                    <td>@prescription.PatientName</td>
+                    <td>@prescription.SurgeonName</td>
+                    <td>@prescription.PrescriptionStatus</td>
+                    <td>@prescription.MedicationName</td>
+                    <td>@prescription.Quantity</td>
+                    <td>@prescription.Instructions</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No prescriptions dispensed within the selected date range.</p>
+}
+
+<h3>Medication Summary</h3>
+@if (medicationSummaries != null && medicationSummaries.Count > 0)
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Medication Name</th>
+                <th>Total Dispensed</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var summary in medicationSummaries)
+            {
+                <tr>
+                    <td>@summary.MedicationName</td>
+                    <td>@summary.TotalDispensed</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No medication dispensed summary available.</p>
+}
+
+    <button id="downloadButton" class="btn btn-success" onclick="downloadPDF()">Download Report as PDF</button>
+    <!-- Smaller Navigation Button -->
+    <a href="/PrescriptionRecords/Report" class="btn btn-info btn-sm" role="button" style="margin-top: 20px; display: block; margin-left: auto; margin-right: auto;">
+        View Prescription Records Report
+    </a>
+
+    <!-- Load jsPDF and jsPDF AutoTable from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Get pharmacist name and date range
+            const pharmacistName = "@pharmacistName";
+            const dateRange = "@startDate.ToString("MM/dd/yyyy") - @endDate.ToString("MM/dd/yyyy")";
+
+            // Add Hospital Header
+            doc.setFontSize(12);
+            doc.text('Bay Breeze Hospital', 105, 10, { align: 'center' });
+
+            // Title and details
+            doc.setFontSize(16);
+            doc.text('DISPENSED PRESCRIPTIONS REPORT', 20, 20);
+            doc.setFontSize(12);
+            doc.text(`Pharmacist: ${pharmacistName}`, 20, 30);
+            doc.text(`Date Range: ${dateRange}`, 20, 40);
+            doc.text(`Report Generated: ${new Date().toLocaleDateString()}`, 20, 50);
+
+            // Dispensed Prescriptions Table
+            const prescriptionData = [];
+            document.querySelectorAll('table:first-of-type tbody tr').forEach(row => {
+                const columns = row.querySelectorAll('td');
+                prescriptionData.push([
+                    columns[0]?.textContent.trim() || '', // Date
+                    columns[1]?.textContent.trim() || '', // Patient Name
+                    columns[2]?.textContent.trim() || '', // Surgeon Name
+                    columns[3]?.textContent.trim() || '', // Status
+                    columns[4]?.textContent.trim() || '', // Medication
+                    columns[5]?.textContent.trim() || '', // Quantity
+                    columns[6]?.textContent.trim() || ''  // Instructions
+                ]);
+            });
+
+            if (prescriptionData.length > 0) {
+                doc.autoTable({
+                    startY: 60,
+                    head: [['DATE', 'PATIENT NAME', 'SURGEON NAME', 'STATUS', 'MEDICATION', 'QUANTITY', 'INSTRUCTIONS']],
+                    body: prescriptionData
+                });
+            } else {
+                doc.text('No prescriptions found in the selected date range.', 20, 60);
+            }
+
+            // Medication Summary Table
+            const summaryData = [];
+            document.querySelectorAll('table:last-of-type tbody tr').forEach(row => {
+                const columns = row.querySelectorAll('td');
+                summaryData.push([
+                    columns[0]?.textContent.trim() || '', // Medication Name
+                    columns[1]?.textContent.trim() || ''  // Total Dispensed
+                ]);
+            });
+
+            if (summaryData.length > 0) {
+                doc.text('MEDICATION SUMMARY:', 20, doc.lastAutoTable.finalY + 20);
+                doc.autoTable({
+                    startY: doc.lastAutoTable.finalY + 30,
+                    head: [['MEDICATION NAME', 'TOTAL DISPENSED']],
+                    body: summaryData
+                });
+            } else {
+                doc.text('No medication summary available.', 20, doc.lastAutoTable.finalY + 20);
+            }
+
+            // Footer
+            doc.setFontSize(10);
+            doc.text('Bay Breeze Hospital | Contact: 041 583 2121 | Email: baybreeze@gmail.com', 105, 280, { align: 'center' });
+
+            // Save the PDF
+            doc.save('Dispensed_Prescriptions_Report.pdf');
+        }
+    </script>
+
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,263 @@
+﻿@model Health_Hive_Project_2024.Models.MedicationRecords
+
+@{
+    ViewData["Title"] = "Create Medication Record";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Modern form styles */
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin-top: 40px;
+        }
+
+        .form-modern {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+            }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+            border-radius: 10px;
+            padding: 12px 24px;
+            font-size: 16px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #004085;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: #fff;
+            border-radius: 10px;
+            padding: 12px 24px;
+            font-size: 16px;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+                border-color: #545b62;
+            }
+
+        .alert-danger {
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .text-danger {
+            color: #dc3545;
+        }
+
+        h1, h4 {
+            color: #333;
+        }
+
+        hr {
+            border-top: 3px solid #007bff;
+        }
+
+        .modal-dialog.custom-size {
+            max-width: 500px; /* Adjust the width as needed */
+        }
+
+        .modal-body {
+            max-height: 350px; /* Adjust the height as needed */
+            overflow-y: auto; /* Add scrolling if content exceeds the height */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Medication Record</h1>
+        <hr />
+
+        <!-- Form -->
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <form asp-action="Create" class="form-modern">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="MedicationName" class="control-label">
+                            <img src="~/images/medication-name.png" alt="Surgeon Icon" style="width:20px; height:20px; margin-right:5px;">
+                            Medication Name:
+                        </label>
+                        <input asp-for="MedicationName" class="form-control" placeholder="Enter Medication Name" />
+                        <span asp-validation-for="MedicationName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DosageFormID" class="control-label">
+                            <img src="~/images/dosage-form.png" alt="Surgeon Icon" style="width:20px; height:20px; margin-right:5px;">
+                            Dosage Form:
+                        </label>
+                        <select asp-for="DosageFormID" class="form-select" asp-items="ViewBag.DosageFormID">
+                            <option value="">Select Dosage Form</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Schedule" class="control-label">
+                            <img src="~/images/medication-schedule.png" alt="Surgeon Icon" style="width:20px; height:20px; margin-right:5px;">
+                            Schedule:
+                        </label>
+                        <select asp-for="Schedule" class="form-select">
+                            <option value="">Select Schedule</option>
+                            @for (int i = 1; i <= 6; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Schedule" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="QuantityOnHand" class="control-label">
+                            <img src="~/images/medication-quantity.png" alt="Surgeon Icon" style="width:20px; height:20px; margin-right:5px;">
+                            Quantity on hand:
+                        </label>
+                        <input asp-for="QuantityOnHand" class="form-control" placeholder="Enter Quantity on Hand" />
+                        <span asp-validation-for="QuantityOnHand" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ReOrderLevel" class="control-label">
+                            <img src="~/images/re-order-level.png" alt="Surgeon Icon" style="width:20px; height:20px; margin-right:5px;">
+                            Re-Order Level:
+                        </label>
+                        <input asp-for="ReOrderLevel" class="form-control" placeholder="Enter Re-Order Level" />
+                        <span asp-validation-for="ReOrderLevel" class="text-danger"></span>
+                    </div>
+
+                    <!-- Active Ingredients Code -->
+                    <div class="mb-3">
+                        <label for="ActiveIngredients" class="control-label">
+                            <img src="~/images/active-ingredient.png" alt="Surgeon Icon" style="width:20px; height:20px; margin-right:5px;">
+                            Active Ingredients:
+                        </label>
+                        <input type="text" class="form-control" id="selectedIngredientsText" readonly placeholder="Select Active Ingredients">
+                        <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#activeIngredientsModal">
+                            Select Ingredients
+                        </button>
+                        <input type="hidden" id="SelectedIngredients" name="SelectedIngredients" />
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">Add Medication</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <a asp-action="Index" class="btn btn-secondary">View Available Medications</a>
+        </div>
+    </div>
+
+    <!-- Modal for selecting Active Ingredients -->
+    <div class="modal fade" id="activeIngredientsModal" tabindex="-1" aria-labelledby="activeIngredientsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered custom-size">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="activeIngredientsModalLabel">Select Active Ingredients</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="activeIngredientsList">
+                        @foreach (var ingredient in ViewBag.ActiveIngredients as List<Health_Hive_Project_2024.Models.ActiveIngredientRecords>)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="@ingredient.IngredientID" id="ingredient@ingredient.IngredientID">
+                                <label class="form-check-label" for="ingredient@ingredient.IngredientID">
+                                    @ingredient.IngredientName
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveIngredients">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var saveIngredientsButton = document.getElementById('saveIngredients');
+            var selectedIngredientsInput = document.getElementById('SelectedIngredients');
+            var selectedIngredientsText = document.getElementById('selectedIngredientsText');
+            var modalCheckboxes = document.querySelectorAll('#activeIngredientsList .form-check-input');
+
+            saveIngredientsButton.addEventListener('click', function () {
+                var selectedValues = [];
+                var selectedText = [];
+
+                modalCheckboxes.forEach(function (checkbox) {
+                    if (checkbox.checked) {
+                        selectedValues.push(checkbox.value);
+                        selectedText.push(checkbox.nextElementSibling.textContent.trim());
+                    }
+                });
+
+                selectedIngredientsInput.value = selectedValues.join(',');
+                selectedIngredientsText.value = selectedText.join(', ');
+
+                var modal = bootstrap.Modal.getInstance(document.getElementById('activeIngredientsModal'));
+                modal.hide();
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+

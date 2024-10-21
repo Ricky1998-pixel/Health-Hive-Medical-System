@@ -1,0 +1,96 @@
+﻿
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                    <h6 class="text-white text-capitalize ps-3">Patient Information</h6>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <!-- Load icon library -->
+                <div class="table-responsive p-0">
+                    <table class="table align-items-center justify-content-center mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary  font-weight-bolder opacity-7">View, manage and gain insights</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model == null || !Model.Any())
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex px-2">
+                                            <div class="my-auto">
+                                                <h1 class="mb-0 text-lg ">You have not yet purchased a package. <br /><a asp-action="Offers" asp-controller="Package" class="link-underline link-underline-primary" style="text-decoration:underline"><strong> Check offers</strong></a></h1>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var user in Model)
+                                {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex px-2">
+                                                    <div>
+                                                        <i class='fas fa-box'></i>
+                                                    </div>
+                                                    <div class="my-auto">
+                                                        <h6 class="mb-0 ml-3 text-sm">Package type :</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex px-2">
+                                                    <div>
+                                                        <i class="fa">&#xf2c3;</i>
+                                                    </div>
+                                                    <div class="my-auto">
+
+                                                        <h6 class="mb-0 ml-3 text-sm">Code Type :</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex px-2">
+                                                    <div>
+                                                        <i class="fa fa-dollar"></i>
+                                                    </div>
+                                                    <div class="my-auto">
+                                                        <h6 class="mb-0 ml-3 text-sm">Package lesson Price : R</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex px-2">
+                                                    <div>
+
+                                                        <i class='fas fa-exclamation-circle' style="color:green"></i>
+                                                    </div>
+                                                    <div class="my-auto">
+                                                        <h6 class="mb-0 ml-3 text-sm">Payment Status:  </h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2"><hr /></td>
+                                        </tr>
+                                       
+                                    
+
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

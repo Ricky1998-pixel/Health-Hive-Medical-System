@@ -1,0 +1,58 @@
+﻿@model Health_Hive_Project_2024.Models.DosageForm
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>DosageForm</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Form" class="control-label"></label>
+                <select asp-for="Form" class="form-control">
+                    <option value="">Select Dosage Form</option>
+                    <option value="Tablet">Tablet</option>
+                    <option value="Capsule">Capsule</option>
+                    <option value="Powder">Powder</option>
+                    <option value="Granule">Granule</option>
+                    <option value="Lozenge">Lozenge</option>
+                    <option value="Syrup">Syrup</option>
+                    <option value="Elixir">Elixir</option>
+                    <option value="Suspension">Suspension</option>
+                    <option value="Emulsion">Emulsion</option>
+                    <option value="Drop">Drop</option>
+                    <option value="Ointment">Ointment</option>
+                    <option value="Cream">Cream</option>
+                    <option value="Gel">Gel</option>
+                    <option value="Paste">Paste</option>
+                    <option value="Inhaler">Inhaler</option>
+                    <option value="Nebulizer">Nebulizer</option>
+                    <option value="Patch">Patch</option>
+                    <option value="Suppository">Suppository</option>
+                    <option value="Implant">Implant</option>
+                    <option value="OralDissolvingTablet">Oral Dissolving Tablet</option>
+                    <option value="SublingualTablet">Sublingual Tablet</option>
+                    <option value="Solution">Solution</option>
+                    <option value="SuspensionForInjection">Suspension for Injection</option>
+                    <option value="EmulsionForInjection">Emulsion for Injection</option>
+                    <option value="PowderForInjection">Powder for Injection</option>
+                </select>
+                <span asp-validation-for="Form" class="text-danger"></span>
+            </div>
+            >
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

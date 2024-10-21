@@ -1,0 +1,814 @@
+﻿@model Health_Hive_Project_2024.Models.PrescriptionRecords
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h4>Prescription Form</h4>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Include Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- Include Bootstrap Datetimepicker CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.6/css/tempusdominus-bootstrap-4.min.css">
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- Include Moment.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<!-- Include Bootstrap Datetimepicker JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.6/js/tempusdominus-bootstrap-4.min.js"></script>
+
+<!-- Include jQuery and Bootstrap CSS/JS -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+<style>
+    .modal-content {
+        border-radius: 15px;
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        border-radius: 15px;
+    }
+
+    .list-group-item {
+        border: none;
+        border-radius: 10px;
+        margin-bottom: 5px;
+    }
+
+        .list-group-item:hover {
+            background-color: #f1f1f1;
+        }
+
+    #searchMedication {
+        border-radius: 15px;
+        margin-bottom: 10px;
+    }
+
+    .rounded-container {
+        border: 1px solid #ddd; /* Border color */
+        border-radius: 15px; /* Round the corners */
+        padding: 20px; /* Add padding inside the container */
+        background-color: #fff; /* Optional: Set a background color */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better appearance */
+    }
+</style>
+
+<hr />
+<div class="container">
+    <div class="row">
+        <!-- Form Container -->
+        <div class="col-md-8">
+            <div class="rounded-container p-4 shadow-sm">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <label asp-for="SurgeonID" class="control-label">
+                            <img src="~/images/surgeon.png" alt="Surgeon Icon" style="width:20px; height:20px; margin-right:5px;">
+                            Surgeon:
+                        </label>
+                        <select asp-for="SurgeonID" class="form-control" asp-items="ViewBag.SurgeonID" id="surgeon-select"></select>
+                    </div>
+
+                    <!-- Table to Display Selected Medications -->
+                    <div class="rounded-container container mt-4 p-3 bg-light border">
+                        <h5>Selected Medications</h5>
+                        <table class="table table-bordered" id="medicationsTable">
+                            <thead>
+                                <tr>
+                                    <th>Medication</th>
+                                    <th>Quantity</th>
+                                    <th>Instructions</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Rows will be appended here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <input type="hidden" name="medicationIds" id="medicationIds" />
+                    <input type="hidden" name="quantities" id="quantities" />
+                    <input type="hidden" name="instructions" id="instructions" />
+
+                    <!-- Add margin-top class to the button -->
+                    <button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#medicationModal">
+                        Add Medications
+                    </button>
+
+
+
+                    <div class="form-group">
+                        <label asp-for="PatientID" class="control-label">
+                            <img src="~/images/patient search.png" alt="Surgeon Icon" style="width:20px; height:20px; margin-right:5px;">
+                            Patient ID Number:
+                        </label>
+                        <input type="text" id="patientIdSearch" class="form-control" placeholder="Enter Patient ID Number" />
+                        <button type="button" id="searchPatientBtn" class="btn btn-primary">Search</button>
+                    </div>
+                    <div id="patientDetailsContainer"></div>
+                    <!-- Hidden input field to store the selected PatientID -->
+                    <input type="hidden" id="PatientID" name="PatientID" />
+
+                    <div class="form-group">
+                        <label asp-for="Date" class="control-label">
+                            <img src="~/images/Calendar.png" alt="Surgeon Icon" style="width:20px; height:20px; margin-right:5px;">
+                            Prescription Date:
+                        </label>
+                        <input asp-for="Date" class="form-control" id="date-input" />
+                        <span asp-validation-for="Date" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PrescriptionStatus" class="control-label">
+                            <img src="~/images/prescription status.png" alt="Surgeon Icon" style="width:20px; height:20px; margin-right:5px;">
+                            Prescription Status:
+                        </label>
+                        <select asp-for="PrescriptionStatus" class="form-control" asp-items="ViewBag.PrescriptionStatus" id="status-select"></select>
+                        <span asp-validation-for="PrescriptionStatus" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PharmacistID" class="control-label">
+                            <img src="~/images/pharmacist.png" alt="Surgeon Icon" style="width:20px; height:20px; margin-right:5px;">
+                            Pharmacist:
+                        </label>
+                        <select asp-for="PharmacistID" class="form-control" asp-items="ViewBag.PharmacistID" id="pharmacist-select"></select>
+                    </div>
+
+
+                    <div class="form-group mt-3">
+                        <input type="submit" value="Prescribe" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Right Side Container -->
+        <div class="col-md-4">
+            <div class="rounded-container p-3 border shadow-sm">
+                <div class="wrapper-light-blue">
+                    <div id="selected-surgeon-container" class="form-group">
+                        <label for="selected-surgeon" class="control-label">Responsible Surgeon:</label>
+                        <p id="selected-surgeon" class="form-control-static"></p>
+                    </div>
+
+                    <div id="alertContainer"></div> <!-- Container to display alerts -->
+
+                    <div id="patient-details-container">
+                        <label for="patient-details" class="control-label">Patient Details:</label>
+                        <!-- Patient details will be injected here -->
+                    </div>
+
+                    <div id="selected-date-container">
+                        <div class="form-group">
+                            <label for="selected-date" class="control-label">Prescription Date:</label>
+                            <p id="selected-date" class="form-control-static"></p>
+                        </div>
+                    </div>
+
+                    <div id="selected-status-container" class="form-group">
+                        <label for="selected-status" class="control-label">Prescription Status:</label>
+                        <p id="selected-status" class="form-control-static"></p>
+                    </div>
+
+                    <div id="selected-pharmacist-container" class="form-group">
+                        <label for="selected-pharmacist" class="control-label">Responsible Pharmacist:</label>
+                        <p id="selected-pharmacist" class="form-control-static"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Combined Medication and Details Modal -->
+        <div class="modal fade" id="medicationModal" tabindex="-1" aria-labelledby="medicationModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="medicationModalLabel">Select Medications</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <!-- Left Column: Medications List -->
+                            <div class="col-md-5">
+                                <!-- Search Input -->
+                                <input type="text" id="medicationSearch" class="form-control mb-3" placeholder="Search for medications..." />
+
+                                <!-- Medication List with Checkboxes -->
+                                <ul id="medicationList" class="list-group" style="max-height: 300px; overflow-y: auto;">
+                                    @if (ViewBag.MedicationList != null)
+                                    {
+                                        foreach (var medication in ViewBag.MedicationList as List<Health_Hive_Project_2024.Models.MedicationRecords>)
+                                        {
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <input type="checkbox" class="medication-checkbox" value="@medication.MedicationID" data-name="@medication.MedicationName" />
+                                                <span>@medication.MedicationName</span>
+                                            </li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li class="list-group-item">No medications available</li>
+                                    }
+                                </ul>
+                            </div>
+
+                            <!-- Divider -->
+                            <div class="col-md-1 d-flex justify-content-center align-items-center">
+                                <div style="width: 2px; height: 100%; background-color: green;"></div>
+                            </div>
+
+                            <!-- Right Column: Quantity and Instructions -->
+                            <div class="col-md-6">
+                                <!-- Details Input -->
+                                <div id="detailsSection">
+                                    <div class="mb-3">
+                                        <label for="quantityInput" class="form-label">Quantity</label>
+                                        <input type="number" id="quantityInput" class="form-control" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="instructionsInput" class="form-label">Instructions</label>
+                                        <input type="text" id="instructionsInput" class="form-control" />
+                                    </div>
+                                    <button type="button" id="addMedicationBtn" class="btn btn-primary mt-2">Add Medication</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        @* <!-- Medication Confirmation Modal -->
+        <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <!-- Add your GIF here -->
+                        <img src="~/images/medication confirmation gif.gif" alt="Success GIF" class="img-fluid" style="max-width: 100px; height: auto;">
+
+                        <!-- Confirmation message -->
+                        <h5 id="confirmationMessage" class="mt-3"></h5>
+
+                        <!-- OK button -->
+                        <button type="button" class="btn btn-primary mt-3" data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+        <!-- Medication Confirmation Modal -->
+        <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <img src="~/images/medication confirmation gif.gif" alt="Success GIF" class="img-fluid" style="max-width: 100px; height: auto;">
+                        <h5 id="confirmationMessage" class="mt-3"></h5>
+                        <button type="button" class="btn btn-primary mt-3" id="confirmationOkBtn">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        @* <script>
+            $(document).ready(function () {
+                // Search functionality for medications
+                $('#medicationSearch').on('input', function () {
+                    var query = $(this).val().toLowerCase();
+                    $('#medicationList li').each(function () {
+                        var medicationName = $(this).find('span').text().toLowerCase();
+                        if (medicationName.includes(query)) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                });
+
+                $('#addMedicationBtn').click(function () {
+                    var selectedMedication = $('#medicationList input[type="checkbox"]:checked');
+                    var medicationId = selectedMedication.val();
+                    var medicationName = selectedMedication.data('name');
+                    var quantity = $('#quantityInput').val();
+                    var instructions = $('#instructionsInput').val();
+
+                    if (medicationId && quantity) {
+                        var newRow = `
+                        <tr data-medication-id="${medicationId}">
+                            <td>${medicationName}</td>
+                            <td>${quantity}</td>
+                            <td>${instructions}</td>
+                            <td><button type="button" class="btn btn-danger remove-medication-btn">Remove</button></td>
+                        </tr>
+                    `;
+                        $('#medicationsTable tbody').append(newRow);
+
+                        // Update hidden fields
+                        updateHiddenFields();
+
+                        // Clear inputs
+                        $('#quantityInput').val('');
+                        $('#instructionsInput').val('');
+                        selectedMedication.prop('checked', false);
+
+                        // Show confirmation modal with medication name
+                        $('#confirmationMessage').text(`Medication: ${medicationName} has been added to the prescription form.`);
+                        $('#confirmationModal').modal('show');
+                    } else {
+                        alert('Please select a medication and enter a quantity.');
+                    }
+                });
+
+
+                $(document).on('click', '.remove-medication-btn', function () {
+                    $(this).closest('tr').remove();
+                    // Update hidden fields after removal
+                    updateHiddenFields();
+                });
+
+                function updateHiddenFields() {
+                    var medicationIds = [];
+                    var quantities = [];
+                    var instructions = [];
+
+                    $('#medicationsTable tbody tr').each(function () {
+                        var medicationId = $(this).data('medication-id');
+                        var quantity = $(this).find('td').eq(1).text();
+                        var instruction = $(this).find('td').eq(2).text();
+
+                        medicationIds.push(medicationId);
+                        quantities.push(quantity);
+                        instructions.push(instruction);
+                    });
+
+                    $('#medicationIds').val(medicationIds.join(','));
+                    $('#quantities').val(quantities.join(','));
+                    $('#instructions').val(instructions.join(','));
+                }
+            });
+
+
+        </script> *@
+        <script>
+            $(document).ready(function () {
+                let medicationModal = new bootstrap.Modal(document.getElementById('medicationModal'));
+                let confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+
+                // Search functionality for medications
+                $('#medicationSearch').on('input', function () {
+                    var query = $(this).val().toLowerCase();
+                    $('#medicationList li').each(function () {
+                        var medicationName = $(this).find('span').text().toLowerCase();
+                        $(this).toggle(medicationName.includes(query));
+                    });
+                });
+
+                // Add Medication Button Click Logic
+                $('#addMedicationBtn').on('click', function () {
+                    console.log("Add Medication Button Clicked");
+
+                    var selectedMedication = $('#medicationList input[type="checkbox"]:checked');
+                    if (selectedMedication.length === 0) {
+                        alert('Please select a medication.');
+                        return;
+                    }
+
+                    var medicationId = selectedMedication.val();
+                    var medicationName = selectedMedication.data('name');
+                    var quantity = $('#quantityInput').val();
+                    var instructions = $('#instructionsInput').val();
+
+                    if (!quantity) {
+                        alert('Please enter a quantity.');
+                        return;
+                    }
+
+                    var newRow = `
+                        <tr data-medication-id="${medicationId}">
+                            <td>${medicationName}</td>
+                            <td>${quantity}</td>
+                            <td>${instructions}</td>
+                            <td><button type="button" class="btn btn-danger remove-medication-btn">Remove</button></td>
+                        </tr>
+                    `;
+                    $('#medicationsTable tbody').append(newRow);
+
+                    updateHiddenFields();
+
+                    // Reset inputs
+                    $('#quantityInput').val('');
+                    $('#instructionsInput').val('');
+                    selectedMedication.prop('checked', false);
+
+                    $('#confirmationMessage').text(`Medication: ${medicationName} has been added to the prescription form.`);
+                    medicationModal.hide();
+                    confirmationModal.show();
+                });
+
+                // Handle removal of medication rows
+                $(document).on('click', '.remove-medication-btn', function () {
+                    $(this).closest('tr').remove();
+                    updateHiddenFields();
+                });
+
+                // Update hidden fields with selected medications
+                function updateHiddenFields() {
+                    var medicationIds = [];
+                    var quantities = [];
+                    var instructions = [];
+
+                    $('#medicationsTable tbody tr').each(function () {
+                        var medicationId = $(this).data('medication-id');
+                        var quantity = $(this).find('td').eq(1).text();
+                        var instruction = $(this).find('td').eq(2).text();
+
+                        medicationIds.push(medicationId);
+                        quantities.push(quantity);
+                        instructions.push(instruction);
+                    });
+
+                    $('#medicationIds').val(medicationIds.join(','));
+                    $('#quantities').val(quantities.join(','));
+                    $('#instructions').val(instructions.join(','));
+                }
+
+                // Handle confirmation modal OK button click
+                $('#confirmationOkBtn').on('click', function () {
+                    confirmationModal.hide();
+                    setTimeout(() => {
+                        medicationModal.show();
+                    }, 500);
+                });
+
+                // Reset inputs and state on medication modal show
+                $('#medicationModal').on('show.bs.modal', function () {
+                    $('#medicationList input[type="checkbox"]').prop('checked', false);
+                    $('#quantityInput').val('');
+                    $('#instructionsInput').val('');
+                    $('body').addClass('modal-open');
+                });
+
+                $('#medicationModal').on('hide.bs.modal', function () {
+                    $('body').removeClass('modal-open');
+                });
+
+                // Prevent default form submission
+                $('form').on('submit', function (e) {
+                    e.preventDefault();
+                });
+            });
+        </script>
+
+
+
+        <style>
+            .modal-content {
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            #selectedMedications .d-flex {
+                margin-bottom: 10px;
+            }
+        </style>
+
+
+    </div>
+</div>
+
+
+<!-- Prescription Success Modal -->
+<div class="modal fade" id="prescriptionSuccessModal" tabindex="-1" aria-labelledby="prescriptionSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="prescriptionSuccessModalLabel">Prescription Sent</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <!-- Add your GIF here -->
+                <img src="~/images/prescription sent.gif" alt="Success GIF" class="img-fluid mb-3" style="max-width: 100px; height: auto;">
+                <!-- Success message -->
+                <p>Your prescription has been successfully sent.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--submition-->
+<script>
+    $(document).ready(function () {
+        $('form').on('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            $.ajax({
+                url: $(this).attr('action'), // The form's action URL
+                type: 'POST', // The form's method (POST)
+                data: $(this).serialize(), // Serialize the form data
+                success: function (response) {
+                    if (response.success) {
+                        // Show the modal on successful response
+                        $('#prescriptionSuccessModal').modal('show');
+                    } else {
+                        // Handle validation errors or unsuccessful submission
+                        alert('There was a problem with your submission. Please try again.');
+                    }
+                },
+                error: function () {
+                    // Handle errors here
+                    alert('Something went wrong. Please try again.');
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+
+
+<!-- Show surgeon -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get references to the dropdown and the display element
+        var surgeonSelect = document.getElementById('surgeon-select');
+        var selectedSurgeon = document.getElementById('selected-surgeon');
+
+        // Function to update the display element
+        function updateSurgeon() {
+            var selectedOption = surgeonSelect.options[surgeonSelect.selectedIndex];
+            selectedSurgeon.textContent = selectedOption.text;
+        }
+
+        // Add event listener to update on change
+        surgeonSelect.addEventListener('change', updateSurgeon);
+
+        // Initial update on page load (if a selection is already made)
+        updateSurgeon();
+    });
+</script>
+
+<!-- Show status -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get references to the dropdown and the display element
+        var statusSelect = document.getElementById('status-select');
+        var selectedStatus = document.getElementById('selected-status');
+
+        // Function to update the display element
+        function updateStatus() {
+            var selectedOption = statusSelect.options[statusSelect.selectedIndex];
+            selectedStatus.textContent = selectedOption.text;
+        }
+
+        // Add event listener to update on change
+        statusSelect.addEventListener('change', updateStatus);
+
+        // Initial update on page load (if a selection is already made)
+        updateStatus();
+    });
+</script>
+
+<!-- Show pharmacits -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get references to the dropdown and the display element
+        var pharmacistSelect = document.getElementById('pharmacist-select');
+        var selectedPharmacist = document.getElementById('selected-pharmacist');
+
+        // Function to update the display element
+        function updatePharmacist() {
+            var selectedOption = pharmacistSelect.options[pharmacistSelect.selectedIndex];
+            selectedPharmacist.textContent = selectedOption.text;
+        }
+
+        // Add event listener to update on change
+        pharmacistSelect.addEventListener('change', updatePharmacist);
+
+        // Initial update on page load (if a selection is already made)
+        updatePharmacist();
+    });
+</script>
+
+<!-- Show medication -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get references to the dropdown and the display element
+        var medicationSelect = document.getElementById('medication-select');
+        var selectedMedication = document.getElementById('selected-medication');
+
+        // Function to update the display element
+        function updateMedication() {
+            var selectedOption = medicationSelect.options[medicationSelect.selectedIndex];
+            selectedMedication.textContent = selectedOption.text;
+        }
+
+        // Add event listener to update on change
+        medicationSelect.addEventListener('change', updateMedication);
+
+        // Initial update on page load (if a selection is already made)
+        updateMedication();
+    });
+</script>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            // // Function to handle the search logic
+            // function searchPatient() {
+            //     var patientIdNumber = $('#patientIdSearch').val();
+            //     $.ajax({
+            //         url: '@Url.Action("SearchPatient", "Patients")',
+            //         type: 'GET',
+            //         data: { patientIdNumber: patientIdNumber },
+            //         success: function (result) {
+            //             $('#patient-details-container').html(result);
+            //             var selectedPatientId = $('#selectedPatientId').val();
+            //             if (selectedPatientId) {
+            //                 $('#PatientID').val(selectedPatientId);
+            //             }
+            //         },
+            //         error: function (xhr, status, error) {
+            //             console.error(error);
+            //         }
+            //     });
+            // }
+
+            // // Attach click event to the search button
+            // $('#searchPatientBtn').on('click', function () {
+            //     searchPatient();
+            // });
+
+            // // Attach keypress event to the input field
+            // $('#patientIdSearch').on('keypress', function (e) {
+            //     if (e.which === 13) { // Check if Enter key is pressed
+            //         e.preventDefault(); // Prevent default form submission
+            //         searchPatient();
+            //     }
+            // });
+
+
+
+
+
+            // Function to handle the search logic
+            // Function to handle the search logic
+            function searchPatient() {
+                var patientIdNumber = $('#patientIdSearch').val();
+                var selectedMedicationIds = $('#medicationIds').val().split(',');
+
+                if (selectedMedicationIds.length === 0 || selectedMedicationIds[0] === "") {
+                    $('#alertContainer').html('<div class="alert alert-danger" role="alert">Please select at least one medication before searching for a patient.</div>');
+                    return;
+                }
+
+                if (!patientIdNumber) {
+                    $('#alertContainer').html('<div class="alert alert-danger" role="alert">Please enter a Patient ID number.</div>');
+                    return;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("SearchPatientById", "Patients")',
+                    type: 'GET',
+                    data: {
+                        patientIdNumber: patientIdNumber,
+                        medicationIds: selectedMedicationIds.join(',')
+                    },
+                    success: function (response) {
+                        $('#patient-details-container').html(response);
+
+                        // Check for alerts in the response
+                        var $response = $(response);
+                        var alerts = $response.find('#alertContainer .alert').html();
+                        if (alerts) {
+                            $('#modal-alerts-body').html(alerts);
+                            $('#alertsModal').modal('show');
+                        }
+
+                        // Update hidden patient ID if available
+                        var patientId = $response.find('#selectedPatientId').val();
+                        if (patientId) {
+                            $('#PatientID').val(patientId);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                        $('#patient-details-container').html('<p>An error occurred while searching for the patient. Please try again.</p>');
+                    }
+                });
+            }
+
+
+
+
+
+
+
+            // Attach click event to the search button
+            $('#searchPatientBtn').on('click', function () {
+                searchPatient();
+            });
+
+            // Attach keypress event to the input field
+            $('#patientIdSearch').on('keypress', function (e) {
+                if (e.which === 13) { // Check if Enter key is pressed
+                    e.preventDefault(); // Prevent default form submission
+                    searchPatient();
+                }
+            });
+
+
+
+
+
+
+            // Update selected date when the date input changes
+            $('#date-input').on('change', function () {
+                var selectedDate = $(this).val();
+                $('#selected-date').text(selectedDate);
+            });
+
+            // Update selected status when the status select changes
+            $('#status-select').on('change', function () {
+                var selectedStatus = $(this).val();
+                $('#selected-status').text(selectedStatus);
+            });
+            // Update selected pharmacist when the pharmacist select changes
+            $('#pharmacist-select').on('change', function () {
+                var selectedPharmacist = $(this).val();
+                $('#selected-pharmacist').text(selectedPharmacist);
+            });
+            $('#medication-select').change(function () {
+                var selectedValue = $(this).val();
+                var selectedText = $(this).find("option:selected").text();
+                $('#selected-medication').text(selectedText);
+            });
+            // Update selected quantity when the quantity input changes
+            $('#quantity-input').on('change', function () {
+                var selectedQuantity = $(this).val();
+                $('#selected-quantity').text(selectedQuantity);
+            });
+            // Update selected instructions when the instructions input changes
+            $('#instructions-input').on('change', function () {
+                var selectedInstructions = $(this).val();
+                $('#selected-instructions').text(selectedInstructions);
+            });
+            // Update selected surgeon when the surgeon select changes
+            $('#surgeon-select').on('change', function () {
+                var selectedSurgeon = $(this).val();
+                $('#selected-surgeon').text(selectedSurgeon);
+            });
+            // Update Urgent check box
+            $('#urgent-checkbox').on('change', function () {
+                var isUrgent = $(this).is(':checked') ? 'Yes' : 'No';
+                $('#selected-urgent').text(isUrgent);
+            });
+
+        });
+    </script>
+}

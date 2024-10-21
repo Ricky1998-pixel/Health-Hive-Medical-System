@@ -1,0 +1,42 @@
+﻿@model Health_Hive_Project_2024.Models.WardRecords
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>WardRecords</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.WardName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.WardName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Capacity)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Capacity)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Location)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Location)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.WardType)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.WardType)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.WardID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

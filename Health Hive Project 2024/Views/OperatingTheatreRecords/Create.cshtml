@@ -1,0 +1,158 @@
+﻿@* @model Health_Hive_Project_2024.Models.OperatingTheatreRecords
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>OperatingTheatreRecords</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TheatreName" class="control-label"></label>
+                <input asp-for="TheatreName" class="form-control" />
+                <span asp-validation-for="TheatreName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div> *@
+
+@model CreateRecordsViewModel
+
+@{
+    ViewData["Title"] = "Create Multiple Records";
+}
+
+<h1 class="text-center">Create Multiple Records</h1>
+<hr />
+<div class="d-flex justify-content-center align-items-start mt-5">
+    <div class="col-md-8">
+        <form asp-action="CreateMultipleRecords" method="post">
+            <!-- Container for Operating Theatre Records -->
+            <div id="operatingTheatreForm" class="form-container rounded shadow p-4 mb-5 bg-white" style="display:block;">
+                <h4 class="text-primary">Operating Theatre Records</h4>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="OperatingTheatre.TheatreName" class="control-label"></label>
+                    <input asp-for="OperatingTheatre.TheatreName" class="form-control" />
+                    <span asp-validation-for="OperatingTheatre.TheatreName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-secondary" id="nextToWard">Next</button>
+                </div>
+            </div>
+
+            <!-- Container for Ward Records -->
+            <div id="wardForm" class="form-container rounded shadow p-4 mb-5 bg-white" style="display:none;">
+                <h4 class="text-primary">Ward Records</h4>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Ward.WardName" class="control-label"></label>
+                    <input asp-for="Ward.WardName" class="form-control" id="wardNameInput" />
+                    <span asp-validation-for="Ward.WardName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Ward.Capacity" class="control-label"></label>
+                    <input asp-for="Ward.Capacity" class="form-control" />
+                    <span asp-validation-for="Ward.Capacity" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Ward.Location" class="control-label"></label>
+                    <input asp-for="Ward.Location" class="form-control" />
+                    <span asp-validation-for="Ward.Location" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Ward.WardType" class="control-label"></label>
+                    <input asp-for="Ward.WardType" class="form-control" />
+                    <span asp-validation-for="Ward.WardType" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-secondary" id="prevToOperatingTheatre">Previous</button>
+                    <button type="button" class="btn btn-secondary" id="nextToBed">Next</button>
+                </div>
+            </div>
+
+            <!-- Container for Bed Records -->
+            <div id="bedForm" class="form-container rounded shadow p-4 mb-5 bg-white" style="display:none;">
+                <h4 class="text-primary">Bed Records</h4>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Bed.BedNo" class="control-label"></label>
+                    <input asp-for="Bed.BedNo" class="form-control" />
+                    <span asp-validation-for="Bed.BedNo" class="text-danger"></span>
+                </div>
+                @* <div class="form-group">
+                    <label asp-for="Bed.WardID" class="control-label"></label>
+                    <select asp-for="Bed.WardID" class="form-control" id="wardDropdown">
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div> *@
+                <div class="form-group">
+                    <button type="button" class="btn btn-secondary" id="prevToWard">Previous</button>
+                    <input type="submit" value="Create All" class="btn btn-primary" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById("nextToWard").onclick = function () {
+            document.getElementById("operatingTheatreForm").style.display = "none";
+            document.getElementById("wardForm").style.display = "block";
+        };
+
+        document.getElementById("prevToOperatingTheatre").onclick = function () {
+            document.getElementById("wardForm").style.display = "none";
+            document.getElementById("operatingTheatreForm").style.display = "block";
+        };
+
+        document.getElementById("nextToBed").onclick = function () {
+            document.getElementById("wardForm").style.display = "none";
+            document.getElementById("bedForm").style.display = "block";
+
+            // Get the ward name from the input
+            var wardName = document.getElementById("wardNameInput").value;
+
+            // Get the dropdown
+            var wardDropdown = document.getElementById("wardDropdown");
+
+            // Clear any existing options
+            wardDropdown.innerHTML = '';
+
+            // Add the new option based on the ward name entered
+            if (wardName) {
+                var option = document.createElement("option");
+                option.text = wardName;
+                option.value = wardName;
+                wardDropdown.add(option);
+            }
+        };
+
+        document.getElementById("prevToWard").onclick = function () {
+            document.getElementById("bedForm").style.display = "none";
+            document.getElementById("wardForm").style.display = "block";
+        };
+    </script>
+}
+
+
+
+
+

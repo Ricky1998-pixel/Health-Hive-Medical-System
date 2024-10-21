@@ -1,0 +1,184 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.MedicalHistory>
+
+@{
+    ViewData["Title"] = "Medical History Index";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Include Custom CSS -->
+    <style>
+        /* Custom CSS */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            color: #343a40;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+            .table thead th {
+                background-color: #007bff;
+                color: #ffffff;
+                font-weight: 600;
+                text-align: center;
+            }
+
+            .table tbody tr:nth-of-type(even) {
+                background-color: #f2f2f2;
+            }
+
+            .table tbody tr:hover {
+                background-color: #e9ecef;
+            }
+
+        .btn {
+            margin-right: 10px;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #004085;
+            }
+
+        .table-responsive {
+            margin-top: 20px;
+            max-height: 80vh; /* Set a maximum height for the table */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+            .search-bar input {
+                border-radius: 20px;
+                padding: 10px;
+                border: 1px solid #ced4da;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            }
+
+                .search-bar input:focus {
+                    border-color: #007bff;
+                    outline: none;
+                    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+                }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Medical History Records</h1>
+
+        <form method="get" asp-controller="MedicalHistories" asp-action="Index">
+            <div class="search-bar">
+                <input type="text" name="searchTerm" class="form-control" placeholder="Search by Patient ID Number..." />
+            </div>
+        </form>
+
+        <p>
+            <a class="btn btn-primary" asp-action="Create">Create New Medical History Record</a>
+        </p>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Date Recorded</th>
+                        <th>Allergies</th>
+                        <th>Medications</th>
+                        <th>Conditions</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="recordsTableBody">
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Patient.Name @item.Patient.Surname</td>
+                            <td>@item.DateRecorded.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                @foreach (var allergy in item.MedicalHistoryAllergies)
+                                {
+                                    @allergy.ActiveIngredientRecords.IngredientName <br />
+                                }
+                            </td>
+                            <td>
+                                @foreach (var medication in item.MedicalHistoryMedications)
+                                {
+                                    @medication.MedicationRecords.MedicationName <br />
+                                }
+                            </td>
+                            <td>
+                                @if (item.MedicalHistoryCondition != null)
+                                {
+                                    @foreach (var condition in item.MedicalHistoryCondition)
+                                    {
+                                        @condition.Condition.Diagnosis <br />
+                                    }
+                                }
+                                else
+                                {
+                                    <span>No conditions listed</span>
+                                }
+                            </td>
+                            <td>
+                                <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.MedicalHistoryID">Edit</a>
+                                <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.MedicalHistoryID">Details</a>
+                                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.MedicalHistoryID">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Include jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Custom JS -->
+    <script>
+        $(document).ready(function () {
+            // Search functionality
+            $('input[name="searchTerm"]').on('keyup', function () {
+                var searchTerm = $(this).val().toLowerCase();
+                $('#recordsTableBody tr').each(function () {
+                    var patientIDNumber = $(this).find('td:first').text().toLowerCase();
+                    $(this).toggle(patientIDNumber.indexOf(searchTerm) !== -1);
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
+
+
+
+
+

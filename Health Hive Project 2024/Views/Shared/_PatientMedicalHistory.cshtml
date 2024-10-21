@@ -1,0 +1,162 @@
+﻿@model Health_Hive_Project_2024.Models.MedicalHistory
+
+<style>
+    /* General Section Style */
+    .section {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 10px;
+        background-color: #e3f2fd;
+        border: 1px solid #90caf9;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+        /* Heading Style */
+        .section h3 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            font-size: 1.2em;
+        }
+
+            .section h3 img {
+                width: 25px;
+                height: 25px;
+                margin-right: 10px;
+            }
+
+    /* Flexbox for Content */
+    .info-section {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+        .info-section img {
+            width: 20px; /* Adjust size as needed */
+            height: 20px; /* Adjust size as needed */
+            margin-right: 10px; /* Space between image and text */
+            vertical-align: middle; /* Align image vertically in the middle */
+        }
+
+    /* Additional Styles for Specific Content */
+    .date-recorded img,
+    .treatment img,
+    .notes img,
+    .recorded-by img,
+    .family-history img,
+    .surgical-history img,
+    .immunizations img {
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+    }
+
+    /* Colors for Different Sections */
+    .date-recorded {
+        background-color: #fff3e0;
+    }
+
+    .treatment {
+        background-color: #e1f5fe;
+    }
+
+    .notes {
+        background-color: #f1f8e9;
+    }
+
+    .recorded-by {
+        background-color: #ffebee;
+    }
+
+    .family-history {
+        background-color: #f3e5f5;
+    }
+
+    .surgical-history {
+        background-color: #fff9c4;
+    }
+
+    .immunizations {
+        background-color: #e8f5e9;
+    }
+</style>
+
+<!-- Date Recorded Section -->
+<div class="section date-recorded">
+    <h3>
+        <img src="~/images/date recorded.png" alt="Calendar Icon">
+        Date Recorded:
+    </h3>
+    <p><strong>Date Recorded:</strong> @Model.DateRecorded.ToShortDateString()</p>
+</div>
+
+
+<!-- Medications Section -->
+<div class="section">
+    <h3>
+        <img src="~/images/medication.png" alt="Medication Icon">
+        Current Medications:
+    </h3>
+    @if (Model.MedicalHistoryMedications != null && Model.MedicalHistoryMedications.Any())
+    {
+        <ul>
+            @foreach (var medication in Model.MedicalHistoryMedications)
+            {
+                <li>@medication.MedicationRecords.MedicationName</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p><span style="color: #999;">No Medication Record</span></p>
+    }
+
+</div>
+
+<!-- Allergies Section -->
+<div class="section">
+    <h3>
+        <img src="~/images/allergies.png" alt="Allergy Icon">
+        Current Allergies:
+    </h3>
+    @if (Model.MedicalHistoryAllergies != null && Model.MedicalHistoryAllergies.Any())
+    {
+        <ul>
+            @foreach (var allergy in Model.MedicalHistoryAllergies)
+            {
+                <li>@allergy.ActiveIngredientRecords.IngredientName</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p><span style="color: #999;">No Allergy Record</span></p>
+    }
+</div>
+
+<!-- Conditions Section -->
+<div class="section">
+    <h3>
+        <img src="~/images/medical condition.png" alt="Allergy Icon">
+        Current Conditions:
+    </h3>
+    @if (Model.MedicalHistoryCondition != null && Model.MedicalHistoryCondition.Any())
+    {
+        <ul>
+            @foreach (var condition in Model.MedicalHistoryCondition)
+            {
+                <li>@condition.Condition.Diagnosis</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p><span style="color: #999;">No Condition Record</span></p>
+    }
+</div>
+
+
+
+
+

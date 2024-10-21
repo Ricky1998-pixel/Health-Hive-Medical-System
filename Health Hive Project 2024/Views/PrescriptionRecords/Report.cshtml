@@ -1,0 +1,291 @@
+﻿@model dynamic
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription Report</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        h1, h2 {
+            text-align: center;
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: #343a40;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: #495057;
+            margin-top: 40px;
+        }
+
+        p {
+            text-align: center;
+            font-size: 1rem;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        form {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        input[type="date"] {
+            padding: 10px;
+            margin: 0 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            input[type="submit"]:hover {
+                background-color: #0056b3;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+        }
+
+        th, td {
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            text-align: left;
+            font-size: 1rem;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: 500;
+        }
+
+        td {
+            color: #495057;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .summary-table {
+            margin-top: 30px;
+            width: 100%;
+        }
+
+            .summary-table th {
+                background-color: #28a745;
+                color: white;
+            }
+
+            .summary-table td {
+                text-align: center;
+            }
+
+        #downloadButton {
+            display: block;
+            margin: 30px auto;
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            #downloadButton:hover {
+                background-color: #218838;
+            }
+    </style>
+</head>
+<body>
+    <h1>PRESCRIPTION REPORT</h1>
+    <p id="pharmacistName">Pharmacist: Dr: @ViewBag.PharmacistName</p>
+    <p id="dateRange">Date Range: @ViewBag.StartDate?.ToString("dd MMMM yyyy") – @ViewBag.EndDate?.ToString("dd MMMM yyyy")</p>
+    <p>Report Generated: @DateTime.Now.ToString("dd MMMM yyyy")</p>
+
+    <!-- Date Range Selection Form -->
+    <form method="get" action="/PrescriptionRecords/Report">
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDateInput" name="startDate" value="@ViewBag.StartDate?.ToString("yyyy-MM-dd")" />
+
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDateInput" name="endDate" value="@ViewBag.EndDate?.ToString("yyyy-MM-dd")" />
+
+        <input type="submit" value="Generate Report" />
+    </form>
+
+    <!-- Prescriptions Table -->
+    <table id="prescriptionTable">
+        <thead>
+            <tr>
+                <th>DATE</th>
+                <th>PATIENT</th>
+                <th>SURGEON</th>
+                <th>STATUS</th>
+                <th>MEDICATIONS</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var prescription in ViewBag.Prescriptions)
+            {
+                <tr>
+                    <td>@prescription.Date.ToShortDateString()</td>
+                    <td>@prescription.PatientName</td>
+                    <td>@prescription.SurgeonName</td>
+                    <td>@prescription.PrescriptionStatus</td>
+                    <td>
+                        <ul>
+                            @foreach (var medication in prescription.Medications)
+                            {
+                                <li>
+                                    @medication.MedicationName - Qty: @medication.Quantity, Instructions: @medication.Instructions
+                                </li>
+                            }
+                        </ul>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <p id="totalPatients">TOTAL SURGERIES: @ViewBag.Prescriptions.Count</p>
+
+    <!-- Medication Summary Table -->
+    <h2>SUMMARY PER MEDICATION</h2>
+    <table id="summaryTable" class="summary-table">
+        <thead>
+            <tr>
+                <th>MEDICATION</th>
+                <th>TOTAL PRESCRIPTIONS</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var summary in ViewBag.MedicationSummaries)
+            {
+                <tr>
+                    <td>@summary.MedicationName</td>
+                    <td>@summary.TotalPrescriptions</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button id="downloadButton" onclick="downloadPDF()">Download Report as PDF</button>
+
+    <!-- Load jsPDF and jsPDF AutoTable from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Get pharmacist name and date range
+            const pharmacistName = document.getElementById('pharmacistName').textContent;
+            const dateRange = document.getElementById('dateRange').textContent;
+
+
+            // Add Hospital Header
+            doc.setFontSize(12);
+            doc.text('Bay Breeze Hospital', 105, 10, { align: 'center' });
+
+            // Title and details
+            doc.setFontSize(16);
+            doc.text('PRESCRIPTION REPORT', 20, 20);
+            doc.setFontSize(12);
+            doc.text(pharmacistName, 20, 30);
+            doc.text(dateRange, 20, 40);
+            doc.text(`Report Generated: ${new Date().toLocaleDateString()}`, 20, 50);
+
+            // Prescriptions Table
+            const prescriptionData = [];
+            document.querySelectorAll('#prescriptionTable tbody tr').forEach(row => {
+                const columns = row.querySelectorAll('td');
+                prescriptionData.push([
+                    columns[0]?.textContent.trim() || '', // Date
+                    columns[1]?.textContent.trim() || '', // Patient
+                    columns[2]?.textContent.trim() || '', // Surgeon
+                    columns[3]?.textContent.trim() || '', //Status
+                    columns[4]?.textContent.trim() || '' //Medications
+                ]);
+            });
+
+            if (prescriptionData.length > 0) {
+                doc.autoTable({
+                    startY: 60,
+                    head: [['DATE', 'PATIENT', 'SURGEON', 'STATUS', 'MEDICATIONS']],
+                    body: prescriptionData
+                });
+            } else {
+                doc.text('No prescriptions found in the selected date range.', 20, 60);
+            }
+
+            // Total Patients
+            const totalPatients = document.getElementById('totalPatients').textContent;
+            doc.text(totalPatients, 20, doc.lastAutoTable.finalY + 10); // Adding Total Patients
+
+            // Medication Summary Table
+            const summaryData = [];
+            document.querySelectorAll('#summaryTable tbody tr').forEach(row => {
+                const columns = row.querySelectorAll('td');
+                summaryData.push([
+                    columns[0]?.textContent.trim() || '', // Medication Name
+                    columns[1]?.textContent.trim() || ''  // Total Prescriptions
+                ]);
+            });
+
+            if (summaryData.length > 0) {
+                doc.text('SUMMARY PER MEDICATION:', 20, doc.lastAutoTable.finalY + 20);
+                doc.autoTable({
+                    startY: doc.lastAutoTable.finalY + 30,
+                    head: [['MEDICATION', 'TOTAL MEDS PER PRESCRIPTIONS']],
+                    body: summaryData
+                });
+            }
+
+            // Footer
+            doc.setFontSize(10);
+            doc.text('Bay Breeze Hospital | Contact: 041 583 2121 | Email: baybreeze@gmail.com', 105, 280, { align: 'center' });
+
+            // Save the PDF
+            doc.save('Prescription_Report.pdf');
+        }
+
+    </script>
+</body>
+</html>

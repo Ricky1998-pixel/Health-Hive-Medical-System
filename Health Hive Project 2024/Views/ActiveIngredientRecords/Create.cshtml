@@ -1,0 +1,218 @@
+﻿@* @model Health_Hive_Project_2024.Models.ActiveIngredientRecords
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>ActiveIngredientRecords</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="IngredientName" class="control-label"></label>
+                <input asp-for="IngredientName" class="form-control" />
+                <span asp-validation-for="IngredientName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to Listing page</a>
+</div>
+ *@
+
+
+
+@model List<Health_Hive_Project_2024.Models.ActiveIngredientRecords>
+
+@{
+    ViewData["Title"] = "Create Multiple Active Ingredients";
+}
+
+<h1>Create Multiple Active Ingredients</h1>
+<hr />
+
+<div class="row">
+    <!-- Left-hand side: Form to add ingredients inside a rounded container -->
+    <div class="col-md-5">
+        <div class="container border rounded p-4" style="background-color: #f8f9fa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <form asp-action="CreateMultiple" method="post" id="ingredientForm">
+                <div id="ingredientFields">
+                    <div class="form-group" id="ingredientField_0">
+                        <label for="IngredientName_0">Ingredient Name</label>
+                        <input name="IngredientName[0]" class="form-control" oninput="updateIngredientList(0)" />
+                    </div>
+                </div>
+
+                <div class="form-group mt-3">
+                    <button type="button" id="addIngredient" class="btn btn-secondary">Add Another Ingredient</button>
+                    <button type="button" id="removeIngredient" class="btn btn-danger" style="display: none;">Remove Last Ingredient</button>
+                </div>
+
+                <div class="form-group mt-3">
+                    <input type="submit" value="Create All" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Green separator line -->
+    <div class="col-md-1">
+        <hr style="border-left: 2px solid green; height: 100%;" />
+    </div>
+
+    <!-- Right-hand side: Display list of active ingredients in a rounded container -->
+    <div class="col-md-6">
+        <div class="container border rounded p-4" style="background-color: #f8f9fa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <h4>Entered Active Ingredients:</h4>
+            <div id="ingredientListContainer" class="border p-3 rounded" style="background-color: white;">
+                <ul id="ingredientList">
+                    <!-- List items will be added here dynamically -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to Listing page</a>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Active Ingredient(s) Added</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="~/images/active ingredient added.gif" alt="Success GIF" class="img-fluid" style="max-width: 100px; height: auto;" />
+                <p id="modalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <a href="@Url.Action("Index", "ActiveIngredientRecords")" class="btn btn-primary">View Active Ingredients</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        let ingredientIndex = 1;
+
+        // Add new ingredient field
+        document.getElementById('addIngredient').addEventListener('click', function () {
+            const ingredientFields = document.getElementById('ingredientFields');
+
+            const newField = `
+                        <div class="form-group" id="ingredientField_${ingredientIndex}">
+                            <label for="IngredientName_${ingredientIndex}">Ingredient Name</label>
+                            <input name="IngredientName[${ingredientIndex}]" class="form-control" oninput="updateIngredientList(${ingredientIndex})" />
+                        </div>`;
+
+            ingredientFields.insertAdjacentHTML('beforeend', newField);
+            ingredientIndex++;
+
+            // Show the remove button since there is now more than 1 field
+            document.getElementById('removeIngredient').style.display = 'inline-block';
+        });
+
+        // Remove last added ingredient field
+        document.getElementById('removeIngredient').addEventListener('click', function () {
+            if (ingredientIndex > 1) {
+                ingredientIndex--; // Decrease the index before removing the last field
+                const lastField = document.getElementById(`ingredientField_${ingredientIndex}`);
+                lastField.remove(); // Remove the last added ingredient field
+
+                // Remove the last item from the ingredient list
+                document.getElementById(`ingredientItem_${ingredientIndex}`).remove();
+
+                // Hide the remove button if there's only one input field left
+                if (ingredientIndex === 1) {
+                    document.getElementById('removeIngredient').style.display = 'none';
+                }
+            }
+        });
+
+        // Function to update the right-hand ingredient list
+        function updateIngredientList(index) {
+            const ingredientInput = document.querySelector(`[name="IngredientName[${index}]"]`);
+            let ingredientListItem = document.getElementById(`ingredientItem_${index}`);
+
+            // If the list item doesn't exist yet, create it
+            if (!ingredientListItem) {
+                ingredientListItem = document.createElement('li');
+                ingredientListItem.id = `ingredientItem_${index}`;
+                document.getElementById('ingredientList').appendChild(ingredientListItem);
+            }
+
+            // Update the list item text
+            ingredientListItem.textContent = `${index + 1}. ${ingredientInput.value}`;
+        }
+
+        // Handle form submission
+        document.getElementById('ingredientForm').onsubmit = function (event) {
+            // Prevent the default form submission
+            event.preventDefault();
+
+            // Create an array of ingredient names
+            const ingredients = Array.from(document.querySelectorAll('input[name^="IngredientName"]')).map(input => input.value).filter(name => name);
+
+            // If there are ingredients, send the AJAX request
+            if (ingredients.length > 0) {
+                const formData = new FormData(this); // Collect form data
+
+                fetch('@Url.Action("CreateMultiple", "ActiveIngredientRecords")', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest' // Indicate an AJAX request
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                throw new Error(err);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Show the modal with the success message
+                        const modalMessage = `Active Ingredient(s): ${data.message} were successfully added into the system.`;
+                        document.getElementById('modalMessage').textContent = modalMessage;
+                        $('#successModal').modal('show');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while adding the ingredients. Please try again.');
+                    });
+            }
+        };
+
+
+        // Initially hide the remove button if there's only 1 field
+        if (ingredientIndex === 1) {
+            document.getElementById('removeIngredient').style.display = 'none';
+        }
+    </script>
+}
+
+
+
+
+
+

@@ -1,0 +1,160 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.Patient>
+@{
+    ViewData["Title"] = "Index";
+    int row = 0;
+}
+<head>
+    <style>
+
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/Anaesthe_SearchEngine.css" rel="stylesheet" asp-append-version="true" />
+</head>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                    <h6 class="text-white text-capitalize ps-3">Search Engine for post surgery</h6>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <!-- Load icon library -->
+                <form id="searchForm" method="post" onsubmit="return false;">
+                    <div class="containerr">
+                        <h2 class="heading">Type patient Id to search for Information.</h2>
+                        <div class="searchInputWrapper">
+                            <input id="Search" autocomplete="off" maxlength="13" class="searchInput" name="searchOrder" type="text" placeholder='focus here to search'>
+                            <button class="searchButton" style="z-index:0" type="submit"><i class="searchInputIcon fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive p-0">
+                    <table class="table align-items-center justify-content-center mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">#</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">ID</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">First Name</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Last Name</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Gender</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientTab">
+                            @* Initially render with all patients or empty *@
+                            @if (Model == null || !Model.Any())
+                            {
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="d-flex px-2">
+                                            <div class="my-auto">
+                                                <h5 class="mb-0 text-lg">Can't Find any patient</h5>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var user in Model)
+                                {
+                                    row++;
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@row</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@user.PatientIDNumber</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@user.Name</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@user.Surname</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@user.Gender</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <a asp-controller="PostSurgery" asp-action="Order" asp-route-Id="@user.PatientID" class="btn btn-primary">Post Notes</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="loader">
+    <div></div>
+    <div></div>
+    <div></div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Search').on('input', function () {
+                let searchValue = $(this).val();
+                if (searchValue.length >= 1) {
+                    // Show loading animation
+                    $('#patientTab').html('<tr><td colspan="6"><div class="loader"><div></div><div></div><div></div></div></td></tr>');
+
+                    $.ajax({
+                        url: '@Url.Action("GetInfor", "PostSurgery")', // Updated to correct action method
+                        type: 'GET',
+                        data: { searchText: searchValue },
+                        success: function (data) {
+                            $('#patientTab').html(data); // Injects the returned HTML into the table
+                        },
+                        error: function (xhr, status, error) {
+                            $('#patientTab').html('<tr><td colspan="6" class="text-danger">Error loading data. Please try again.</td></tr>');
+                        }
+                    });
+                } else {
+                    $('#patientTab').html('<tr><td colspan="6">Please search using the patient ID number.</td></tr>');
+                }
+            });
+        });
+
+    </script>
+}

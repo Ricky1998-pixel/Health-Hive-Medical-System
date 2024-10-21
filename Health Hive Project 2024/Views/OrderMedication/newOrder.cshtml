@@ -1,0 +1,169 @@
+﻿@* @model OrderMedications
+@{
+    ViewData["Title"] = "newOrder";
+}
+
+<form method="post" asp-action="Create" class="needs-validation" novalidate>
+
+    <input hidden asp-for="@Model.PatientID" />
+
+    <div class="row">
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="form-group local-forms ">
+                <label for="validationTooltip01">First Name <span class="login-danger">*</span></label>
+
+                <input asp-for="FirstName" type="text" class="form-controll" id="date" required>
+                <div class="invalid-feedback">
+                    Please type your First Name.
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="form-group local-forms">
+                <label for="validationTooltip03">Last Name<span class="login-danger">*</span></label>
+                <div class="time-icon">
+                    <input asp-for="LastName" class="form-controll" id="MedicationId" required>
+
+                    <div class="invalid-feedback">
+                        Please type your Last Name.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-6">
+            <div class="form-group local-forms">
+                <label>Branch</label>
+                <select class=" form-controll" id="validationCustom04" asp-for="Branch" required>
+                    <option selected disabled value="">-- Select Branch --</option>
+                    <option>Organization</option>
+
+
+                </select>
+                <div class="invalid-feedback">
+                    Please select your branch.
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-6">
+            <div class="form-group local-forms">
+                <label>Gender<span class="login-danger">*</span> </label>
+
+                <select asp-for="Gender" class=" form-controll" id="validationCustom04" required>
+                    <option selected disabled value="">-- Choose gender type --</option>
+                    <option>Male</option>
+                    <option>Female</option>
+
+                </select>
+                <div class="invalid-feedback">
+                    Please select your gender.
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="form-group local-forms">
+                <label>Email<span class="login-danger">*</span></label>
+                <input asp-for="Email" type="email" id="validationTooltip06" class="form-controll" rows="3" cols="30" required />
+                <div class="invalid-feedback">
+                    Please type your email.
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="form-group local-forms">
+                <label>Phone Number<span class="login-danger">*</span></label>
+                <input asp-for="PhoneNumb" type="number" id="validationTooltip06" class="form-controll" rows="3" cols="30" required />
+                <div class="invalid-feedback">
+                    Please type your Phone Number.
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="form-group select-">
+                <label class="gen-label">Password</label><br>
+
+                <input asp-for="Password" type="password" class=" form-controll" id="validationCustom04" required />
+
+                <div class="invalid-feedback">
+                    Please type your password.
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="form-group local-forms ">
+                <label class="gen-label">Confirm Password</label><br>
+
+                <input asp-for="ConfirmPassword" type="password" class=" form-controll" id="validationCustom04" required />
+
+                <div class="invalid-feedback">
+                    Please Confirm password.
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="doctor-submit text-end">
+
+                <input type="submit" class="btn btn-primary " value="Submit" />
+
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+
+<style>
+    /* Style for the form container */
+    .form-container {
+        width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    /* Style for form labels */
+    .control-label {
+        font-weight: bold;
+    }
+
+    /* Style for form inputs */
+    .form-controll {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        /*   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); */
+    }
+</style>
+
+<script>
+    (function () {
+        'use strict';
+        window.addEventListener('load', function () {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script> *@

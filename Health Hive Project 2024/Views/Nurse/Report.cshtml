@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewData["Title"] = "Report";
+}
+@model IEnumerable<PrescriptionMedications>
+@inject IHttpContextAccessor accessor
+<div class="row">
+    <a onclick="Download()" class="btn btn-primary float-end w-25">Download</a>
+</div>
+<div id="report">
+    <h2 class="text-center">Medication Report</h2>
+    <h1 class="text-center">@accessor.HttpContext.Session.GetString("user_full_name")</h1>
+    <div class="row justify-content-evenly">
+        <div class="col">
+            <h4>Date Range: @(TempData["f"] == null ? "" : TempData["f"]) - - @(TempData["t"] == null ? "" : TempData["t"])</h4>
+        </div>
+        <div class="col">
+            <h4>Report Generated: @DateTime.Now.ToShortDateString()</h4>
+        </div>
+
+    </div>
+    <br />
+    <table class="table">
+        <caption>TOTAL PATIENTS: @Model.DistinctBy(c => c.PrescriptionRecords.PatientID).Count()</caption>
+        <thead>
+            <tr>
+                <td>Date</td>
+                <td>Patient</td>
+                <td>Medication</td>
+                <td>Qty</td>
+                <td>Time</td>
+            </tr>
+
+        </thead>
+        <tbody>
+            @foreach (var i in Model)
+            {
+                <tr>
+                    <td>@i.AdministeredDate.Value.ToShortDateString()</td>
+                    <td>@i.PrescriptionRecords.Patient.Name @i.PrescriptionRecords.Patient.Surname</td>
+                    <td>@i.MedicationRecords.MedicationName</td>
+                    <td>@i.QuantityAdministered</td>
+                    <td>@i.AdministeredDate.Value.ToShortTimeString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <br />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <td>Medicine</td>
+                <td>Qty Administered</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var i in Model.GroupBy(c => c.MedicationRecords.MedicationName).Select(c => new { name = c.Key, count = c.Sum(c => c.QuantityAdministered) }))
+            {
+                <tr>
+                    <td>@i.name</td>
+                    <td>@i.count</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <br />
+</div>
+@section Scripts{
+    <script>
+        function Download(){
+            var opt = {
+                margin: 5,
+                filename: 'Report.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait',
+                },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+            const element = document.getElementById('report');
+            html2pdf().from(element).set(opt).toPdf().get('pdf').save();
+        }
+        
+    </script>
+}
+

@@ -1,0 +1,617 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.PrescriptionRecords>
+
+@{
+    ViewData["Title"] = "Index";
+    var groupedByPatient = Model.GroupBy(p => p.PatientID);
+}
+
+<link rel="stylesheet" type="text/css" href="~/css/Important-blink.css">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+
+<style>
+    body {
+        background-color: #f4f4f9;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 1200px;
+        margin: 20px auto;
+        border-radius: 20px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .form-control, .btn {
+        border-radius: 25px;
+    }
+
+    .table th, .table td {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .btn-primary:hover {
+        background-color: #5a6268;
+    }
+
+    .rounded-container {
+        padding: 10px;
+        background-color: #f8f9fa;
+        margin-bottom: 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 15px;
+    }
+
+    .blinking-icon {
+        font-size: 1.2em;
+        animation: blink 1s infinite;
+    }
+
+    .modal-content {
+        border-radius: 15px;
+    }
+
+    .highlighted-medication {
+        background-color: #f8d7da; /* Light red background */
+    }
+
+</style>
+<style>
+    .table-warning {
+        background-color: #fff3cd;
+        animation: highlight 2s ease-in-out;
+    }
+
+    
+</style>
+
+<!--Alert Container Style-->
+<style>
+    .alerts-column {
+        width: 300px; /* Fixed width */
+        max-width: 300px;
+        vertical-align: top;
+        padding: 10px;
+    }
+
+    .custom-alert {
+        font-size: 0.85em;
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .alert-content {
+        max-height: 150px; /* Adjust as needed */
+        overflow-y: auto;
+        padding-right: 15px; /* Space for scrollbar */
+    }
+
+    .alert-list {
+        padding-left: 1rem;
+        margin-bottom: 0;
+        list-style-type: none;
+    }
+
+        .alert-list li {
+            margin-bottom: 0.25rem;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+            .alert-list li:hover {
+                white-space: normal;
+                word-wrap: break-word;
+            }
+
+    .btn-close {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+</style>
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="SearchPrescription" method="post">
+            <div class="row justify-content-end">
+                <div class="col-md-8">
+                    <input type="text" autocomplete="off" placeholder="Patient ID Number" name="patientId" class="form-control" maxlength="13">
+                </div>
+                <div class="col-md-2">
+                    <input type="submit" value="Search" class="btn btn-primary" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (groupedByPatient.Any())
+{
+    @foreach (var patientGroup in groupedByPatient)
+    {
+        var patient = patientGroup.FirstOrDefault()?.Patient;
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">
+                    @patient.Name @patient.Surname (@patient.PatientIDNumber)
+                </h5>
+                
+                <table class="table">
+                    <thead>
+                        <tr>
+                            @if (patientGroup.Count() > 1)
+                            {
+                                <th>Select</th>
+                            }
+                            <th>Surgeon</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Medications</th>
+                            <th>Alerts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var prescription in patientGroup)
+                        {
+                            var rowClass = TempData["highlightPrescriptionID"] != null &&
+                            (int)TempData["highlightPrescriptionID"] == prescription.PrescriptionID
+                            ? "table-warning" : "";
+                            <tr class="@rowClass">
+                                @if (patientGroup.Count() > 1)
+                                {
+                                    <td>
+                                        <input type="radio" name="selectedPrescription-@patient.PatientID" value="@prescription.PrescriptionID" class="form-check-input">
+                                    </td>
+                                }
+                                <td>@prescription.Surgeon.Name</td>
+                                <td>@prescription.Date.ToString("dd-MM-yyyy")</td>
+                                <td>
+                                    @prescription.PrescriptionStatus
+                                    @if (prescription.PrescriptionStatus == "Urgent")
+                                    {
+                                        <span class="blinking-icon text-danger">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                        </span>
+                                    }
+                                    else if (prescription.PrescriptionStatus == "Normal")
+                                    {
+                                        <span class="text-success">
+                                            <i class="fas fa-check-circle"></i>
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="rounded-container">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Medication</th>
+                                                    <th>Quantity</th>
+                                                    <th>Instructions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var med in prescription.PrescriptionMedications)
+                                                {
+                                                    var highlightClass = TempData["highlightMedicationID"] != null && (int)TempData["highlightMedicationID"] == med.MedicationID
+                                                    ? "highlighted-medication"
+                                                    : "";
+
+                                                    <tr class="@highlightClass">
+                                                        <td>@med.MedicationRecords.MedicationName</td>
+                                                        <td>@med.Quantity</td>
+                                                        <td>@med.Instructions</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </td>
+                                <td class="alerts-column">
+                                    @if (TempData["criticalAlerts"] != null && (int)TempData["highlightPrescriptionID"] == prescription.PrescriptionID)
+                                    {
+                                        <div class="alert alert-danger alert-dismissible fade show custom-alert" role="alert">
+                                            <strong>Critical Alerts:</strong>
+                                            <div class="alert-content">
+                                                <ul class="alert-list">
+                                                    @foreach (var alert in (string[])TempData["criticalAlerts"])
+                                                    {
+                                                        <li>@alert</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    }
+
+                                    @if (TempData["nonCriticalAlerts"] != null && (int)TempData["highlightPrescriptionID"] == prescription.PrescriptionID)
+                                    {
+                                        <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+                                            <strong>Medical Alerts:</strong>
+                                            <div class="alert-content">
+                                                <ul class="alert-list">
+                                                    @foreach (var alert in (string[])TempData["nonCriticalAlerts"])
+                                                    {
+                                                        <li>@alert</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+
+
+                <div class="text-center">
+                    <a href="#" class="btn btn-info btn-sm showMedicalHistory" data-id="@patient.PatientID">View Medical History</a>
+                    <a href="#" class="btn btn-success btn-sm showVitals" data-id="@patient.PatientID">View Vital History</a>
+                    
+                    <form asp-action="Dispense" method="post" style="display:inline;">
+                        @if (patientGroup.Count() == 1)
+                        {
+                            <input type="hidden" name="prescriptionID" value="@patientGroup.First().PrescriptionID">
+                        }
+                        else
+                        {
+                            <input type="hidden" name="prescriptionID" id="selectedPrescriptionID-@patient.PatientID" value="">
+                        }
+                        <input type="hidden" name="patientID" value="@patient.PatientID">
+                        <button type="submit" class="btn btn-success dispenseBtn" data-patient-id="@patient.PatientID">Dispense</button>
+                    </form>
+                    <form id="rejectForm-@patientGroup.FirstOrDefault()?.PrescriptionID" method="post" style="display:inline;">
+                        <input type="hidden" name="PrescriptionID" value="@patientGroup.FirstOrDefault()?.PrescriptionID" />
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal-@patientGroup.FirstOrDefault()?.PrescriptionID">
+                            Reject
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="card mt-4">
+        <div class="card-body text-center text-danger">
+            No Data Found
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        $("input[name^='selectedPrescription-']").change(function () {
+            var selectedValue = $(this).val();
+            var patientId = $(this).attr('name').split('-')[1];
+            $("#selectedPrescriptionID-" + patientId).val(selectedValue);
+        });
+
+        $(".dispenseBtn").click(function (e) {
+            var patientId = $(this).data('patient-id');
+            var selectedValue = $("#selectedPrescriptionID-" + patientId).val();
+            if ($("input[name='selectedPrescription-" + patientId + "']").length > 0 && !selectedValue) {
+                e.preventDefault();
+                alert("Please select a prescription to dispense.");
+            }
+        });
+    });
+</script>
+@if (TempData["highlightPrescriptionID"] != null)
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var highlightedRow = document.querySelector('.table-warning');
+            if (highlightedRow) {
+                highlightedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    </script>
+}
+
+
+
+
+
+
+<div class="text-right mb-3">
+    <a href="@Url.Action("Index", "DispensedPrescriptions")" class="btn btn-primary">
+        View Dispensed Prescriptions
+    </a>
+</div>
+
+<div class="text-right mb-3">
+    <a href="@Url.Action("Index", "RejectedPrescriptions")" class="btn btn-secondary">
+        View Rejected Prescriptions
+    </a>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content custom-modal">
+            <div class="modal-body">
+                Modal body content here.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Structure: Patient Vital History -->
+<div class="modal fade" id="patientVitalsModal" tabindex="-1" role="dialog" aria-labelledby="patientVitalsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="patientVitalsModalLabel">Patient Vital History</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="patientVitalsContent">
+                    <!-- Content will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Structure: Patient Medical History -->
+<div class="modal fade" id="medicalHistoryModal" tabindex="-1" role="dialog" aria-labelledby="medicalHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="medicalHistoryModalLabel">Patient Medical History</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="patientMedicalHistoryContent">
+                    <!-- Content will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Reject Modal -->
+@foreach (var item in Model)
+{
+    <!-- Reject Prescription Modal -->
+    <div class="modal fade" id="rejectModal-@item.PrescriptionID" tabindex="-1" aria-labelledby="rejectModalLabel-@item.PrescriptionID" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rejectModalLabel-@item.PrescriptionID">Reject Prescription</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <!-- Add your GIF here -->
+                    <img src="~/images/rejected prescription.gif" alt="Rejection GIF" style="width: 80px; height: 80px;" />
+
+                    <!-- Rejection Form -->
+                    <form id="rejectForm-@item.PrescriptionID" method="post" action="@Url.Action("RejectPrescription", "PrescriptionRecords")">
+                        <input type="hidden" name="PrescriptionID" value="@item.PrescriptionID" />
+                        <div class="mb-3">
+                            <label for="rejectionReason-@item.PrescriptionID" class="form-label">Rejection Reason</label>
+                            <textarea class="form-control" id="rejectionReason-@item.PrescriptionID" name="RejectionReason" rows="3" required></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+<!-- Modal for Prescription Rejection Success -->
+<div class="modal fade" id="prescriptionRejectedModal" tabindex="-1" role="dialog" aria-labelledby="prescriptionRejectedModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="prescriptionRejectedModalLabel">Prescription Rejected</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <!-- Add your rejection GIF here -->
+                <img src="~/images/rejected prescription successfully.gif" alt="Rejection GIF" style="width: 100px; height: 100px;" />
+                <p>@TempData["rejectionPass"]</p> <!-- This will show the rejection success message -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // Check if there's a success message in TempData
+        if ('@TempData["rejectionPass"]' !== '') {
+            // Show the modal
+            $('#prescriptionRejectedModal').modal('show');
+        }
+    });
+</script>
+
+
+
+
+
+
+
+<!-- Dispense Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Success!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <!-- Add your GIF here, replacing the icon -->
+                <img src="~/images/dispensed prescription.gif" alt="Success GIF" style="width: 80px; height: 80px;" />
+                <p>Prescription successfully dispensed and Stock on Hand updated.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // Check for success message
+        var successMessage = '@TempData["dispensePass"]';
+        if (successMessage) {
+            $('#successModal').modal('show');
+        }
+    });
+</script>
+
+<!-- Medication Low -->
+<!-- Modal -->
+<div class="modal fade" id="insufficientQuantityModal" tabindex="-1" role="dialog" aria-labelledby="insufficientQuantityModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="insufficientQuantityModalLabel">Insufficient Quantity</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Add your GIF here -->
+                <div style="text-align: center;">
+                    <img src="~/images/dispense alert.gif" alt="Insufficient Stock GIF" style="width:100%; max-width:200px;">
+                </div>
+                <!-- Modal message -->
+                <p id="modalMessage">@TempData["error"]</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // Check if there is an error message in TempData
+        if ('@TempData["error"]' !== '') {
+            $('#insufficientQuantityModal').modal('show'); // Show the modal
+        }
+    });
+</script>
+
+
+
+
+
+<style>
+    .custom-modal {
+        border-radius: 15px;
+        background-color: #87CEEB;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $('a[data-toggle="modal"]').on('click', function () {
+            var target = $(this).data('target');
+            var url = $(this).data('url');
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (data) {
+                    $(target).find('.modal-body').html(data);
+                    $(target).modal('show');
+                },
+                error: function () {
+                    console.error('Error loading modal content.');
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+
+    // Handle click event for 'View Vital History' button
+    $(document).ready(function () {
+        $('.showVitals').on('click', function (e) {
+            e.preventDefault();
+            var patientId = $(this).data('id');
+
+            // Show loading indicator
+            $('#patientVitalsContent').html('<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
+
+            // Show the modal
+            $('#patientVitalsModal').modal('show');
+
+            // Fetch the partial view
+            $.ajax({
+                url: '/PatientVitals/GetPatientVitals',
+                data: { id: patientId },
+                type: 'GET',
+                success: function (result) {
+                    $('#patientVitalsContent').html(result);
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX error: " + status + ": " + error);
+                    $('#patientVitalsContent').html('<div class="alert alert-danger">Error loading patient vitals. Please try again later.</div>');
+                }
+            });
+        });
+    });
+
+
+    // Handle click event for 'View Medical History' button
+    $(document).on('click', '.showMedicalHistory', function (e) {
+        e.preventDefault(); // Prevent default link behavior
+
+        var patientId = $(this).data('id'); // Get the patient ID from the button's data attribute
+
+        // Make an AJAX request to fetch the patient medical history
+        $.ajax({
+            url: '@Url.Action("GetPatientMedicalHistory", "MedicalHistories")', // Update URL if needed
+            type: 'GET',
+            data: { id: patientId },
+            success: function (data) {
+                // Load the response into the modal body
+                $('#patientMedicalHistoryContent').html(data);
+
+                // Show the modal
+                $('#medicalHistoryModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                console.error('An error occurred:', error);
+            }
+        });
+    });
+
+</script>
+

@@ -1,0 +1,51 @@
+﻿@model Health_Hive_Project_2024.Models.VitalType
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>VitalType</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @* <input type="hidden" asp-for="VitalTypeID" />
+            <div class="form-group">
+                <label asp-for="BloodPressure" class="control-label"></label>
+                <input asp-for="BloodPressure" class="form-control" />
+                <span asp-validation-for="BloodPressure" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PulseRate" class="control-label"></label>
+                <input asp-for="PulseRate" class="form-control" />
+                <span asp-validation-for="PulseRate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RespitoryRate" class="control-label"></label>
+                <input asp-for="RespitoryRate" class="form-control" />
+                <span asp-validation-for="RespitoryRate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BloodOxygen" class="control-label"></label>
+                <input asp-for="BloodOxygen" class="form-control" />
+                <span asp-validation-for="BloodOxygen" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BloodGlucoseLevel" class="control-label"></label>
+                <input asp-for="BloodGlucoseLevel" class="form-control" />
+                <span asp-validation-for="BloodGlucoseLevel" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

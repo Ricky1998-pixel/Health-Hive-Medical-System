@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Search</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .search-form {
+            margin-bottom: 20px;
+        }
+
+            .search-form input[type="text"] {
+                border-radius: 20px;
+                padding: 10px 20px;
+                border: 1px solid #ced4da;
+            }
+
+            .search-form button {
+                border-radius: 20px;
+                padding: 10px 20px;
+                margin-left: 10px;
+            }
+
+        .patient-details-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+            .patient-details-container h2 {
+                margin-bottom: 20px;
+                color: #343a40;
+            }
+
+        .patient-info p {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            color: #495057;
+        }
+
+        .btn-book-surgery {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background-color: #28a745;
+            color: #ffffff;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+            .btn-book-surgery:hover {
+                background-color: #218838;
+            }
+
+        .modal-content {
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .modal-footer button, .modal-footer a {
+            border-radius: 20px;
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Patient Search</h1>
+        <div class="search-form">
+            <form id="searchForm" class="d-flex justify-content-center">
+                <input type="text" id="patientID" name="patientID" class="form-control" placeholder="Enter Patient ID" required>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+        <div id="patientDetails" class="patient-details-container" style="display: none;">
+            <h2>Patient Details</h2>
+            <div class="patient-info" id="patientInfo"></div>
+            <button id="bookSurgeryBtn" class="btn btn-book-surgery mt-3">Book Surgery</button>
+        </div>
+    </div>
+
+    <!-- Bootstrap modal for patient not found -->
+    <div class="modal fade" id="patientNotFoundModal" tabindex="-1" role="dialog" aria-labelledby="patientNotFoundModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="patientNotFoundModalLabel">Patient Not Found</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    The patient cannot be found or is not in the system.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    @* <a href="/Patients/Create" class="btn btn-primary">Add Patient</a> *@
+                    <a id="addPatientLink" href="/Patients/Create" class="btn btn-primary">Add Patient</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            let patientID = document.getElementById('patientID').value;
+            searchPatient(patientID);
+        });
+
+        document.getElementById('bookSurgeryBtn').addEventListener('click', function () {
+            let patientID = this.getAttribute('data-patient-id');
+            window.location.href = `/SurgeryBookings/Create?patientID=${patientID}`;
+        });
+
+        function searchPatient(patientID) {
+            fetch(`/api/patients/${patientID}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(patientInfo => {
+                    displayPatientInfo(patientInfo);
+                })
+                .catch(error => {
+                    console.error('There was a problem with your fetch operation:', error);
+                    $('#patientNotFoundModal').modal('show');
+                    document.getElementById('addPatientLink').href = `/Patients/Create?patientID=${patientID}`; // Update the link with the patientID
+                });
+        }
+
+
+        function displayPatientInfo(patientInfo) {
+            let patientDetailsDiv = document.getElementById('patientDetails');
+            let patientInfoDiv = document.getElementById('patientInfo');
+            patientInfoDiv.innerHTML = `
+                                        <p><strong>ID Number:</strong> ${patientInfo.patientIDNumber}</p>
+                                        <p><strong>Name:</strong> ${patientInfo.name} ${patientInfo.surname}</p>
+                                        <p><strong>Address:</strong> ${patientInfo.address}</p>
+                                        <p><strong>Contact Number:</strong> ${patientInfo.contactNumber}</p>
+                                        <p><strong>Email Address:</strong> ${patientInfo.emailAddress}</p>
+                                        <p><strong>Date of Birth:</strong> ${new Date(patientInfo.dateOfBirth).toLocaleDateString()}</p>
+                                        <p><strong>Gender:</strong> ${patientInfo.gender}</p>
+                                    `;
+            patientDetailsDiv.style.display = 'block';
+            document.getElementById('bookSurgeryBtn').setAttribute('data-patient-id', patientInfo.patientID);
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

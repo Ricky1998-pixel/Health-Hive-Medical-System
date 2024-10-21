@@ -1,0 +1,94 @@
+﻿@model Health_Hive_Project_2024.Models.MedicalHistory
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Medical History</h4>
+    <hr />
+    <dl class="row">
+        <!-- Patient Details -->
+        <dt class="col-sm-2">
+            Patient
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Patient?.Name @Model.Patient?.Surname <!-- Display Name and Surname -->
+        </dd>
+
+        <!-- Date Recorded -->
+        <dt class="col-sm-2">
+            Date Recorded
+        </dt>
+        <dd class="col-sm-10">
+            @Model.DateRecorded.ToString("d MMM yyyy")
+        </dd>
+
+        <!-- Allergies -->
+        <dt class="col-sm-2">
+            Allergies
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.MedicalHistoryAllergies != null && Model.MedicalHistoryAllergies.Any())
+            {
+                <ul>
+                    @foreach (var allergy in Model.MedicalHistoryAllergies)
+                    {
+                        <li>@allergy.ActiveIngredientRecords?.IngredientName <!-- Adjust based on your model properties --></li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No allergies recorded.</p>
+            }
+        </dd>
+
+        <!-- Medications -->
+        <dt class="col-sm-2">
+            Medications
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.MedicalHistoryMedications != null && Model.MedicalHistoryMedications.Any())
+            {
+                <ul>
+                    @foreach (var medication in Model.MedicalHistoryMedications)
+                    {
+                        <li>@medication.MedicationRecords?.MedicationName <!-- Adjust based on your model properties --></li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No medications recorded.</p>
+            }
+        </dd>
+
+        <!-- Conditions -->
+        <dt class="col-sm-2">
+            Conditions
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.MedicalHistoryCondition != null && Model.MedicalHistoryCondition.Any())
+            {
+                <ul>
+                    @foreach (var condition in Model.MedicalHistoryCondition)
+                    {
+                        <li>@condition.Condition?.Diagnosis <!-- Adjust based on your model properties --></li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No conditions recorded.</p>
+            }
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.MedicalHistoryID" class="btn btn-primary">Edit</a> |
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

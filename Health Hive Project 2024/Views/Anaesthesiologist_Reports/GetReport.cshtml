@@ -1,0 +1,72 @@
+﻿@model ReportViewModel
+@{
+    ViewData["Title"] = "GetReport";
+}
+
+
+<h2>Generate Report</h2>
+
+<form asp-action="GenerateReport" method="post">
+    <div class="form-group">
+        <label for="startDate">Start Date</label>
+        <input type="date" asp-for="StartDate" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="endDate">End Date</label>
+        <input type="date" asp-for="EndDate" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="selectedStatus">Order Status</label>
+        <select asp-for="SelectedStatus" class="form-control" asp-items="Model.Statuses">
+            <option value="">-- Select Status --</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Search</button>
+    <button type="submit" formaction="/Anaesthesiologist_Reports/DownloadReportPdf" class="btn btn-success">Generate PDF Report</button>
+</form>
+
+
+@if (Model.Orders != null && Model.Orders.Any())
+{
+    <br /><p>
+        <h6>Orders from @Model.StartDate.ToString("dd MMM yyyy") </h6> <h6>to @Model.EndDate.ToString("dd MMM yyyy") </h6>
+    </p>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Patient Name</th>
+                <th>Medications</th>
+              
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model.Orders)
+            {
+                <tr>
+                    <td>@order.Date.ToString("dd MMM yyyy")</td>
+                    <td>@order.Patient.Name</td>
+                    <td>
+                        <ul>
+                            @foreach (var med in order.GetMedicationData)
+                            {
+                                <li>@med.Medication.MedicationName (Qty: @med.Quantity)</li>
+                            }
+                        </ul>
+                    </td>
+                 
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info mt-4" role="alert">
+        <strong>Please Note:</strong> Use the search feature to display and generate the PDF form.
+    </div>
+
+}

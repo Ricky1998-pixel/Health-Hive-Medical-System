@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewData["Title"] = "Bo";
+}
+
+<div class="row justify-content-center">
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="Report" asp-controller="Nurse" method="post">
+                <div class="row">
+                    <h5>Date range</h5>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="control-label">Date From:</label>
+                            <input type="date" name="f" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="control-label">Date To:</label>
+                            <input type="date" name="t" class="form-control" />
+                        </div>
+                    </div>
+
+                </div>
+                <button type="submit" class="btn">Generate</button>
+            </form>
+
+
+        </div>
+    </div>
+</div>

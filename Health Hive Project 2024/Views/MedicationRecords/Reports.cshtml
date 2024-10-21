@@ -1,0 +1,200 @@
+﻿@using System.Collections.Generic
+@using Newtonsoft.Json
+@model IEnumerable<Health_Hive_Project_2024.Models.DispensedPrescription>
+
+@{
+    ViewData["Title"] = "Prescription Reports";
+    
+    // Retrieve data from ViewData
+    var dispensedPrescriptions = (IEnumerable<Health_Hive_Project_2024.Models.DispensedPrescription>)ViewData["DispensedPrescriptions"];
+    var rejectedPrescriptions = (IEnumerable<Health_Hive_Project_2024.Models.RejectedPrescription>)ViewData["RejectedPrescriptions"];
+    
+    // Process data for chart
+    var dispensedData = dispensedPrescriptions
+        .GroupBy(p => p.Date.ToString("MMMM yyyy"))
+        .Select(g => new { Month = g.Key, Count = g.Count() })
+        .OrderBy(d => DateTime.ParseExact(d.Month, "MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture))
+        .ToList();
+        
+    var rejectedData = rejectedPrescriptions
+        .GroupBy(p => p.Date.ToString("MMMM yyyy"))
+        .Select(g => new { Month = g.Key, Count = g.Count() })
+        .OrderBy(d => DateTime.ParseExact(d.Month, "MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture))
+        .ToList();
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+
+    <!-- Combined Graph for Rejected and Dispensed Prescriptions -->
+    <div class="card rounded-3 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4>Rejected and Dispensed Prescriptions</h4>
+        </div>
+        <div class="card-body">
+            <canvas id="prescriptionsChart" style="max-width: 600px; max-height: 400px; width: 100%; height: auto;"></canvas>
+        </div>
+    </div>
+
+    <!-- Details of Rejected Prescriptions -->
+    <div class="card rounded-3 shadow-sm mt-4">
+        <div class="card-header bg-danger text-white">
+            <h4>Rejected Prescriptions Details</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>PrescriptionID</th>
+                        <th>SurgeonID</th>
+                        <th>PatientID</th>
+                        <th>Date</th>
+                        <th>PrescriptionStatus</th>
+                        <th>PharmacistID</th>
+                        <th>MedicationID</th>
+                        <th>Quantity</th>
+                        <th>Instructions</th>
+                        <th>RejectionReason</th>
+                        <th>RejectedOn</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in rejectedPrescriptions)
+                    {
+                        <tr>
+                            <td>@item.PrescriptionID</td>
+                            <td>@item.SurgeonID</td>
+                            <td>@item.PatientID</td>
+                            <td>@item.Date.ToShortDateString()</td>
+                            <td>@item.PrescriptionStatus</td>
+                            <td>@item.PharmacistID</td>
+                            <td>@item.MedicationID</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Instructions</td>
+                            <td>@item.RejectionReason</td>
+                            <td>@item.RejectedOn.ToShortDateString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Details of Dispensed Prescriptions -->
+    <div class="card rounded-3 shadow-sm mt-4">
+        <div class="card-header bg-success text-white">
+            <h4>Dispensed Prescriptions Details</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>PrescriptionID</th>
+                        <th>SurgeonID</th>
+                        <th>PatientID</th>
+                        <th>Date</th>
+                        <th>PrescriptionStatus</th>
+                        <th>PharmacistID</th>
+                        <th>MedicationID</th>
+                        <th>Quantity</th>
+                        <th>Instructions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in dispensedPrescriptions)
+                    {
+                        <tr>
+                            <td>@item.PrescriptionID</td>
+                            <td>@item.SurgeonID</td>
+                            <td>@item.PatientID</td>
+                            <td>@item.Date.ToShortDateString()</td>
+                            <td>@item.PrescriptionStatus</td>
+                            <td>@item.PharmacistID</td>
+                            <td>@item.MedicationID</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Instructions</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Download PDF Button -->
+    <div class="mt-4">
+        <button id="downloadPdf" class="btn btn-primary">Download as PDF</button>
+    </div>
+</div>
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Include html2pdf.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Retrieve and parse data from Razor view
+        var dispensedData = @Html.Raw(JsonConvert.SerializeObject(dispensedData));
+        var rejectedData = @Html.Raw(JsonConvert.SerializeObject(rejectedData));
+        
+        // Generate labels and data for the chart
+        var labels = Array.from(new Set([...dispensedData, ...rejectedData].map(d => d.Month)));
+        
+        var dispensedCounts = labels.map(label => {
+            const data = dispensedData.find(d => d.Month === label);
+            return data ? data.Count : 0;
+        });
+        
+        var rejectedCounts = labels.map(label => {
+            const data = rejectedData.find(d => d.Month === label);
+            return data ? data.Count : 0;
+        });
+        
+        var ctx = document.getElementById('prescriptionsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Dispensed Prescriptions',
+                        data: dispensedCounts,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Rejected Prescriptions',
+                        data: rejectedCounts,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // PDF Download Button functionality
+        document.getElementById('downloadPdf').addEventListener('click', function() {
+            var element = document.querySelector('.container');
+            html2pdf().from(element).save('prescriptions-report.pdf');
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,475 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Patient
+<div class="row justify-content-center">
+    <div class="card w-75">
+        <div class="card-body" id="b-1">
+            <h3 class="text-center">Admit Patient</h3>
+            <h5 class="">Step 1/4: Patient Info</h5>
+            <br />
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label class="control-label">Name</label>
+                        <input id="pat-name" value="@Model.Name" autocomplete="off" type="text" class="form-control" />
+                        <span class="text-danger" style="display:none" id="pat-name-er">Required field</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Surname</label>
+                        <input id="pat-sur" value="@Model.Surname" autocomplete="off" type="text" class="form-control" />
+                        <span class="text-danger" style="display:none" id="pat-sur-er">Required field</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">ID Number</label>
+                        <input type="text" value="@Model.PatientIDNumber" readonly autocomplete="off" id="pat-idnum" class="form-control" />
+                        <span class="text-danger" style="display:none" id="pat-idnum-er">Invalid ID Number</span>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Address</label>
+                        <input type="text" value="@Model.Address" autocomplete="off" id="pat-address" class="form-control" />
+                        <span class="text-danger" style="display:none" id="pat-address-er">Required field</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Date of Birth</label>
+                        <input type="text" value="@Model.DateOfBirth.ToShortDateString()" readonly autocomplete="off" id="pat-dob" class="form-control" />
+                        <span class="text-danger" style="display:none" id="pat-dob-er">Required field</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Contact Number</label>
+                        <input type="text" value="@Model.ContactNumber" autocomplete="off" id="pat-connum" class="form-control" />
+                        <span class="text-danger" style="display:none" id="pat-connum-er">Required field</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Email Address</label>
+                        <input type="text" value="@Model.EmailAddress" autocomplete="off" id="pat-email" class="form-control" />
+                        <span class="text-danger" style="display:none" id="pat-email-er">Invalid Email Address</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Gender</label>
+                        @if(Model.Gender == "Male")
+                        {
+                            <select id="pat-gender" class="form-select">
+                                <option selected value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        }
+                        else
+                        {
+                            <select id="pat-gender" class="form-select">
+                                <option value="Male">Male</option>
+                                <option selected value="Female">Female</option>
+                            </select>
+                        }
+
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" onclick="Next1()" value="Next" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="display:none" id="b-2">
+            <h3 class="text-center">Admit Patient</h3>
+            <h5 class="">Step 2/4: Ward Admission</h5>
+            <br />
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label class="control-label">Ward</label>
+                        <select id="ward-id" class="form-select" asp-items="ViewBag.Ward"></select>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Bed</label>
+                        <select id="bed-id" class="form-select" asp-items="ViewBag.Bed"></select>
+
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="button" value="" onclick="Prev1()" class="btn btn-primary">Previous</button>
+                        <button type="button" value="Next" onclick="Next2()" class="btn btn-primary" >Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="display:none" id="b-3">
+            <h3 class="text-center">Admit Patient</h3>
+            <h5 class="">Step 3/4: Patient Vitals</h5>
+            <br />
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label class="control-label">Date and Time Taken</label>
+                        <input id="vit-date" required autocomplete="off" type="datetime-local" class="form-control" />
+
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Height (cm)</label>
+                        <input id="pat-height" autocomplete="off" min="10" type="number" class="form-control" />
+                        <span class="text-danger" style="display:none" id="pat-height-er">Out of normal range</span>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Weight (km)</label>
+                        <input id="pat-weight" autocomplete="off" min="1" type="number" class="form-control" />
+                        <span class="text-danger" style="display:none" id="pat-weight-er">Out of normal range</span>
+
+                    </div>
+
+                    @if (Model.Vitals != null)
+                    {
+                        foreach (var item in Model.Vitals)
+                        {
+                            if (!item.VitalName.ToLower().Contains("pressure"))
+                            {
+                                <div class="form-group">
+                                    <label class="control-label">@item.Name</label>
+                                    <input type="text" autocomplete="off" id="@item.VitalID" name="pat-vitals" class="form-control" />
+                                    <span class="text-danger" style="display:none" id="pat-@(item.VitalID)-er">Out of normal range</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <label class="control-label">@item.Name</label>
+                                    <div class="col-md-5">
+                                        <label class="control-label">@item.VitalName:</label>
+                                        <input autocomplete="off" id="@item.VitalID" name="pat-vitals" type="number" class="form-control" />
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="control-label">@item.VitalName2:</label>
+                                        <input autocomplete="off" id="@item.VitalID" name="pat-vitals" type="number" class="form-control" />
+                                    </div>
+                                    <span class="text-danger" style="display:none" id="pat-@(item.VitalID)-er">Out of normal range</span>
+                                </div>
+                            }
+                            
+                        }
+                    }
+
+
+                    
+
+                </div>
+
+               
+                <div class="form-group">
+                    <button type="button" value="Previous" onclick="Prev2()" class="btn btn-primary">Previous</button>
+                    <button type="button" value="Next" onclick="Submit()" class="btn btn-primary">Next</button>@*change back to next3()*@
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="display:none" id="b-4">
+            <h3 class="text-center">Admit Patient</h3>
+            <h5 class="">Step 4/4: Medical History</h5>
+            <br />
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label class="control-label">Chronic Conditions</label>
+                        <select id="pat-cond" class="form-select" asp-items="ViewBag.Conditions"></select>
+                        <input type="button" value="Add" onclick="AddCon()"  class="btn btn-outline-success mt-2" />
+                        <div class="mt-4">
+                            <table class="table w-75 table-striped">
+                                <tbody id="con-list">
+                                </tbody>
+                                
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Allergies</label>
+                        <select id="pat-allergies" class="form-select" asp-items="ViewBag.ActiveIn"></select>
+                        <input type="button" value="Add" onclick="AddAllergies()" class="btn btn-outline-success  mt-2" />
+                        <div class="mt-4">
+                            <table class="table w-75 table-striped">
+                                <tbody id="allergies-list">
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Medicine</label>
+                        <select id="pat-meds" class="form-select" asp-items="ViewBag.Medicines"></select>
+                        <input type="button" value="Add" onclick="AddMeds()" class="btn btn-outline-success mt-2" />
+                        <div class="mt-4">
+                            <table class="table w-75 table-striped">
+                                <tbody id="meds-list">
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" value="Previous" onclick="Prev3()" class="btn btn-primary">Previous</button>
+                        <button type="submit" value="Submit" onclick="Submit()" class="btn btn-primary" >Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="modal fade" id="modal-center" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Addmit Patient</h5>
+            </div>
+            <div class="modal-body">
+                <div class="text-center" id="modalbody">
+                    <div class="spinner-border text-primary" id="spinner" role="status"></div><br /><span class="sr-only">Loading...</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@section Scripts {
+@*     @if (Model.Vitals != null)
+        {
+            foreach (var item in Model.Vitals)
+            {
+               
+            }
+        }
+         <script>
+                  $('#').on("input", function () {
+                    if ($('#').val() > valRes.max || $('#pat-res-rate').val() < valRes.min) {
+                        $('#pat-res-er').show()
+                    }
+                    else{
+                        $('#pat-res-er').hide()
+                    }
+                });  
+     </script> *@
+    <script>
+        function Refresh() {
+            let s = ''
+            for (let i = 0; i < Con.length; i++) {
+                var obj = Con[i];
+                s += '<tr><td>' + obj.name + '</td><td><button type="button" onclick="RemoveCon(\'' + obj.Id + '\')" class="btn btn-outline-danger float-end"> Remove </button></td ></tr>'
+            }
+            b = $('#con-list')
+            b.empty()
+            b.append(s)
+            s = ''
+            for (let i = 0; i < Allergies.length; i++) {
+                var obj = Allergies[i];
+                s += '<tr><td>' + obj.name + '</td><td><button type="button" onclick="RemoveAllergies(\'' + obj.Id + '\') " class="btn btn-outline-danger float-end"> Remove </button></td ></tr>'
+            }
+            bb = $('#allergies-list')
+            bb.empty()
+            bb.append(s)
+            s = ''
+            for (let i = 0; i < Medicine.length; i++) {
+                var obj = Medicine[i];
+                s += '<tr><td>' + obj.name + '</td><td><button type="button" onclick="RemoveMeds(\'' + obj.Id + '\') " class="btn btn-outline-danger float-end"> Remove </button></td ></tr>'
+            }
+            bb = $('#meds-list')
+            bb.empty()
+            bb.append(s)
+
+        }
+        const PatID = @Model.PatientID
+        function AddCon() {
+            var c = { Id: $('#pat-cond option:selected').val(), name: $('#pat-cond option:selected').text() }
+            for (let i = 0; i < Con.length; i++) {
+                var obj = Con[i];
+                if (obj.Id == c.Id) {
+                    return null;
+                }
+            }
+            Con.push(c)
+            Refresh()
+        }
+        function RemoveCon(id) {
+            for (let i = 0; i < Con.length; i++) {
+                var obj = Con[i];
+                if (obj.Id == id) {
+                    let spliced = Con.splice(i, 1);
+                    break;
+                }
+            }
+            Refresh();
+        }
+        function AddAllergies() {
+            var c = { Id: $('#pat-allergies option:selected').val(), name: $('#pat-allergies option:selected').text() }
+            for (let i = 0; i < Allergies.length; i++) {
+                var obj = Allergies[i];
+                if (obj.Id == c.Id) {
+                    return null;
+                }
+            }
+            Allergies.push(c)
+            Refresh()
+        }
+        function RemoveAllergies(id) {
+            for (let i = 0; i < Allergies.length; i++) {
+                var obj = Allergies[i];
+                if (obj.Id == id) {
+                    let spliced = Allergies.splice(i, 1);
+                    break;
+                }
+            }
+            Refresh();
+        }
+        function AddMeds() {
+            var c = { Id: $('#pat-meds option:selected').val(), name: $('#pat-meds option:selected').text() }
+            for (let i = 0; i < Medicine.length; i++) {
+                var obj = Medicine[i];
+                if (obj.Id == c.Id) {
+                    return null;
+                }
+            }
+            Medicine.push(c)
+            Refresh()
+        }
+        function RemoveMeds(id) {
+            for (let i = 0; i < Medicine.length; i++) {
+                var obj = Medicine[i];
+                if (obj.Id == id) {
+                    let spliced = Medicine.splice(i, 1);
+                    break;
+                }
+            }
+            Refresh();
+        }
+
+        var Con =[]
+        var Allergies = []
+        var Medicine = []
+        var VitalsRange = @Html.Raw(Json.Serialize(Model.Vitals.ToList()))
+        
+        
+        $("input[name*=pat-vitals]").on("input", function () {
+            $("input[name*=pat-vitals]").each(function () {
+
+                    for (let i = 0; i < VitalsRange.length; i++) {
+                        let s = '#pat-' + $(this).attr('id') + '-er'
+                            $(s).hide()
+
+                        if ($(this).attr('id') == VitalsRange[i].vitalID && ($(this).val() < VitalsRange[i].minimumValue ||  $(this).val() > VitalsRange[i].maxValue) ){
+                            $(s).show()
+                            break
+                        }
+                    }
+                    
+
+                });
+        });
+        function Next1() {
+            
+            let emailVal = /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            let idC = /^\d{13}$/;
+            if ($('#pat-name').val().length <= 2) {
+                $('#pat-name-er').show()
+                return null
+            }
+            if ($('#pat-sur').val().length <= 2) {
+                $('#pat-sur-er').show()
+                return null
+            }
+            if ($('#pat-dob').val() == null) {
+                $('#pat-dob-er').show()
+                return null
+            }
+
+            if (!idC.test($('#pat-idnum').val())) {
+                $('#pat-idnum-er').show()
+                return null;
+            }
+            if ($('#pat-address').val().length < 3) {
+                $('#pat-address-er').show()
+                return null
+            }
+            if ($('#pat-connum').val().length < 10) {
+                $('#pat-connum-er').show()
+                return null
+            }
+            if (!emailVal.test($('#pat-email').val())) {
+                $('#pat-email-er').show();
+                return false;
+            }
+            $('#pat-name-er').hide()
+            $('#pat-sur-er').hide()
+            $('#pat-idnum-er').hide()
+            $('#pat-address-er').hide()
+            $('#pat-email-er').hide()
+
+            $('#b-1,#b-2').toggle("slow", "swing")
+        }
+        function Prev1(){
+            $('#b-1,#b-2').toggle("slow", "swing")
+        }
+        function Prev2(){
+            $('#b-3,#b-2').toggle("slow", "swing")
+        }
+        function Prev3(){
+            $('#b-4,#b-3').toggle("slow", "swing")
+        }
+
+        function Next2(){
+            $('#b-3,#b-2').toggle("slow", "swing")
+        }
+        function Next3() {
+            $('#b-3,#b-4').toggle("slow", "swing")
+        }
+        
+        function Submit() {
+            var date = new Date($('#pat-dob').val())
+            var Patient = { Name: $('#pat-name').val(), Surname: $('#pat-sur').val(), Address: $('#pat-address').val(), ContactNumber: $('#pat-connum').val(), EmailAddress: $('#pat-email').val(), DateOfBirth: date, Gender: $('#pat-gender option:selected').text(), PatientIDNumber: $('#pat-idnum').val() }
+            var Vitals = { Pulse: $('#pat-pulse').val(), Bp: { s: $('#pat-bp-s').val(), d: $('#pat-bp-d').val() }, Temp: $('#pat-tempp').val(), Res: $('#pat-res-rate').val(), Bol: $('#pat-bol').val(), Bgl: $('#pat-bgl').val() }
+            var Vital = []
+            $("input[name*=pat-vitals]").each(function () {
+                var ij = $(this).attr('id')
+                var iv = $(this).val()
+                var vit = { PatientID: PatID, VitalID: $(this).attr('id'), Value1: $(this).val(), Value2: 0, DateTime: $('#vit-date').val() }
+
+                $("input[name*=pat-vitals]").each(function () {
+                    if ($(this).attr('id') == ij && $(this).val() != iv){
+                        vit = { PatientID: PatID, VitalID: $(this).attr('id'), Value1: iv, Value2: $(this).val() }
+                       
+                    }
+
+                });
+                Vital.push(vit)
+            });
+            var History = { Conditions: Con, Allergies: Allergies, Medicines: Medicine }
+            var data = { Patient: Patient, PatientVitals : Vital, History: History, Bed: $('#bed-id option:selected').val(), Ward: $('#ward-id option:selected').val(), Height: $('#pat-height').val(), Weight: $('#pat-weight').val(), BookingID: '@TempData["id"]' }
+
+            $.ajax({
+                type: "POST",
+                data: JSON.stringify(data),
+                url: "@Url.Action("AdmitPatient1", "Nurse")",
+                dataType: "Json",
+                contentType: "application/json",
+                success: function (res) {
+                    if (res == true) {
+                        body = $('#modalbody')
+                        body.empty();
+                        body.append('<p>Patient has been addmited</p>');
+                        $('#modal-center').modal('show');
+                        setTimeout(function (){
+                            window.location.href = '@Url.Action("Create", "MedicalHistories", new {id = Model.PatientID})'
+                        })
+                    }
+                    else {
+                        body = $('#modalbody')
+                        body.empty();
+                        body.append('<p class="text-danger">Please Go Back. Fill in Missing Values</p>');
+                        $('#modal-center').modal('show');
+                    }
+                }
+            });
+            
+        }
+    </script>
+}

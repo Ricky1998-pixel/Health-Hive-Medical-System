@@ -1,0 +1,322 @@
+﻿@{
+    ViewData["Title"] = "Retake Vitals";
+}
+@if (@TempData["error"] != null)
+{
+    <div class="row justify-content-center">
+        <div class="alert alert-danger w-50 text-center">
+            <p>@TempData["error"]</p>
+        </div>
+    </div>
+}
+@if (@TempData["pass"] != null)
+{
+    <div class="row justify-content-center">
+        <div class="alert alert-success w-50 text-center">
+            <p>@TempData["pass"]</p>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group">
+                    <input id="pat-id" placeholder="Patient ID Number" value="@Model.id" maxlength="13" autocomplete="off" type="text" class="form-control" />
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label class="control-label">Name</label>
+                            <dd class="col-sm-10" id="pat-name" style="margin-left:15%">
+                            </dd>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Surname</label>
+                            <dd class="col-sm-10" id="pat-sur" style="margin-left:15%">
+                            </dd>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">ID Number</label>
+                            <dd class="col-sm-10" id="pat-id-num" style="margin-left:15%">
+                            </dd>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Address</label>
+                            <dd class="col-sm-10" id="pat-add" style="margin-left:15%">
+                            </dd>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Date of Birth</label>
+                            <dd class="col-sm-10" id="pat-dob" style="margin-left:15%">
+                            </dd>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">Contact Number</label>
+                            <dd class="col-sm-10" id="pat-connum" style="margin-left:15%">
+                            </dd>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Email Address</label>
+                            <dd class="col-sm-10" id="pat-email" style="margin-left:15%">
+                            </dd>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Gender</label>
+                            <dd class="col-sm-10" id="pat-gen" style="margin-left:15%">
+                            </dd>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="text-center">Retake Vitals</h4>
+                <div class="form-group">
+                    <label class="control-label">Date and Time Taken</label>
+                    <input id="vit-date" required autocomplete="off" type="datetime-local" class="form-control" />
+                </div>
+                <br />
+                <div class="form-group">
+                    <label class="control-label">Note for Surgeon</label>
+                    <input id="v-note" required autocomplete="off" type="text" class="form-control" />
+                </div>
+                <br />
+
+                @if ((IEnumerable<Vitals>)ViewBag.Vitals != null)
+                {
+                    foreach (var item in (IEnumerable<Vitals>)ViewBag.Vitals)
+                    {
+                        if (!item.VitalName.ToLower().Contains("pressure"))
+                        {
+                            <div class="card">
+                                <div class="row card-body">
+                                    <div class="col-md-6">
+                                        <label class="control-label">@item.VitalName</label>
+                                        <br />
+                                        <input id="@item.VitalID" name="pat-vitals" value="0" autocomplete="off" type="number" class="form-control" />
+                                        <span class="text-danger" style="display:none" id="pat-@item.VitalID-er">Out of normal range</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                        }
+                        else
+                        {
+                            <div class="card">
+                                <div class="row card-body">
+                                    <div class="col-md-6">
+                                        <label class="control-label">@item.VitalName</label>
+                                        <br />
+                                        <input id="@item.VitalID" value="0" name="pat-vitals" autocomplete="off" type="number" class="form-control" />
+                                        <span class="text-danger" style="display:none" id="pat-@item.VitalID-er">Out of normal range</span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="control-label">@item.VitalName2</label>
+                                        <br />
+                                        <input id="@item.VitalID" value="0" name="pat-vitals" autocomplete="off" type="number" class="form-control" />
+                                        <span class="text-danger" style="display:none" id="pat-@item.VitalID-er">Out of normal range</span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <br />
+                        }
+                        
+                    }
+                }
+
+                <div class="col-md-5" style="display:flex;align-items:flex-end;justify-content: flex-end;">
+                    <button type="button" onclick="Submit()" class="btn btn-outline-success float-end">Submit</button>
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="modal fade" id="modal-center" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Vitals Added</h5>
+            </div>
+            <div class="modal-body">
+                <div class="text-center" id="modalbody">
+                    <div class="spinner-border text-primary" id="spinner" role="status"></div><br /><span class="sr-only">Loading...</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var VitalsRange = @Html.Raw(Json.Serialize(ViewBag.Vital))
+        $("input[name*=pat-vitals]").on("input", function () {
+            $("input[name*=pat-vitals]").each(function () {
+
+                    for (let i = 0; i < VitalsRange.length; i++) {
+                        let s = '#pat-' + $(this).attr('id') + '-er'
+                            $(s).hide()
+
+                        if ($(this).attr('id') == VitalsRange[i].vitalID && ($(this).val() < VitalsRange[i].minimumValue ||  $(this).val() > VitalsRange[i].maxValue) ){
+                            $(s).show()
+                            break
+                        }
+                    }
+                    
+
+                });
+        });
+        $("#pat-id").on('input', function () {
+            if ($('#pat-id').val().length == 13) {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("SearchPatientData", "Nurse")",
+                    data: { id: $('#pat-id').val() },
+                    contentType: "application/json",
+                    success: function (res) {
+                        if (res != null) {
+                            $('#pat-name').text(res.name)
+                            $('#pat-sur').text(res.surname)
+                            $('#pat-gen').text(res.gender)
+                            $('#pat-add').text(res.address)
+                            $('#pat-id-num').text(res.patientIDNumber)
+                            $('#pat-dob').text(res.dateOfBirth.split('T')[0])
+                            $('#pat-connum').text(res.contactNumber)
+                            $('#pat-email').text(res.emailAddress)
+                        }
+                        else {
+                            $('#pat-name').text('')
+                            $('#pat-sur').text('')
+                            $('#pat-gen').text('')
+                            $('#pat-id-num').text('')
+                            $('#pat-dob').text('')
+                            $('#pat-connum').text('')
+                            $('#pat-email').text('')
+                            body = $('#modalbody')
+                            body.empty();
+                            body.append('<p class="text-danger">Patient Not Found</p>');
+                            $('#modal-center').modal('show');
+                        }
+
+                    }
+
+                });
+            }
+            
+        })
+        var Patid = 0
+        $(document).ready(function () {
+            if ($('#pat-id').val().length == 13) {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("SearchPatientData", "Nurse")",
+                    data: { id: $('#pat-id').val() },
+                    contentType: "application/json",
+                    success: function (res) {
+                        if (res != null) {
+                            console.log(res)
+                            Patid = res.patientID
+                            $('#pat-name').text(res.name)
+                            $('#pat-sur').text(res.surname)
+                            $('#pat-gen').text(res.gender)
+                            $('#pat-id-num').text(res.patientIDNumber)
+                            $('#pat-dob').text(res.dateOfBirth.split('T')[0])
+                            $('#pat-connum').text(res.contactNumber)
+                            $('#pat-email').text(res.emailAddress)
+                            $('#pat-add').text(res.address)
+
+                        }
+                        else {
+                            $('#pat-name').text('')
+                            $('#pat-sur').text('')
+                            $('#pat-gen').text('')
+                            $('#pat-id-num').text('')
+                            $('#pat-dob').text('')
+                            $('#pat-connum').text('')
+                            $('#pat-email').text('')
+                            body = $('#modalbody')
+                            body.empty();
+                            body.append('<p class="text-danger">Patient Not Found</p>');
+                            $('#modal-center').modal('show');
+                        }
+
+                    }
+
+                });
+            }
+            
+        });
+        function Submit(){
+            
+            var Vital = []
+            if ($('#vit-date').val() == null) {
+                alert("Please enter the date")
+                return null
+            }
+            //this is for saving the values into a  model
+            $("input[name*=pat-vitals]").each(function () {
+                var ij = $(this).attr('id')
+                var iv = $(this).val()
+                if(iv > 0){
+                    var vit = { PatientID: Patid, VitalID: $(this).attr('id'), Value1: $(this).val(), Value2: 0, DateTime: $('#vit-date').val() }
+
+                    $("input[name*=pat-vitals]").each(function () {
+                        if ($(this).attr('id') == ij && $(this).val() != iv) {
+                            vit = { PatientID: Patid, VitalID: $(this).attr('id'), Value1: iv, Value2: $(this).val() }
+
+                        }
+
+                    });
+                    Vital.push(vit)
+                }
+                
+            });
+            
+            if ($('#v-note').val() == "") {
+                alert("Please enter the note")
+                return null
+            }
+            if(Vital.length == 0){
+                return null
+            }
+            data = { PatientId: $('#pat-id').val(), PatientVitals: Vital, Type : $('#v-note').val() }
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("AddVital", "Nurse")",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function (res) {
+                    if (res != null) {
+                        console.log(res)
+                        if(res.r == true){
+                           alert("Vitals have been sent to the surgeon.")
+                           window.location.href = '@Url.Action("RetakeVitals","Nurse")'
+                        }
+                    }
+                    else {
+                        body = $('#modalbody')
+                        body.empty();
+                        body.append('<p class="text-danger">Something went wrong please try again</p>');
+                        $('#modal-center').modal('show');
+                    }
+
+                }
+
+            });
+        }
+    </script>
+}
+
+

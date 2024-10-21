@@ -1,0 +1,41 @@
+﻿
+
+<div class="modal-header">
+    <h5 class="modal-title" id="addNewVitalLabel">New Vital Reading</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<form id="addNewVitalForm" method="post">
+    @Html.AntiForgeryToken()
+    <div class="modal-body">
+
+        <!-- Hidden field for PatientID -->
+        <input type="hidden" value="@Model.PatientID" name="PatientID" />
+
+        <div class="mb-3">
+            <label for="NormalRangeId" class="form-label">Select Vital</label>
+            <select class="form-select" id="NormalRangeId" name="NormalRangeId" required>
+               
+                    <option value="">dsd</option>
+                
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="ReadingValue1" class="form-label">Reading Value 1</label>
+            <input type="number" class="form-control" id="ReadingValue1" name="ReadingValue1" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="ReadingValue2" class="form-label">Reading Value 2 (Optional)</label>
+            <input type="number" class="form-control" id="ReadingValue2" name="ReadingValue2" />
+        </div>
+
+        <!-- Placeholder for validation errors -->
+        <div id="validation-errors"></div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Add Vital</button>
+    </div>
+</form>

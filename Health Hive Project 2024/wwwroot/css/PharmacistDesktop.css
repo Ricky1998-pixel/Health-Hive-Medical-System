@@ -1,0 +1,53 @@
+﻿/* Default loading spinner */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    z-index: 1000;
+    visibility: hidden; /* Hidden by default */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Hourglass spinner */
+.hourglass-spinner {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    background: transparent; /* Transparent background */
+}
+
+    .hourglass-spinner::before,
+    .hourglass-spinner::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-left: 30px solid transparent;
+        border-right: 30px solid transparent;
+        border-bottom: 30px solid #3498db; /* Color of the hourglass */
+        border-top: 30px solid transparent;
+        transform: rotate(45deg);
+    }
+
+    .hourglass-spinner::after {
+        border-bottom-color: #fff; /* Inner color */
+        border-top: none;
+        top: 15px;
+        left: 15px;
+    }
+
+/* Spinner animation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

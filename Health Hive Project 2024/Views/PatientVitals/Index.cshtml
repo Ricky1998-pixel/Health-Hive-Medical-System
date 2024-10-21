@@ -1,0 +1,89 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.PatientVitals>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Patient)
+            </th>
+            @* <th>
+                @Html.DisplayNameFor(model => model.HeartRate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SystolicBloodPressure)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DiastolicBloodPressure)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RespirationRate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BodyTemperature)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OxygenSaturation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BloodGlucoseLevel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RecordedDateTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Notes)
+            </th> *@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Patient.Address)
+            </td>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.HeartRate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SystolicBloodPressure)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DiastolicBloodPressure)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RespirationRate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BodyTemperature)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OxygenSaturation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BloodGlucoseLevel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RecordedDateTime)
+            </td>*@
+            <td> 
+                @Html.DisplayFor(modelItem => item.Notes)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PatientVitalID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PatientVitalID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PatientVitalID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,232 @@
+﻿@model IEnumerable<SurgeryBooking>
+@{
+    ViewData["Title"] = "Index";
+    int row = 0;
+}
+<head>
+    <style>
+        .success:hover {
+            background-color: #04AA6D;
+            color: white;
+        }
+    </style>
+    <link href="~/css/Anaesthe_SearchEngine.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/Anae_OrderStatus.css" rel="stylesheet" asp-append-version="true" />
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- JS, Popper.js, and Bootstrap JS -->
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+</head>
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                    <h6 class="text-white text-capitalize ps-3">Booked Surgery Patient</h6>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <form id="searchForm" method="get" asp-controller="BookedPatient" asp-action="Index">
+                    <div class="containerr">
+                        <h2 class="heading">Type patient Id to search for Information.</h2>
+                        <div class="searchInputWrapper">
+                            <input value="@ViewData["CurrentFilter"]" id="searchId" autocomplete="off" maxlength="13" class="searchInput" name="searchId" type="text" placeholder='focus here to search'>
+                            <button class="searchButton" style="z-index:0" type="submit"><i class="searchInputIcon fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+                <div class="table-responsive p-0">
+                    @if (Model.Any())
+                    {
+
+
+
+                        <table class="table align-items-center justify-content-center mb-0">
+                            <thead style="height:50px;width:50px;">
+                                <tr>
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7" style="width:5px !important; "></th>
+                          
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7">ID No</th>
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Patient Name</th>
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Surgery Date</th>
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Time</th>
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Treatment Code</th>
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Surgeon</th>
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Anaesthesiologist</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var med in Model)
+                                {
+                                    row++;
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@row</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                      
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@med.Patient.PatientIDNumber</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@med.Patient.Name  @med.Patient.Surname</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm"> @med.SurgeryDate</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">
+                                                        @med.Session
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                        </td>
+
+
+
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">
+                                                        <a href="#" class="btn btn-info btn-sm showAllergies" data-id="@med.SurgeryID">View Treatment Code</a>
+
+
+                                                        
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td>
+
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                 @*    <h6 class="mb-0 text-sm">@med.Surgeon.Name @med.Surgeon.Surname</h6> *@
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@med.Anaesthesiologist.Name @med.Anaesthesiologist.Surname</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <div class="modal fade" id="treatmentModal" tabindex="-1" role="dialog" aria-labelledby="treatmentModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="treatmentModalLabel">Treatment Code</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <!-- Treatment code will be dynamically loaded here -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    }
+                    else
+                    {
+                        <h5>No bookings yet!</h5>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="allergiesModal" tabindex="-1" role="dialog" aria-labelledby="allergiesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="allergiesModalLabel">Treatment Code</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- The allergies history will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).on('click', '.showAllergies', function (e) {
+        e.preventDefault();
+
+        var surgeryId = $(this).data('id');
+
+        $.ajax({
+            url: '@Url.Action("GetTreatmentCode", "BookedPatient")',
+            data: { surgeryId: surgeryId },
+            success: function (data) {
+                $('#allergiesModal .modal-body').html(data);
+                $('#allergiesModal').modal('show');
+            }
+        });
+    });
+</script>
+@* 
+<script>
+    $(document).on('click', '.showTreatmentCode', function (e) {
+        e.preventDefault();
+
+        var surgeryId = $(this).data('id');
+        console.log("Surgery ID: ", surgeryId);
+
+        $.ajax({
+            url: '@Url.Action("GetTreatmentCode", "BookedPatient")',
+            data: { surgeryId: surgeryId },
+            success: function (data) {
+                console.log("AJAX success, data: ", data);
+                $('#treatmentModal .modal-body').html(data);
+                $('#treatmentModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                console.log("AJAX error: ", error);
+            }
+        });
+    });
+</script> *@

@@ -1,0 +1,81 @@
+﻿@model List<Health_Hive_Project_2024.Models.PatientVitals>
+
+<div id="patient-vitals-root"></div>
+
+<script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<script src="https://unpkg.com/lucide-react@0.263.1/dist/umd/lucide-react.min.js"></script>
+
+<script type="text/babel">
+    const patientVitalsData = @Html.Raw(Json.Serialize(Model));
+
+    const { Heart, Activity, Thermometer, Droplet, PieChart, AlertCircle, Calendar, FileText } = lucide;
+
+    const VitalIcon = ({ name }) => {
+      switch (name.toLowerCase()) {
+        case 'heart rate': return <Heart />;
+        case 'blood pressure': return <Activity />;
+        case 'respiration rate': return <Activity />;
+        case 'body temperature': return <Thermometer />;
+        case 'oxygen saturation': return <Droplet />;
+        case 'blood glucose': return <PieChart />;
+        default: return <AlertCircle />;
+      }
+    };
+
+    const VitalDisplay = ({ patientVital }) => {
+      const { vitals, value1, value2, value3 } = patientVital;
+
+      const isNormal = (value, min, max) => value >= min && value <= max;
+
+      let displayValue = value1.toString();
+      if (vitals.vitalName2) {
+        displayValue += `/${value2}`;
+        if (value3) displayValue += `/${value3}`;
+      }
+
+      const normal = isNormal(value1, vitals.minimumValue, vitals.maxValue);
+
+      return (
+        <div className={`flex items-center p-2 ${normal ? 'bg-green-100' : 'bg-red-100'} rounded-lg mb-2`}>
+          <VitalIcon name={vitals.name} className="mr-2" />
+          <div>
+            <p className="font-bold">{vitals.name}:</p>
+            <p className={normal ? 'text-green-600' : 'text-red-600'}>
+              {displayValue} {vitals.unitOfMeasure}
+            </p>
+            {!normal && <p className="text-red-600 font-bold">Not within normal range!</p>}
+          </div>
+        </div>
+      );
+    };
+
+    const PatientVitalsDisplay = ({ patientVitals }) => {
+      if (!patientVitals || patientVitals.length === 0) {
+        return <p>No vitals data available.</p>;
+      }
+
+      return (
+        <div className="p-4 bg-white shadow rounded-lg">
+          {patientVitals.map((pv, index) => (
+            <VitalDisplay key={pv.patientVitalID} patientVital={pv} />
+          ))}
+          <div className="flex items-center mt-4">
+            <Calendar className="mr-2" />
+            <p><strong>Recorded Date & Time:</strong> {new Date(patientVitals[0].dateTime).toLocaleString()}</p>
+          </div>
+          <div className="flex items-center mt-2">
+            <FileText className="mr-2" />
+            <p><strong>Notes:</strong> {patientVitals[0].notes || 'No notes available'}</p>
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.render(
+        <PatientVitalsDisplay patientVitals={patientVitalsData} />,
+        document.getElementById('patient-vitals-root')
+    );
+</script>
+

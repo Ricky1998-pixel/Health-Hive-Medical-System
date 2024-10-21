@@ -1,0 +1,155 @@
+﻿@model Health_Hive_Project_2024.Data.ViewModels.ViewPres
+
+@{
+    ViewData["Title"] = "Administer Medicine";
+}
+
+@if (TempData["error"] != null)
+{
+    <div class="row justify-content-center">
+        <div class="alert alert-danger">
+            @TempData["error"]
+        </div>
+    </div>
+}
+@if (TempData["pass"] != null)
+{
+    <div class="row  justify-content-center">
+        <div class="alert alert-success">
+            @TempData["pass"]
+        </div>
+    </div>
+}
+<div class="card">
+    <div class="card-body">
+        <div class="form-group">
+            <label class="control-label">Patient Name</label>
+            <dd class="col-sm-10" style="margin-left:15%">
+                @Model.Pres.Patient.Name
+            </dd>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Patient Surname</label>
+            <dd class="col-sm-10" style="margin-left:15%">
+                @Model.Pres.Patient.Surname
+            </dd>
+        </div>
+       <div class="form-group">
+            <label class="control-label">Date and Time</label>
+            <dd class="col-sm-10" style="margin-left:15%">
+                <input  class="form-control" type="datetime-local" id="a-date"/>
+            </dd>
+        </div>
+       
+        <br/>
+        <br/>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Medication Name</th>
+                    <th>Quantity</th>
+                    <th>Instructions</th>
+                    <th>Quantity Administered</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items.Count() == 0)
+                {
+                    <tr>
+                        <td class="text-danger">
+                            No Data Found
+                        </td>
+                    </tr>
+                }
+                @foreach (var item in Model.Items)
+                {
+                    
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.qty)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Inst)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AdQty)
+                        </td>
+                        @if (item.AdQty < item.qty)
+                        {
+                            <td>
+                                <input type="number" value="1" max="@item.qty" class="form-control" id="m-@item.id" />
+                            </td>
+                            <td>
+                                <a onclick="Submit('@item.id', '#m-@item.id')" class="btn btn-outline-success">Submit</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                        }
+
+                       
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+
+    </div>
+</div>
+<div class="modal fade" id="modal-center" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Administer Meds</h5>
+            </div>
+            <div class="modal-body">
+                <div class="text-center" id="modalbody">
+                    <div class="spinner-border text-primary" id="spinner" role="status"></div><br /><span class="sr-only">Loading...</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function Submit(i, d){
+            if ($('#a-date').val() == null) {
+                alert("Please enter the date")
+                return null
+            }
+            data = { Id: i, Count: $(d).val(), DateTime: $('#a-date').val() }
+            $.ajax({
+                type: "POST",
+                data: JSON.stringify(data),
+                url: "@Url.Action("MedAdd", "Nurse")",
+                dataType: "Json",
+                contentType: "application/json",
+                success: function (res) {
+                    console.log(res)
+                    if (res == true) {
+                        body = $('#modalbody')
+                        body.empty();
+                        body.append('<p>Done</p>');
+                        $('#modal-center').modal('show');
+                        location.reload()
+                    }
+                    else {
+                        body = $('#modalbody')
+                        body.empty();
+                        body.append('<p class="text-danger">Something went wrong. Please refrresh page</p>');
+                        $('#modal-center').modal('show');
+                    }
+                }
+            });
+        }
+    </script>
+}

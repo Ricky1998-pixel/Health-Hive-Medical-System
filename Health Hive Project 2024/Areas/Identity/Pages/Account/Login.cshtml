@@ -1,0 +1,137 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Background image and general styles */
+        body {
+            background-image: url('/images/pexels-karolina-grabowska-4467739.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Form container styles */
+        .form-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Box shadow for depth */
+            margin: 0 auto; /* Center horizontally */
+        }
+
+        /* Form control styles */
+        .form-control {
+            border: 1px solid #ced4da; /* Add a border */
+            border-radius: 5px !important; /* Ensure rounded corners */
+            padding: 10px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease;
+        }
+
+            .form-control:focus {
+                border-color: #007bff !important;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important;
+                outline: none;
+            }
+
+        /* Button styles */
+        .btn-primary {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px !important; /* Ensure rounded corners */
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+
+
+        /* Link styles */
+        .link-text {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+            .link-text:hover {
+                text-decoration: underline;
+            }
+
+        /* Error message styles */
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        /* Image styles */
+        .logo-image {
+            display: block;
+            margin: 0 auto 20px; /* Center image and add space below it */
+            max-width: 150px; /* Adjust size as needed */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 50%; /* Make image rounded */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Optional: add a shadow for depth */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <img src="~/images/user login.png" alt="Logo" class="logo-image">
+        <h1 class="text-center">@ViewData["Title"]</h1>
+        <form id="loginForm" method="post" class="needs-validation" novalidate>
+            <div class="form-group">
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="Email" required />
+            </div>
+            <div class="form-group">
+                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Password" required />
+            </div>
+            <button id="loginSubmit" type="submit" class="btn btn-primary">Log in</button>
+            <div>
+                <p><a id="forgotPassword" asp-page="./ForgotPassword" class="link-text">Forgot your password?</a></p>
+                <p><a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="link-text">Register as a new user</a></p>
+                <p><a id="resendConfirmation" asp-page="./ResendEmailConfirmation" class="link-text">Resend email confirmation</a></p>
+            </div>
+            <div asp-validation-summary="All" class="error-message"></div>
+        </form>
+    </div>
+    <!-- Include Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+

@@ -1,0 +1,21 @@
+﻿@model IEnumerable<PatientMedication>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Medication Name</th>
+            <th>Dosage</th>
+         
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var medication in Model)
+        {
+            <tr>
+                <td>@medication.Medication.MedicationName</td>
+                <td>@medication.Medication.DosageForm</td>
+              
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,18 @@
+﻿@model Health_Hive_Project_2024.Models.VitalPatient
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete Vital Patient</h2>
+
+<h3>Are you sure you want to delete this item?</h3>
+
+<div>
+    <h4>@Model.PatientName</h4>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="VitalPatientId" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+    </form>
+</div>

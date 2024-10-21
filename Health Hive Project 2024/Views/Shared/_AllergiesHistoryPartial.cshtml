@@ -1,0 +1,19 @@
+﻿@model IEnumerable<Allergies>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Ingredient Name</th>
+        
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var allergy in Model)
+        {
+            <tr>
+                <td>@allergy.Ingredient.IngredientName</td> <!-- Adjust to your property -->
+              
+            </tr>
+        }
+    </tbody>
+</table>

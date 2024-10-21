@@ -1,0 +1,423 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.MedicationRecords>
+
+@{
+    ViewData["Title"] = "Medication List:";
+}
+
+<link rel="stylesheet" href="~/css/Important-blink.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<div class="container mt-4">
+    <div class="card rounded-3 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4>@ViewData["Title"]</h4>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <a asp-action="Create" class="btn btn-success">Add New Medication</a>
+            </div>
+
+            <div class="mb-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search medications...">
+            </div>
+
+            <form id="bulkActionForm">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Select</th>
+                                <th>@Html.DisplayNameFor(model => model.MedicationName)</th>
+                                <th>@Html.DisplayNameFor(model => model.DosageForm.Form)</th>
+                                <th>@Html.DisplayNameFor(model => model.Schedule)</th>
+                                <th>@Html.DisplayNameFor(model => model.QuantityOnHand)</th>
+                                <th>@Html.DisplayNameFor(model => model.ReOrderLevel)</th>
+                                <th>Active Ingredients</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="medicationTableBody">
+                            @foreach (var item in Model.OrderBy(m => m.MedicationName))
+                            {
+                                bool quantityParsed = int.TryParse(item.QuantityOnHand, out int quantityOnHand);
+                                bool reOrderParsed = int.TryParse(item.ReOrderLevel, out int reOrderLevel);
+                                bool isEmergency = quantityParsed && reOrderParsed && quantityOnHand < reOrderLevel;
+
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="medication-select" name="selectedItems" value="@item.MedicationID" data-name="@item.MedicationName" />
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.MedicationName)
+                                        @if (isEmergency)
+                                        {
+                                            <i class="bi bi-exclamation-triangle text-danger blinking-icon" title="Emergency"></i>
+                                        }
+                                    </td>
+                                    <td>@Html.DisplayFor(modelItem => item.DosageForm.Form)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Schedule)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.QuantityOnHand)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.ReOrderLevel)</td>
+                                    <td>
+                                        @if (item.MedicationActiveIngredients != null && item.MedicationActiveIngredients.Any())
+                                        {
+                                            <ul>
+                                                @foreach (var ingredient in item.MedicationActiveIngredients)
+                                                {
+                                                    <li>@ingredient.ActiveIngredientRecords.IngredientName</li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <span>No active ingredients</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @* <a asp-action="Edit" asp-route-id="@item.MedicationID" class="btn btn-warning btn-sm">Capture Stock</a> *@
+                                        <a href="#" class="btn btn-info btn-sm details-btn" data-id="@item.MedicationID" data-name="@item.MedicationName">Details</a>
+                                        <a asp-action="Delete" asp-route-id="@item.MedicationID" class="btn btn-danger btn-sm">Remove Medication</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <button type="button" class="btn btn-primary" id="bulkActionBtn">Order Medications</button>
+                <button type="button" class="btn btn-secondary" id="captureStockBtn">Capture Stock</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Order Confirmation Modal -->
+<div class="modal fade" id="bulkActionModal" tabindex="-1" role="dialog" aria-labelledby="bulkActionModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bulkActionModalLabel">Confirm Medication Order</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="confirmOrderForm" method="post" action="@Url.Action("BulkAction", "MedicationRecords")">
+                    <div id="selectedMedications">
+                        @foreach (var medication in Model)
+                        {
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="urgent_@medication.MedicationID" name="urgent[@medication.MedicationID]" value="true">
+                                <label class="form-check-label" for="urgent_@medication.MedicationID">Urgent</label>
+                                <div class="form-group">
+                                    <label for="quantity_@medication.MedicationID">Quantity</label>
+                                    <input type="number" class="form-control" id="quantity_@medication.MedicationID" name="quantities[@medication.MedicationID]" value="1" min="1" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success">Order</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Capture Stock Modal -->
+<div class="modal fade" id="captureStockModal" tabindex="-1" role="dialog" aria-labelledby="captureStockModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="captureStockModalLabel">Capture Stock</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="captureStockForm" method="post" action="@Url.Action("CaptureStock", "MedicationRecords")">
+                    <div id="selectedStockMedications">
+                        <!-- Selected medications will be populated here via JavaScript -->
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success">Capture Stock</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Order Completed</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Medications ordered successfully!</p>
+            </div>
+            <div class="modal-footer">
+                <a href="@Url.Action("Index", "OrderItems")" class="btn btn-primary">View Orders</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Capture Stock Success Modal -->
+<div class="modal fade" id="stockSuccessModal" tabindex="-1" role="dialog" aria-labelledby="stockSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="stockSuccessModalLabel">Stock Update</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Stock successfully captured. Quantity on hand updated.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Medication Details Modal -->
+<div class="modal fade" id="medicationDetailsModal" tabindex="-1" role="dialog" aria-labelledby="medicationDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- Modal content will be loaded here by AJAX -->
+        </div>
+    </div>
+</div>
+<!--Medication Details Modal Style-->
+<style>
+    /* Custom modal styles */
+    .modal-content {
+        border-radius: 15px; /* Rounded corners for the modal */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Shadow for depth */
+    }
+
+    .modal-header {
+        background-color: #f7f7f7; /* Light background color for the header */
+        border-bottom: 1px solid #ddd; /* Subtle border */
+        border-radius: 15px 15px 0 0; /* Rounded corners on top */
+    }
+
+    .modal-body {
+        padding: 20px; /* Padding for the modal body */
+    }
+
+        .modal-body img {
+            width: 100%; /* Full width */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 10px; /* Rounded corners for the image */
+            margin-bottom: 20px; /* Space below the image */
+        }
+
+    /* Ensure modal close button is styled */
+    .modal-header .close {
+        color: #333; /* Color for the close button */
+    }
+
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Bulk Action Button Click Handler
+            $('#bulkActionBtn').click(function () {
+                var selectedItems = [];
+                $('input[name="selectedItems"]:checked').each(function () {
+                    selectedItems.push({
+                        id: $(this).val(),
+                        name: $(this).data('name')
+                    });
+                });
+
+                if (selectedItems.length > 0) {
+                    $('#selectedMedications').empty();
+                    selectedItems.forEach(function (item) {
+                        $('#selectedMedications').append(
+                            '<div class="form-group">' +
+                            '<label>Medication Name: ' + item.name + '</label>' +
+                            '<input type="hidden" name="selectedItems" value="' + item.id + '" />' +
+                            '<input type="number" name="quantities[' + item.id + ']" class="form-control" placeholder="Enter quantity" required />' +
+                            '<div class="form-check mt-2">' +
+                            '<input type="checkbox" name="urgent[' + item.id + ']" class="form-check-input" />' +
+                            '<label class="form-check-label">Mark as urgent</label>' +
+                            '</div>' +
+                            '</div>'
+                        );
+                    });
+                    $('#bulkActionModal').modal('show');
+                } else {
+                    alert("Please select at least one medication.");
+                }
+            });
+
+            // Confirm Order Form Submit Handler
+            $('#confirmOrderForm').submit(function (e) {
+                e.preventDefault(); // Prevent default form submission
+
+                var formData = $(this).serialize();
+                console.log('Form Data:', formData); // Debugging line
+
+                $('#bulkActionModal').modal('hide'); // Hide the bulk action modal
+
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: formData,
+                    success: function (response) {
+                        // Show the success modal directly
+                        $('#successModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX Error:', status, error);
+                        alert('An error occurred while processing the order.');
+                    }
+                });
+            });
+
+
+            // Click event to show medication details and image in a modal
+            $('body').on('click', '.details-btn', function (event) {
+                event.preventDefault(); // Prevent the default action (navigation)
+
+                var $this = $(this);
+                var medicationId = $this.data('id');
+
+                // Load the modal content via AJAX
+                $.ajax({
+                    url: '/MedicationRecords/Details', // Ensure this matches the route
+                    type: 'GET',
+                    data: { id: medicationId },
+                    success: function (data) {
+                        $('#medicationDetailsModal .modal-content').html(data);
+                        $('#medicationDetailsModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX Error:', status, error);
+                        console.error('Response Text:', xhr.responseText);
+                        alert('An error occurred while fetching medication details.');
+                    }
+                });
+            });
+
+            // Ensure the modal hides when clicking outside of it
+            $('#medicationDetailsModal').on('hidden.bs.modal', function () {
+                $('#medicationImage').attr('src', ''); // Clear the image source
+                $('#medicationDetails').empty(); // Clear the details
+            });
+
+
+
+            // Search functionality
+            $('#searchInput').on('input', function () {
+                var searchTerm = $(this).val().toLowerCase();
+                $('#medicationTableBody tr').each(function () {
+                    var rowText = $(this).text().toLowerCase();
+                    if (rowText.indexOf(searchTerm) > -1) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+
+            //New Javascript for testing
+
+            // Handle 'Capture Stock' button click
+            $('#captureStockBtn').on('click', function () {
+                let selectedMedications = [];
+
+                // Collect selected medications
+                $('input.medication-select:checked').each(function () {
+                    let medicationId = $(this).val();
+                    let medicationName = $(this).data('name');
+                    selectedMedications.push({ id: medicationId, name: medicationName });
+                });
+
+                // Clear previous modal content
+                $('#selectedStockMedications').empty();
+
+                // Populate modal with selected medications and quantity inputs
+                selectedMedications.forEach(function (medication) {
+                    $('#selectedStockMedications').append(`
+                        <div class="form-group">
+                            <label>${medication.name} - Enter Quantity:</label>
+                            <input type="number" class="form-control" name="stockQuantities[${medication.id}]" value="0" min="0" />
+                        </div>
+                    `);
+                });
+
+                // Show the Capture Stock modal
+                $('#captureStockModal').modal('show');
+            });
+
+            // Handle form submission with AJAX
+            $('#captureStockForm').on('submit', function (e) {
+                e.preventDefault();  // Prevent default form submission
+
+                var form = $(this);
+
+                // Submit form via AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function (response) {
+                        // Close the Capture Stock modal
+                        $('#captureStockModal').modal('hide');
+
+                        // Show the success modal after stock is captured
+                        $('#stockSuccessModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Error capturing stock. Please try again.');
+                    }
+                });
+            });
+
+            // Refresh page after closing the success modal
+            $('#stockSuccessModal').on('hidden.bs.modal', function () {
+                location.reload();  // Reload the page when the modal is closed
+            });
+
+
+        });
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

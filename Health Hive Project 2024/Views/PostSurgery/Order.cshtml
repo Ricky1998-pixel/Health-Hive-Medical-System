@@ -1,0 +1,352 @@
+﻿@model IEnumerable<OrderMedications>
+@{
+    ViewData["Title"] = "Order";
+    int roww = 0;
+}
+
+<head>
+    <link href="~/css/Anaesthe_SearchEngine.css" rel="stylesheet" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                    <h6 class="text-white text-capitalize ps-3">Post Surgery Notes</h6>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+
+
+                <table class="table align-items-center justify-content-center mb-0">
+                    <thead style="height:50px;width:50px;">
+                        <tr>
+                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7" style="width:5px !important; "></th>
+                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">#Order No</th>
+                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Is Urgent</th>
+                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Instruction</th>
+                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Status</th>
+                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Time Ordered</th>
+                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var med in Model.Where(A => A.Status == OrderStatus.Received))
+                        {
+                            roww++;
+                            <tr>
+                                <td>
+                                    <div class="d-flex px-2">
+                                        <div class="my-auto">
+                                            <h6 class="mb-0 text-sm">@roww</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex px-2">
+                                        <div class="my-auto">
+                                            <h6 class="mb-0 text-sm">@med.PrescriptionOrder</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex px-2">
+                                        <div class="my-auto">
+                                            <h6 class="mb-0 text-sm @(med.IsUrgent ? "text-danger" : "")">
+                                                @(med.IsUrgent ? "Yes" : "No")
+                                            </h6>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="d-flex px-2">
+                                        <div class="my-auto">
+                                            <h6 class="mb-0 text-sm">@med.Instructions</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="status-container">
+                                        <div class="status-circle @("status-" + med.Status)"></div>
+                                        <div class="status-text">@med.Status</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex px-2">
+                                        <div class="my-auto">
+                                            <h6 class="mb-0 text-sm">@med.Date</h6>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- View Medication Button -->
+                                <td>
+                                    <!-- View Medication Button (inside a loop if needed) -->
+                                    <button type="button" class="btn btn-primary medication"
+                                            data-bs-toggle="modal" data-bs-target="#viewMedicationM"
+                                            data-order-id="@med.OrderMedicationID">
+                                        View Medications
+                                    </button>
+                                </td>
+
+                                @if (med.Status == OrderStatus.Dispensed)
+                                {
+                                    <!-- Edit Order Button -->
+                                    <td>
+                                        @* <a class="btn success" style=" border-color: #04AA6D;color: green; ">
+                                Receive
+                                </a> *@
+                                        <a asp-controller="PostSurgery" asp-action="ChangeStatus" asp-route-id="@med.OrderMedicationID" asp-route-PatientID="@med.PatientID" style="background-color:white; box-shadow: 0 4px 6px 0 black;" class="btn btn-shadow-primary" asp-route-newStatus="Received">Receive</a>
+                                    </td>
+
+
+                                }
+
+                            </tr>
+                            <style>
+                                .success:hover {
+                                    background-color: #04AA6D;
+                                    color: white;
+                                }
+                            </style>
+
+
+                            <div class="modal fade" id="viewMedicationM" tabindex="-1" aria-labelledby="viewMedicationModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-xl-custom">
+                                    <!-- Using custom class for wider modals -->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="viewMedicationModalLabel">Medication Details</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div id="medicationListCon">
+                                                <!-- Loading message or data will appear here -->
+                                                Loading medications...
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <!-- Update Note Modal -->
+                            <div class="modal fade" id="updateNoteModal" tabindex="-1" aria-labelledby="updateNoteModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form id="updateNoteForm">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="updateNoteModalLabel">Update Medication Note</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="hidden" id="medicineStoreId">
+                                                <div class="mb-3">
+                                                    <label for="noteInput" class="form-label">Note</label>
+                                                    <input type="text" class="form-control" id="noteInput" required>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var viewMedicationButtons = document.querySelectorAll('.medication');
+
+        viewMedicationButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                var orderId = this.getAttribute('data-order-id'); // Get the OrderMedicationID from the button
+
+                // Update modal title with the OrderMedicationID (optional)
+                document.getElementById('viewMedicationModalLabel').innerText = 'Medications for Order ' + orderId;
+
+                // Display loading message while fetching data
+                document.getElementById('medicationListCon').innerHTML = 'Fetching medications for Order ID: ' + orderId;
+
+                // Fetch medication data for the specific OrderMedicationID
+                fetch(`/OrderMedication/GetMedications?OrderMedicationID=${orderId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        var tableBody = document.getElementById('medicationListCon');
+                        tableBody.innerHTML = ''; // Clear previous data
+
+                        if (data.length > 0) {
+                            // Start building the table HTML structure
+                            var medicationListHtml = `
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Medication Name</th>
+                                            <th>Quantity</th>
+                                            <th>Note</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>`;
+
+                            // Loop through each medication and create table rows
+                            data.forEach((item, index) => {
+                                medicationListHtml += `
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td>${item.medicationName}</td>
+                                        <td>${item.quantity}</td>
+                                        <td>${item.note}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-info btn-sm update-medication-note"
+                                                data-id="${item.medicineStoreId}" data-note="${item.note}">
+                                                Update Note
+                                            </button>
+                                        </td>
+                                    </tr>`;
+                            });
+
+                            medicationListHtml += `</tbody></table>`; // Close the table structure
+
+                            // Update the modal content with the table
+                            tableBody.innerHTML = medicationListHtml;
+
+                            // Add event listeners for each update button
+                            document.querySelectorAll('.update-medication-note').forEach(updateBtn => {
+                                updateBtn.addEventListener('click', function () {
+                                    var medicineStoreId = this.getAttribute('data-id');
+                                    var note = this.getAttribute('data-note');
+
+                                    // Set the form input values
+                                    document.getElementById('medicineStoreId').value = medicineStoreId;
+                                    document.getElementById('noteInput').value = note;
+
+                                    // Open the update note modal
+                                    var updateNoteModal = new bootstrap.Modal(document.getElementById('updateNoteModal'));
+                                    updateNoteModal.show();
+
+                                    // Focus on the note input field when the modal is shown
+                                    updateNoteModal._element.addEventListener('shown.bs.modal', function () {
+                                        document.getElementById('noteInput').focus();
+                                    });
+                                });
+                            });
+                        } else {
+                            // If no data is found, display a message
+                            tableBody.innerHTML = '<p>No medications found for this order.</p>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Display an error message in the modal content
+                        document.getElementById('medicationListCon').innerHTML = '<p>An error occurred while loading medications. Please try again.</p>';
+                    });
+            });
+        });
+
+        // Handle form submission for updating the note
+        var updateNoteForm = document.getElementById('updateNoteForm');
+        updateNoteForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var medicineStoreId = document.getElementById('medicineStoreId').value;
+            var noteValue = document.getElementById('noteInput').value;
+
+            // Send the updated note to the server
+            fetch(`/OrderMedication/UpdateMedicationNote`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    medicineStoreId: medicineStoreId,
+                    note: noteValue
+                })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Note updated successfully!');
+                        location.reload();
+                        // Close the update note modal
+                        var updateNoteModal = bootstrap.Modal.getInstance(document.getElementById('updateNoteModal'));
+                        updateNoteModal.hide();
+
+                        // Reload the medications to show the updated list
+                        var orderId = document.getElementById('viewMedicationModalLabel').innerText.split('#')[1].trim();
+                        document.querySelector(`.medication[data-order-id="${orderId}"]`).click();
+                    } else {
+                        alert('Failed to update the note.');
+                    }
+                });
+             
+        });
+    });
+
+    function deleteMedication(medicineStoreId) {
+        if (!medicineStoreId || medicineStoreId === 0) {
+            alert("Invalid medication ID");
+            return;
+        }
+
+        fetch(`/ExistingOrders/DeleteMedication?medicineStoreId=${medicineStoreId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);  // Display success or failure message
+                } else {
+                    alert("An unknown error occurred.");
+                }
+
+                if (data.message === "Medication deleted successfully") {
+                    location.reload();  // Reload page to reflect changes
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("An error occurred while deleting the medication.");
+            });
+    }
+
+</script>
+
+                    <style>
+    /* Optional: Increase the width beyond the standard sizes */
+    .modal-xl-custom {
+        max-width: 90%; /* Adjust width as necessary */
+    }
+
+  
+
+    /* Optionally, you can also add scrolling for overflowing content */
+    .modal-body {
+        max-height: 70vh; /* Adjust the height as necessary */
+        overflow-y: auto;
+    }
+</style>

@@ -1,0 +1,508 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.SurgeryBooking>
+
+@{
+    ViewData["Title"] = "Surgery Bookings";
+}
+
+@if (TempData["error"] != null)
+{
+    <div class="row justify-content-center">
+        <div class="alert alert-danger">
+            @TempData["error"]
+        </div>
+    </div>
+}
+@if (TempData["pass"] != null)
+{
+    <div class="row justify-content-center">
+        <div class="alert alert-success">
+            @TempData["pass"]
+        </div>
+    </div>
+}
+
+<!-- DataTables CSS and JS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+
+<!-- Bootstrap CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Add this style block to your CSS -->
+<style>
+    .circular-btn {
+        width: 50px; /* Adjust the size as needed */
+        height: 50px; /* Adjust the size as needed */
+        border-radius: 50%; /* Makes the button circular */
+        display: flex; /* Centers the icon */
+        justify-content: center; /* Centers the icon horizontally */
+        align-items: center; /* Centers the icon vertically */
+        padding: 0; /* Removes default padding */
+        border: none; /* Removes border */
+        outline: none; /* Removes outline */
+        transition: background-color 0.3s; /* Adds a transition for hover effect */
+    }
+
+        .circular-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1); /* Adds a hover effect */
+        }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+<!-- Additional CSS for table -->
+<style>
+    table.dataTable {
+        border-collapse: collapse !important;
+    }
+
+        table.dataTable thead th {
+            background-color: #007bff; /* Bootstrap primary color */
+            color: white;
+        }
+
+    .dataTables_wrapper {
+        margin: 20px 0;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM8t8nXsGvO2U7oExS9F+a4Gf5i56N4uqhXW8R" crossorigin="anonymous">
+
+
+<!-- Single Search Form -->
+<div class="container mt-4">
+    <form method="get" action="@Url.Action("Index")">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <input type="text" name="searchTerm" class="form-control" placeholder="Search (Patient ID, Name, Surname, Date, Session, Theatre)" value="@Context.Request.Query["searchTerm"]">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                </button>
+
+                <a href="@Url.Action("Index")" class="btn btn-primary"><i class="fa-solid fa-trash"></i></a> <!-- Clear button to reset search -->
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+
+<!-- Table for Surgery Bookings -->
+<div class="container mt-4">
+    <table id="surgeryBookingsTable" class="display table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th style="background-color: #ffccbc;">Surgeon</th>
+                <th style="background-color: #c5e1a5;">Patient</th>
+                <th style="background-color: #bbdefb;">Anaesthesiologist</th>
+                <th style="background-color: #ffe082;">Theatre</th>
+                <th style="background-color: #d1c4e9;">Surgery Date</th>
+                <th style="background-color: #e1bee7;">Session</th>
+                <th style="background-color: #b2ebf2;">Treatments</th>
+                <th style="background-color: #ffcdd2;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var surgeryBooking in Model)
+            {
+                <tr id="record-and-details-@surgeryBooking.SurgeryID">
+                <tr id="record-@surgeryBooking.SurgeryID">
+                    <td>@($"{surgeryBooking.Surgeon?.Name} {surgeryBooking.Surgeon?.Surname}")</td>
+                    <td>@($"{surgeryBooking.Patient?.Name} {surgeryBooking.Patient?.Surname}")</td>
+                    <td>@($"{surgeryBooking.Anaesthesiologist?.Name} {surgeryBooking.Anaesthesiologist?.Surname}")</td>
+                    <td>@surgeryBooking.Theatre?.TheatreName</td>
+                    <td>@surgeryBooking.SurgeryDate.ToShortDateString()</td>
+                    <td>@surgeryBooking.Session</td>
+                    <td>
+                        <ul>
+                            @if (surgeryBooking.SurgeryBookingTreatments != null && surgeryBooking.SurgeryBookingTreatments.Any())
+                            {
+                                @foreach (var treatment in surgeryBooking.SurgeryBookingTreatments)
+                                {
+                                    <li>@treatment.TreatmentRecords?.TreatmentCode - @treatment.TreatmentRecords?.Description</li>
+                                }
+                            }
+                            else
+                            {
+                                <li>No treatments available</li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+
+                        <div class="btn-group" role="group">
+                            <!-- Complete Button -->
+<button class="btn btn-success circular-btn" data-bs-toggle="modal" data-bs-target="#completeModal-@surgeryBooking.SurgeryID">
+    <i class="fas fa-check"></i>
+</button>
+
+<!-- Details Button -->
+<button class="btn btn-info circular-btn"
+        data-bs-toggle="modal"
+        data-bs-target="#detailsModal"
+        data-surgery-id="@surgeryBooking.SurgeryID"
+        data-patient-id="@surgeryBooking.Patient?.PatientID"
+        data-patient-id-number="@surgeryBooking.Patient?.PatientIDNumber"
+        data-patient-name="@($"{surgeryBooking.Patient?.Name} {surgeryBooking.Patient?.Surname}")"
+        data-gender="@surgeryBooking.Patient?.Gender"
+        data-dob="@surgeryBooking.Patient?.DateOfBirth.ToShortDateString()"
+        data-contact-number="@surgeryBooking.Patient?.ContactNumber"
+        data-email="@surgeryBooking.Patient?.EmailAddress"
+        data-address="@surgeryBooking.Patient?.Address"
+        data-surgery-date="@surgeryBooking.SurgeryDate.ToShortDateString()"
+        data-session="@surgeryBooking.Session"
+        data-theatre-name="@surgeryBooking.Theatre?.TheatreName"
+        data-treatments="@Html.Raw(surgeryBooking.SurgeryBookingTreatments != null && surgeryBooking.SurgeryBookingTreatments.Any() ? string.Join(";", surgeryBooking.SurgeryBookingTreatments.Select(t => t.TreatmentRecords?.TreatmentCode + '-' + t.TreatmentRecords?.Description)) : "No treatments available")"
+        data-surgeon-name="@($"{surgeryBooking.Surgeon?.Name} {surgeryBooking.Surgeon?.Surname}")"
+        data-surgeon-contact="@surgeryBooking.Surgeon?.ContactNumber"
+        data-surgeon-email="@surgeryBooking.Surgeon?.EmailAddress"
+        data-surgeon-registration-number="@surgeryBooking.Surgeon?.HealthCouncilRegistrationNumber"
+        data-anesthesiologist-name="@($"{surgeryBooking.Anaesthesiologist?.Name} {surgeryBooking.Anaesthesiologist?.Surname}")"
+        data-anesthesiologist-contact="@surgeryBooking.Anaesthesiologist?.ContactNumber"
+        data-anesthesiologist-email="@surgeryBooking.Anaesthesiologist?.EmailAddress"
+        data-anesthesiologist-registration-number="@surgeryBooking.Anaesthesiologist?.HealthCouncilRegistrationNumber"
+        onclick="showDetails(this)">
+    <i class="fas fa-info-circle"></i>
+</button>
+
+
+
+                        </div>
+
+                    </td>
+                </tr>
+                </tr>
+
+
+                <!-- Complete Modal for this surgeryBooking -->
+                <div class="modal fade" id="completeModal-@surgeryBooking.SurgeryID" tabindex="-1" aria-labelledby="completeModalLabel-@surgeryBooking.SurgeryID" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="completeModalLabel-@surgeryBooking.SurgeryID">Confirm Completion</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <!-- Add your GIF here -->
+                                <img src="~/images/complete surgery.gif" alt="Completion Confirmation GIF" style="width: 80px; height: 80px;" />
+                                <p class="mt-3">Are you sure you want to complete this surgery?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <form asp-action="MoveToCompleteSurgeries" asp-route-id="@surgeryBooking.SurgeryID" method="post" onsubmit="return handleFormSubmit(event, '@surgeryBooking.SurgeryID')">
+                                    <button type="submit" class="btn btn-danger rounded-button">Yes</button>
+                                </form>
+                                <button type="button" class="btn btn-secondary rounded-button" data-bs-dismiss="modal">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Modal -->
+                <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <!-- Add your GIF here -->
+                                <img src="~/images/surgery complete.gif" alt="Success GIF" style="width: 80px; height: 80px;" />
+                                <p class="mt-3">Surgery has been completed successfully.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary rounded-button" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Modal for displaying details -->
+                <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="detailsModalLabel">Surgery Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="p-3 border rounded" style="background-color: #e0f7fa;">
+                                            <h6>Patient Information</h6>
+                                            <p id="patientInfo"></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="p-3 border rounded" style="background-color: #fffde7;">
+                                            <h6>Surgeon Information</h6>
+                                            <p id="surgeonInfo"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="p-3 border rounded" style="background-color: #ffe0b2;">
+                                            <h6>Surgery Information</h6>
+                                            <p id="surgeryInfo"></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="p-3 border rounded" style="background-color: #e1bee7;">
+                                            <h6>Anaesthesiologist Information</h6>
+                                            <p id="anaesthesiologistInfo"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h6>Treatments</h6>
+                                <ul id="treatmentList"></ul>
+                                <!-- Download button -->
+                                <button id="downloadBtn" class="btn btn-primary">Download PDF</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            }
+        </tbody>
+
+    </table>
+
+</div>
+
+<!-- DataTables Initialization Script -->
+<script>
+    $(document).ready(function() {
+        $('#surgeryBookingsTable').DataTable({
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "lengthChange": true,
+            "pageLength": 10,
+            "language": {
+                "search": "<i class='fas fa-search'></i>",
+                "searchPlaceholder": "Search..."
+            }
+        });
+    });
+</script>
+
+
+<!-- DETAILS MODAL JAVASCRIPT -->
+<script>
+
+    function showDetails(button) {
+    // Extract data attributes from the button
+    var patientIdNumber = $(button).data('patient-id-number');
+    var patientName = $(button).data('patient-name');
+    var gender = $(button).data('gender');
+    var dob = $(button).data('dob');
+    var contactNumber = $(button).data('contact-number');
+    var email = $(button).data('email');
+    var address = $(button).data('address');
+    var surgeryDate = $(button).data('surgery-date');
+    var session = $(button).data('session');
+    var theatreName = $(button).data('theatre-name');
+    var treatments = $(button).data('treatments');
+    
+    // Surgeon Info
+    var surgeonName = $(button).data('surgeon-name');
+    var surgeonContact = $(button).data('surgeon-contact');
+    var surgeonEmail = $(button).data('surgeon-email');
+    var surgeonRegNumber = $(button).data('surgeon-registration-number');
+
+    // Anaesthesiologist Info
+    var anesthesiologistName = $(button).data('anesthesiologist-name');
+    var anesthesiologistContact = $(button).data('anesthesiologist-contact');
+    var anesthesiologistEmail = $(button).data('anesthesiologist-email');
+    var anesthesiologistRegNumber = $(button).data('anesthesiologist-registration-number');
+
+    // Populate Patient Information
+    $('#patientInfo').html(`
+        <strong>ID Number:</strong> ${patientIdNumber} <br>
+        <strong>Name:</strong> ${patientName} <br>
+        <strong>Gender:</strong> ${gender} <br>
+        <strong>Date of Birth:</strong> ${dob} <br>
+        <strong>Contact Number:</strong> ${contactNumber} <br>
+        <strong>Email:</strong> ${email} <br>
+        <strong>Address:</strong> ${address}
+    `);
+
+    // Populate Surgeon Information
+    $('#surgeonInfo').html(`
+        <strong>Name:</strong> ${surgeonName} <br>
+        <strong>Contact Number:</strong> ${surgeonContact} <br>
+        <strong>Email:</strong> ${surgeonEmail} <br>
+        <strong>Health Council Reg. No:</strong> ${surgeonRegNumber}
+    `);
+
+    // Populate Anaesthesiologist Information
+    $('#anaesthesiologistInfo').html(`
+        <strong>Name:</strong> ${anesthesiologistName} <br>
+        <strong>Contact Number:</strong> ${anesthesiologistContact} <br>
+        <strong>Email:</strong> ${anesthesiologistEmail} <br>
+        <strong>Health Council Reg. No:</strong> ${anesthesiologistRegNumber}
+    `);
+
+    // Populate Surgery Information
+    $('#surgeryInfo').html(`
+        <strong>Date:</strong> ${surgeryDate} <br>
+        <strong>Session:</strong> ${session} <br>
+        <strong>Theatre:</strong> ${theatreName}
+    `);
+
+    // Populate Treatments List
+    $('#treatmentList').empty(); // Clear previous items
+    if (treatments && treatments !== "No treatments available") {
+        treatments.split(";").forEach(function (treatment) {
+            $('#treatmentList').append(`<li>${treatment}</li>`);
+        });
+    } else {
+        $('#treatmentList').append('<li>No treatments available</li>');
+    }
+
+    // Show the modal
+    $('#detailsModal').modal('show');
+}
+
+</script>
+
+<!-- PDF JAVASCRIPT -->
+<script>
+    document.getElementById('downloadBtn').addEventListener('click', function () {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Add Hospital Header
+        doc.setFontSize(12);
+        doc.text('Bay Breeze Hospital', 105, 10, { align: 'center' });
+        doc.text('Contact: 041 583 2121 | Email: baybreeze@gmail.com', 105, 16, { align: 'center' });
+
+        // Add Title
+        doc.setFontSize(14);
+        doc.text('Surgery Details Document', 105, 24, { align: 'center' });
+
+        // Fetch content from modal
+        var patientInfo = document.getElementById('patientInfo').innerText;
+        var surgeonInfo = document.getElementById('surgeonInfo').innerText;
+        var anaesthesiologistInfo = document.getElementById('anaesthesiologistInfo').innerText;
+        var surgeryInfo = document.getElementById('surgeryInfo').innerText;
+        var treatments = document.getElementById('treatmentList').innerText;
+
+        // Patient Information (Full Width)
+        doc.setFontSize(10);
+        doc.text('Patient Information:', 10, 36);
+        doc.text(patientInfo, 10, 42);
+
+        // Add space between sections
+        var yOffset = 80; // Space before next section
+
+        // Surgeon and Anaesthesiologist Information (Side by side)
+        doc.text('Surgeon Information:', 10, yOffset);
+        doc.text(surgeonInfo, 10, yOffset + 6); // Align surgeon info under the heading
+
+        // Adding space for Anaesthesiologist section
+        const rightColumnX = 110; // X position for Anaesthesiologist info
+        doc.text('Anaesthesiologist Information:', rightColumnX, yOffset);
+        doc.text(anaesthesiologistInfo, rightColumnX, yOffset + 6); // Align anaesthesiologist info under the heading
+
+        // Surgery Information (Full Width) with space
+        yOffset += 30; // Add more vertical space before next section
+        doc.text('Surgery Information:', 10, yOffset);
+        doc.text(surgeryInfo, 10, yOffset + 6);
+
+        // Treatments (Full Width)
+        yOffset += 30;
+        doc.text('Treatments:', 10, yOffset);
+        doc.text(treatments, 10, yOffset + 6);
+
+        // Notes Section (Full Width)
+        yOffset += 30;
+        doc.text('Notes:', 10, yOffset);
+        doc.rect(10, yOffset + 5, 190, 30); // Box for notes (4-5 lines)
+
+        // Signature and Date (Side by side)
+        yOffset += 50;
+        doc.text('Surgeon Signature:', 10, yOffset);
+        doc.line(50, yOffset, 100, yOffset); // Line for Surgeon Signature
+        doc.text('Date:', 110, yOffset);
+        doc.line(130, yOffset, 160, yOffset); // Line for Surgeon Date
+
+        yOffset += 20;
+        doc.text('Anaesthesiologist Signature:', 10, yOffset);
+        doc.line(50, yOffset, 100, yOffset); // Line for Anaesthesiologist Signature
+        doc.text('Date:', 110, yOffset);
+        doc.line(130, yOffset, 160, yOffset); // Line for Anaesthesiologist Date
+
+        // Footer
+        doc.setFontSize(10);
+        doc.text('Bay Breeze Hospital | Contact: 041 583 2121 | Email: baybreeze@gmail.com', 105, 280, { align: 'center' });
+
+        // Save the PDF
+        doc.save('Surgery_Details.pdf');
+    });
+</script>
+
+
+
+<!--COMPLETE SURGERY JAVASCRIPT-->
+<script>
+
+    function handleFormSubmit(event, surgeryID) {
+        event.preventDefault(); // Prevent default form submission
+
+        var form = $(event.target);
+        var formAction = form.attr('action'); // Get the form action URL
+
+        $.ajax({
+            url: formAction,
+            type: 'POST',
+            data: form.serialize(), // Serialize the form data
+            success: function (response) {
+                if (response.success) {
+                    // Hide the confirmation modal
+                    $('#completeModal-' + surgeryID).modal('hide');
+
+                    // Once the modal is fully hidden, remove the row
+                    $('#completeModal-' + surgeryID).on('hidden.bs.modal', function () {
+                        $('#surgeryRow-' + surgeryID).fadeOut(300, function () {
+                            $(this).remove(); // Remove the row from the DOM
+                        });
+
+                        // Show the success modal
+                        $('#successModal').modal('show');
+                    });
+
+                    // Remove the backdrop and allow interaction after the success modal is closed
+                    $('#successModal').on('hidden.bs.modal', function () {
+                        $('body').removeClass('modal-open'); // Remove Bootstrap's modal-open class
+                        $('.modal-backdrop').remove(); // Remove modal-backdrop
+
+                        // Refresh the page dynamically after the success modal is closed
+                        location.reload(); // Refresh the page
+                    });
+
+                } else {
+                    alert(response.message || 'Failed to complete the surgery.');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred: ' + error);
+            }
+        });
+    }
+
+</script>
+
+

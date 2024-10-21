@@ -1,0 +1,348 @@
+﻿@model Health_Hive_Project_2024.Models.SurgeryBooking
+
+@{
+    ViewData["Title"] = "Create Surgery Booking";
+
+    // Retrieve the patient ID from the query string
+    var patientID = Context.Request.Query["patientID"].ToString();
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<!-- Bootstrap CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Form Container -->
+        <div class="col-md-8">
+            <div class="p-4 border rounded shadow-sm bg-light">
+                <h1 class="mb-4">Surgery Booking</h1>
+
+                <form id="surgeryBookingForm" asp-action="Create" method="post">
+
+
+                    <!-- Surgeon and Patient Selection -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select asp-for="SurgeonID" class="form-select rounded" asp-items="ViewBag.SurgeonID" aria-label="Surgeon">
+                                    <option value="">Select Surgeon</option>
+                                </select>
+                                <label asp-for="SurgeonID" class="control-label">
+                                    <img src="~/images/surgeon.png" alt="Surgeon Icon" style="width:20px; height:20px; margin-right:5px;">
+                                    Surgeon:
+                                </label>
+                                <span asp-validation-for="SurgeonID" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select asp-for="PatientID" class="form-select rounded" asp-items="ViewBag.PatientID" aria-label="Patient">
+                                    <option value="">Select Patient</option>
+                                    @if (!string.IsNullOrEmpty(patientID))
+                                    {
+                                        <option value="@patientID" selected>@patientID</option>
+                                    }
+                                </select>
+                                <label asp-for="PatientID" class="control-label">
+                                    <img src="~/images/patient.png" alt="Patient Icon" style="width:20px; height:20px; margin-right:5px;">
+                                    Patient:
+                                </label>
+                                <span asp-validation-for="PatientID" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date and Session Selection -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <!-- Use datetime-local to allow both date and time selection -->
+                                <input asp-for="SurgeryDate" class="form-control rounded" type="datetime-local" id="surgeryDate" onchange="setSession()" />
+                                <label asp-for="SurgeryDate" class="control-label">
+                                    <img src="~/images/Calendar.png" alt="Date Icon" style="width:20px; height:20px; margin-right:5px;">
+                                    Surgery Date & Time:
+                                </label>
+                                <span asp-validation-for="SurgeryDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input asp-for="Session" class="form-control rounded" type="text" id="sessionInput" placeholder="Session" readonly />
+                                <label asp-for="Session" class="control-label">
+                                    <img src="~/images/session.png" alt="Session Icon" style="width:20px; height:20px; margin-right:5px;">
+                                    Session:
+                                </label>
+                                <span asp-validation-for="Session" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Anaesthesiologist and Theatre Selection -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select asp-for="AnaesthesiologistID" class="form-select rounded" asp-items="ViewBag.AnaesthesiologistID" aria-label="Anaesthesiologist">
+                                    <option value="">Select Anaesthesiologist</option>
+                                </select>
+                                <label asp-for="AnaesthesiologistID" class="control-label">
+                                    <img src="~/images/anaes.png" alt="Anaesthesiologist Icon" style="width:20px; height:20px; margin-right:5px;">
+                                    Anaesthesiologist:
+                                </label>
+                                <span asp-validation-for="AnaesthesiologistID" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating rounded">
+                                <select asp-for="TheatreID" class="form-select rounded" asp-items="ViewBag.TheatreID" aria-label="Theatre">
+                                    <option value="">Select Theatre</option>
+                                </select>
+                                <label asp-for="TheatreID" class="control-label">
+                                    <img src="~/images/theatre.png" alt="Theatre Icon" style="width:20px; height:20px; margin-right:5px;">
+                                    Theatre:
+                                </label>
+                                <span asp-validation-for="TheatreID" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Treatment Codes Selection -->
+                    <div class="mb-3">
+                        <label for="treatmentCodesList">
+                            Treatment Codes
+                            <img src="~/images/treatment codes.png" alt="Treatment Codes Icon" style="width:20px; height:20px; margin-right:5px;">
+                        </label>
+                        <select id="treatmentCodesList" name="treatmentIDs" class="form-select rounded" multiple size="4">
+                            <!-- Treatment codes will be added here by JavaScript -->
+                        </select>
+                        <!-- Hidden field to store selected treatment codes -->
+                        <input type="hidden" id="SelectedTreatmentCodes" name="SelectedTreatmentCodes">
+                        <button type="button" id="openModal" class="btn btn-outline-primary mt-2 btn-sm">Select Treatment Codes</button>
+                    </div>
+
+                    
+
+
+                    <!-- Submit Button -->
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">Book Surgery</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right-side Container -->
+        <div class="col-md-4">
+            <div id="rightSideContainer" class="p-4 border rounded shadow-sm bg-light">
+                <h5>Booking Preview</h5>
+                <p><strong>Surgeon:</strong> <span id="previewSurgeon">Not selected</span></p>
+                <p><strong>Patient:</strong> <span id="previewPatient">Not selected</span></p>
+                <p><strong>Date:</strong> <span id="previewDate">Not selected</span></p>
+                <p><strong>Session:</strong> <span id="previewSession">Not specified</span></p>
+                <p><strong>Anaesthesiologist:</strong> <span id="previewAnaesthesiologist">Not selected</span></p>
+                <p><strong>Theatre:</strong> <span id="previewTheatre">Not selected</span></p>
+                <p><strong>Treatment Codes:</strong> <span id="previewTreatmentCodes">None selected</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Treatment Codes -->
+<div class="modal fade" id="treatmentCodeModal" tabindex="-1" aria-labelledby="treatmentCodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="treatmentCodeModalLabel">Select Treatment Codes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul id="modalTreatmentCodesList" class="list-group" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Treatment codes will be dynamically added here -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="confirmSelection" class="btn btn-primary">Confirm Selection</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.ShowModal != null && (bool)ViewBag.ShowModal)
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var modal = new bootstrap.Modal(document.getElementById('myModal'));
+            modal.show();
+        });
+    </script>
+}
+
+
+
+<!-- Surgery Booked Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Success</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <!-- Replace icon with GIF -->
+                <img src="~/images/surgery booked.gif" alt="Success GIF" style="width: 80px; height: 80px;" />
+                <p class="mt-3">The surgery booking has been successfully created.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Javascript for AM/PM-->
+<script>
+    function setSession() {
+        var surgeryDateInput = document.getElementById("surgeryDate").value;
+        if (surgeryDateInput) {
+            var date = new Date(surgeryDateInput);
+            var hours = date.getHours();
+            var session = hours >= 12 ? "PM" : "AM";
+
+            // Set the session value in the input field
+            document.getElementById("sessionInput").value = session;
+        }
+    }
+</script>
+
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function updatePreview() {
+                document.getElementById('previewSurgeon').innerText = document.querySelector('select[name="SurgeonID"] option:checked')?.textContent || 'Not selected';
+                document.getElementById('previewPatient').innerText = document.querySelector('select[name="PatientID"] option:checked')?.textContent || 'Not selected';
+                document.getElementById('previewDate').innerText = document.querySelector('input[name="SurgeryDate"]').value || 'Not selected';
+                document.getElementById('previewSession').innerText = document.querySelector('input[name="Session"]').value || 'Not specified';
+                document.getElementById('previewAnaesthesiologist').innerText = document.querySelector('select[name="AnaesthesiologistID"] option:checked')?.textContent || 'Not selected';
+                document.getElementById('previewTheatre').innerText = document.querySelector('select[name="TheatreID"] option:checked')?.textContent || 'Not selected';
+
+                const treatmentCodesList = document.getElementById('treatmentCodesList');
+                const selectedOptions = treatmentCodesList.selectedOptions;
+                const treatmentCodes = Array.from(selectedOptions).map(option => option.text).join(', ');
+                document.getElementById('previewTreatmentCodes').innerText = treatmentCodes || 'None selected';
+            }
+
+            // Update preview on change
+            document.querySelectorAll('select, input').forEach(element => {
+                element.addEventListener('change', updatePreview);
+            });
+
+            // Function to fetch treatment codes
+            function fetchTreatmentCodes() {
+                fetch('/SurgeryBookings/GetTreatmentCodes')
+                    .then(response => response.json())
+                    .then(data => {
+                        const modalTreatmentCodesList = document.getElementById('modalTreatmentCodesList');
+                        modalTreatmentCodesList.innerHTML = ''; // Clear previous data
+
+                        if (data.length === 0) {
+                            modalTreatmentCodesList.innerHTML = '<li class="list-group-item">No treatment codes available</li>';
+                        } else {
+                            data.forEach(treatment => {
+                                const li = document.createElement('li');
+                                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                                li.innerHTML = `
+                                    <input type="checkbox" value="${treatment.treatmentID}" data-code="${treatment.treatmentCode}" data-description="${treatment.description}" />
+                                    <span>${treatment.treatmentCode} - ${treatment.description}</span>
+                                `;
+                                modalTreatmentCodesList.appendChild(li);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching treatment codes:', error);
+                        const modalTreatmentCodesList = document.getElementById('modalTreatmentCodesList');
+                        modalTreatmentCodesList.innerHTML = '<li class="list-group-item text-danger">Error fetching treatment codes</li>';
+                    });
+            }
+
+            // Open modal to select treatment codes
+            document.getElementById('openModal').addEventListener('click', function () {
+                fetchTreatmentCodes();
+                const modal = new bootstrap.Modal(document.getElementById('treatmentCodeModal'));
+                modal.show();
+            });
+
+            // Confirm selection of treatment codes
+            document.getElementById('confirmSelection').addEventListener('click', function () {
+                // Get selected treatment codes from the modal
+                const selectedCodes = Array.from(document.querySelectorAll('#modalTreatmentCodesList input:checked'))
+                    .map(checkbox => ({
+                        id: parseInt(checkbox.value),
+                        text: checkbox.dataset.code + ' - ' + checkbox.dataset.description
+                    }));
+
+                // Update the multi-select dropdown with the selected treatment codes
+                const treatmentCodesList = document.getElementById('treatmentCodesList');
+                treatmentCodesList.innerHTML = ''; // Clear previous options
+
+                selectedCodes.forEach(code => {
+                    const option = document.createElement('option');
+                    option.value = code.id;
+                    option.textContent = code.text;
+                    option.selected = true;
+                    treatmentCodesList.appendChild(option);
+                });
+
+                // Update the hidden input field with selected treatment codes as a JSON string
+                document.getElementById('SelectedTreatmentCodes').value = JSON.stringify(selectedCodes.map(code => code.id));
+
+                // Close the modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('treatmentCodeModal'));
+                modal.hide();
+
+                // Update preview
+                updatePreview();
+            });
+        });
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

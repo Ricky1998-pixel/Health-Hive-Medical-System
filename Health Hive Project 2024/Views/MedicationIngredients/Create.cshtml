@@ -1,0 +1,105 @@
+﻿@* @model Health_Hive_Project_2024.Models.MedicationIngredient
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>MedicationIngredient</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="MedicationID" class="control-label"></label>
+                <select asp-for="MedicationID" class ="form-control" asp-items="ViewBag.MedicationID"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="IngredientID" class="control-label"></label>
+                <select asp-for="IngredientID" class ="form-control" asp-items="ViewBag.IngredientID"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="ActiveIngredientStrength" class="control-label"></label>
+                <input asp-for="ActiveIngredientStrength" class="form-control" />
+                <span asp-validation-for="ActiveIngredientStrength" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+ *@
+
+
+@model Health_Hive_Project_2024.Models.MedicationIngredient
+
+@{
+    ViewData["Title"] = "Create Medication Ingredient";
+}
+
+<h1>Create Medication Ingredient</h1>
+
+<form id="medicationIngredientForm" asp-action="Create">
+    <div class="form-group">
+        <label asp-for="MedicationID" class="control-label"></label>
+        <select asp-for="MedicationID" class="form-control" asp-items="ViewBag.MedicationID"></select>
+        <span asp-validation-for="MedicationID" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="IngredientID" class="control-label"></label>
+        <select asp-for="IngredientID" class="form-control" asp-items="ViewBag.IngredientID"></select>
+        <span asp-validation-for="IngredientID" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ActiveIngredientStrength" class="control-label"></label>
+        <input asp-for="ActiveIngredientStrength" class="form-control" />
+        <span asp-validation-for="ActiveIngredientStrength" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
+
+<div id="responseMessage" class="mt-3"></div>
+
+<a asp-action="Index">Back to List</a>
+
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#medicationIngredientForm').on('submit', function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            $('#responseMessage').html('<div class="alert alert-success">Form submitted successfully!</div>');
+                            // Optionally, redirect or update the page
+                            window.location.href = '@Url.Action("Index")'; // Redirect to Index
+                        } else {
+                            $('#responseMessage').html('<div class="alert alert-danger">Form submission failed. Please check the input.</div>');
+                            // Optionally, display errors
+                            response.errors.forEach(function (error) {
+                                $('#responseMessage').append('<div class="alert alert-danger">' + error.errorMessage + '</div>');
+                            });
+                        }
+                    },
+                    error: function () {
+                        $('#responseMessage').html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                    }
+                });
+            });
+        });
+    </script>
+}

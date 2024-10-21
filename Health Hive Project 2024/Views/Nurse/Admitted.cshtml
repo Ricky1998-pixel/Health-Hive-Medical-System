@@ -1,0 +1,74 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.PatientAdmission>
+
+@{
+    ViewData["Title"] = "Admitted Patients";
+}
+<h4 class="text-center">Admitted Patients</h4>
+<br />
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Patient)
+            </th>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.AdmissionDate)
+            </th>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.Ward)
+            </th>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.Bed)
+            </th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() == 0)
+        {
+            <tr>
+                <td class="text-danger">
+                    No Data Found
+                </td>
+            </tr>
+        }
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Patient.Name) @Html.DisplayFor(modelItem => item.Patient.Surname)
+            </td>
+           
+            <td>
+                @Html.DisplayFor(modelItem => item.AdmissionDate)
+            </td>
+            
+            <td>
+                @Html.DisplayFor(modelItem => item.Ward.WardName)
+            </td>
+            
+            <td>
+                @Html.DisplayFor(modelItem => item.Bed.BedNo)
+            </td>
+                <td>
+                    <a asp-action="ViewPatient" class="btn btn-outline-success" asp-route-id="@item.Patient.PatientIDNumber">View Patient</a>
+                </td>
+                <td>
+                    <a asp-action="ViewBooking" class="btn btn-outline-primary" asp-route-id="@item.SurgeryBID">View Booking</a>
+                </td>
+
+
+            <td>
+                <a asp-action="Discharge" class="btn btn-outline-danger" asp-route-id="@item.PatientAdmissionID">Discharge</a>
+            </td>
+            
+
+        </tr>
+}
+    </tbody>
+</table>

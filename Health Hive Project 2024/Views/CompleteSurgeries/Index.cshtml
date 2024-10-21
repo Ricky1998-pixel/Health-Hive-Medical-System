@@ -1,0 +1,134 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.CompleteSurgery>
+
+@{
+    ViewData["Title"] = "Complete Surgeries";
+}
+
+<style>
+    .report-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+
+        .report-button:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Complete Surgeries</h1>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.First().SurgeryID)</th>
+                    <th>@Html.DisplayNameFor(model => model.First().SurgeryDate)</th>
+                    <th>@Html.DisplayNameFor(model => model.First().Session)</th>
+                    <th>Surgeon</th>
+                    <th>Patient</th>
+                    <th>Anesthesiologist</th>
+                    <th>@Html.DisplayNameFor(model => model.First().Theatre.TheatreName)</th>
+                    <th>Treatment Codes</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.SurgeryID)</td>
+                        <td>@Html.DisplayFor(modelItem => item.SurgeryDate)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Session)</td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Surgeon.Name)
+                            @Html.DisplayFor(modelItem => item.Surgeon.Surname)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Patient.Name)
+                            @Html.DisplayFor(modelItem => item.Patient.Surname)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Anaesthesiologist.Name)
+                            @Html.DisplayFor(modelItem => item.Anaesthesiologist.Surname)
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.Theatre.TheatreName)</td>
+                        <td>
+                            <ul>
+                                @if (item.SurgeryBookingTreatments != null && item.SurgeryBookingTreatments.Any())
+                                {
+                                    @foreach (var treatment in item.SurgeryBookingTreatments)
+                                    {
+                                        <li>@treatment.TreatmentRecords?.TreatmentCode - @treatment.TreatmentRecords?.Description</li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li>No treatments available</li>
+                                }
+                            </ul>
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                    onclick="setDeleteId('@item.CompleteSurgeryID')">
+                                Remove Record (Delete)
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div style="text-align: center; margin: 20px 0;">
+    <a href="@Url.Action("CompleteSurgeryReports", "CompleteSurgeries")" class="report-button">
+        View Complete Surgery Reports
+    </a>
+</div>
+
+<!-- Modal for Confirming Record Deletion -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Record Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to remove this record?
+                <br /><strong>Note:</strong> Removing this record will permanently delete it. Make sure you have authorization to do so. This record is kept for analytics and legal purposes.
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" method="post" asp-action="Delete">
+                    <input type="hidden" id="deleteRecordId" name="id" />
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function setDeleteId(id) {
+            document.getElementById('deleteRecordId').value = id;
+        }
+    </script>
+}
+
+
+
+
+
+
+

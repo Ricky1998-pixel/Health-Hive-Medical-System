@@ -1,0 +1,129 @@
+﻿@model Health_Hive_Project_2024.ViewModels.AdminReportViewModel
+
+@{
+    ViewData["Title"] = "Admin Report";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    <h3>Hospital Details</h3>
+    <p><strong>Hospital Name:</strong> @Model.GetHospitalName()</p>
+    <p><strong>Address:</strong> @Model.GetHospitalAddress()</p>
+    <p><strong>Contact Number:</strong> @Model.GetHospitalContactNumber()</p>
+    <p><strong>Email:</strong> @Model.GetHospitalEmail()</p>
+</div>
+
+<div>
+    <h3>Summary</h3>
+    <p><strong>Total Beds:</strong> @(Model.BedsCount == 0 ? "0" : Model.BedsCount.ToString())</p>
+    <p><strong>Total Medications:</strong> @(Model.MedicationsCount == 0 ? "0" : Model.MedicationsCount.ToString())</p>
+    <p><strong>Total Medical Professionals:</strong> @(Model.UsersCount == 0 ? "0" : Model.UsersCount.ToString())</p>
+    <p><strong>Total Operating Theatres:</strong> @(Model.TheatresCount == 0 ? "0" : Model.TheatresCount.ToString())</p>
+    <p><strong>Total Active Ingredients:</strong> @(Model.ActiveIngredientsCount == 0 ? "0" : Model.ActiveIngredientsCount.ToString())</p>
+</div>
+
+<!-- Additional report content can go here -->
+
+
+
+<div>
+    <h3>Medication Details</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Medication Name</th>
+                <th>Dosage Form</th>
+                <th>Active Ingredients</th>
+                <th>Quantity On Hand</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var medication in Model.Medications)
+            {
+                <tr>
+                    <td>@medication.MedicationName</td>
+                    <td>@medication.DosageForm?.DosageFormID</td> <!-- Replace with actual dosage form display if available -->
+                    <td>
+                        @foreach (var activeIngredient in medication.MedicationActiveIngredients)
+                        {
+                            @activeIngredient.ActiveIngredientRecords.IngredientName <br />
+                        }
+                    </td>
+                    <td>@medication.QuantityOnHand</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <h3>Medical Professionals</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Specialization</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.Users)
+            {
+                <tr>
+                    <td>@user.Name</td>
+                    <td>@user.Surname</td>
+                    <td>@user.Specialization</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <h3>Operating Theatres</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Theatre Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var theatre in Model.Theatres)
+            {
+                <tr>
+                    <td>@theatre.TheatreName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <h3>Bed Records</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Bed Number</th>
+                <th>Availability</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var bed in Model.Beds)
+            {
+                <tr>
+                    <td>@bed.BedNo</td>
+                    <td>@(bed.IsAvailable ? "Available" : "Not Available")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Download options -->
+<div>
+    <h3>Download Options</h3>
+    <a href="@Url.Action("DownloadPDF", "AdminReport")" class="btn btn-primary">Download PDF</a>
+    <a href="@Url.Action("DownloadExcel", "AdminReport")" class="btn btn-primary">Download Excel</a>
+</div>
+

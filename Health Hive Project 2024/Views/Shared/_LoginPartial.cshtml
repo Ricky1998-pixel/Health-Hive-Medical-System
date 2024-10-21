@@ -1,0 +1,449 @@
+﻿
+ @using Microsoft.AspNetCore.Identity
+ @using Health_Hive_Project_2024.Models
+@inject SignInManager<MedicalProfessionalRecords> SignInManager
+@inject UserManager<MedicalProfessionalRecords> UserManager
+
+<ul class="navbar-nav">
+
+    @if (User.Identity.IsAuthenticated)
+        {
+
+        @if (User.IsInRole("Admin"))
+        {
+            <style>
+                .nav_icon {
+                    width: 20px; /* Adjusted size for more compact icons */
+                    height: auto; /* Maintain the aspect ratio */
+                    margin-right: 6px; /* Reduced space between the icon and the text */
+                    vertical-align: middle; /* Align the image with the text */
+                }
+
+                .nav-item {
+                    margin-bottom: 5px; /* Reduced bottom margin for tighter spacing */
+                }
+
+                .nav-link {
+                    padding: 8px 10px; /* Adjusted padding for a more compact look */
+                }
+
+                .nav_name {
+                    font-size: 14px; /* Slightly smaller font size for more compact look */
+                }
+            </style>
+
+            <!-- Show admin-specific links -->
+            <li class="nav-item">
+                <a asp-area="" asp-controller="Home" asp-action="AdminDashboard" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/images/dashboard.png" alt="User Icon" class="nav_icon" />
+                    <span class="nav_name">My Dashboard</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="MedicalProfessionalRecords" asp-action="Create" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/images/register users.png" alt="User Icon" class="nav_icon" />
+                    <span class="nav_name">Register users</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="DayHospitals" asp-action="Create" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/images/hospital_619051.png" alt="User Icon" class="nav_icon" />
+                    <span class="nav_name">Day hospital record</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="OperatingTheatreRecords" asp-action="CreateMultipleRecords" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/images/operating theatre.png" alt="User Icon" class="nav_icon" />
+                    <span class="nav_name">Operating theatres, wards & beds</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="Conditions" asp-action="Create" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/images/condition.png" alt="User Icon" class="nav_icon" />
+                    <span class="nav_name">Condition diagnosis records & contra-indications</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="ActiveIngredientRecords" asp-action="Create" class="nav-link text-light nav_link d-flex align-items-center">
+                    <i class="bx bx-User nav_icon"></i>
+                    <span class="nav_name">
+                        Active ingredient records
+                    </span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="TreatmentRecords" asp-action="Create" class="nav-link text-light nav_link d-flex align-items-center">
+                    <i class="bx bx-User nav_icon"></i>
+                    <span class="nav_name">
+                        Treatment code records
+                    </span>
+                </a>
+            </li>
+
+        }
+        else if (User.IsInRole("Surgeon"))
+        {
+            <style>
+                .nav_icon {
+                    width: 24px; /* Adjust the width to your desired size */
+                    height: auto; /* Maintain the aspect ratio */
+                    margin-right: 8px; /* Space between the icon and the text */
+                    vertical-align: middle; /* Align the image with the text */
+                }
+            </style>
+
+
+
+            <!-- Show other links for authenticated users -->
+            <li class="nav-item">
+                <a asp-area="" asp-controller="Home" asp-action="SurgeonDashboard" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/images/dashboard.png" alt="User Icon" class="nav_icon" />
+                    <span class="nav_name">My Dashboard</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="Patients" asp-action="Index1" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/images/surgery booking.png" alt="User Icon" class="nav_icon" />
+                    <span class="nav_name">Surgeries & Patients</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="PrescriptionRecords" asp-action="Create" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/images/prescriptions.png" alt="Prescription Icon" class="nav_icon" />
+                    <span class="nav_name">Medication Prescription</span>
+                </a>
+            </li>
+
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="SurgeryBookings" asp-action="Index" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/images/view bookings.png" alt="View Bookings Icon" class="nav_icon" />
+                    <span class="nav_name">View Bookings</span>
+                </a>
+            </li>
+
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="PatientAdmissions" asp-action="ViewAdmissions" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/images/admitted patients.png" alt="Admitted Patients Icon" class="nav_icon" />
+                    <span class="nav_name">Admitted Patients</span>
+                </a>
+            </li>
+
+
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="CompleteSurgeries" asp-action="Index" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/images/chat.png" alt="Chats Icon" class="nav_icon" />
+                    <span class="nav_name">Complete Surgeries</span>
+                </a>
+            </li>
+
+        }
+        else if (User.IsInRole("Pharmacist"))
+        {
+            <style>
+                .nav_icon {
+                    width: 24px; /* Adjust the width to your desired size */
+                    height: auto; /* Maintain the aspect ratio */
+                    margin-right: 8px; /* Space between the icon and the text */
+                    vertical-align: middle; /* Align the image with the text */
+                }
+            </style>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+            <link rel="stylesheet" href="~/css/PharmacistDesktop.css" />
+            
+            <!-- Loading overlay element -->
+            <div id="loadingOverlay" class="loading-overlay">
+                <div class="hourglass-spinner"></div>
+            </div>
+
+
+
+
+
+            <!-- Show other links for authenticated users -->
+            <li class="nav-item">
+                <a asp-area="" asp-controller="Home" asp-action="PharmacistDashboard"
+                   class="nav-link text-light nav_link d-flex align-items-center"
+                   onclick="showLoading('PharmacistDashboard')">
+                    <img src="~/images/dashboard.png" alt="User Icon" class="nav_icon" />
+                    <span class="nav_name">My Dashboard</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="PrescriptionRecords" asp-action="Index"
+                   class="nav-link text-light nav_link d-flex align-items-center"
+                   onclick="showLoading('ViewPrescriptions')">
+                    <img src="~/images/view prescriptions.png" alt="Prescriptions Icon" class="nav_icon" />
+                    <span class="nav_name">View Prescriptions</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-area="" asp-controller="ManagePrescription" asp-action="Index"
+                   class="nav-link text-light nav_link d-flex align-items-center"
+                   onclick="showLoading('ViewPrescriptions')">
+                    <img src="~/images/anaes.png" alt="Prescriptions Icon" class="nav_icon" />
+                    <span class="nav_name">Anaesthesiologist Orders</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-area="" asp-controller="MedicationRecords" asp-action="Create"
+                   class="nav-link text-light nav_link d-flex align-items-center"
+                   onclick="showLoading('AddMedications')">
+                    <img src="~/images/add medication.png" alt="Add Medications Icon" class="nav_icon" />
+                    <span class="nav_name">Add New Medications</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="MedicationRecords" asp-action="Index"
+                   class="nav-link text-light nav_link d-flex align-items-center"
+                   onclick="showLoading('ViewMedications')">
+                    <img src="~/images/re order.png" alt="View Medications Icon" class="nav_icon" />
+                    <span class="nav_name">View Available Medications and Re-Orders</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="OrderItems" asp-action="Index"
+                   class="nav-link text-light nav_link d-flex align-items-center"
+                   onclick="showLoading('ViewOrders')">
+                    <img src="~/images/medication orders.png" alt="View Orders Icon" class="nav_icon" />
+                    <span class="nav_name">Medication Orders</span>
+                </a>
+            </li>
+
+
+            <script src="~/js/PharmacistDesktop.js"></script>
+        }
+        @if (User.IsInRole("Nurse"))
+        {
+            <style>
+                .nav_icon {
+                    width: 20px; /* Adjust the width of icons */
+                    height: auto;
+                    margin-right: 5px; /* Reduce margin between icon and text */
+                    vertical-align: middle;
+                }
+
+                .loading-overlay {
+                    /* Add styles for loading overlay */
+                }
+
+                .hourglass-spinner {
+                    /* Add styles for hourglass spinner */
+                }
+
+                .nav-link {
+                    padding: 5px 10px; /* Reduce padding on links */
+                    margin: 0; /* Remove margin between links */
+                    display: flex; /* Ensure flex display for alignment */
+                    align-items: center; /* Center align the items */
+                }
+
+                .nav-item {
+                    margin-bottom: 5px; /* Reduce space between nav items */
+                }
+            </style>
+
+            <div id="loadingOverlay" class="loading-overlay">
+                <div class="hourglass-spinner"></div>
+            </div>
+
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a asp-area="" asp-controller="Nurse" asp-action="Index"
+                       class="nav-link text-light nav_link"
+                       onclick="showLoading('NurseDashboard')">
+                        <img src="~/images/dashboard.png" alt="Nurse Dashboard Icon" class="nav_icon" />
+                        <span class="nav_name">My Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-action="Bookings" asp-controller="Nurse"
+                       class="nav-link text-light nav_link"
+                       onclick="showLoading('Bookings')">
+                        <img src="~/css/icons/medical-appointment.png" alt="Bookings Icon" class="nav_icon" />
+                        <span class="nav_name">Bookings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-action="Admitted" asp-controller="Nurse"
+                       class="nav-link text-light nav_link"
+                       onclick="showLoading('AdmittedPatients')">
+                        <img src="~/css/icons/hospital.png" alt="Admitted Patients Icon" class="nav_icon" />
+                        <span class="nav_name">Admitted Patients</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-action="Administers" asp-controller="Nurse"
+                       class="nav-link text-light nav_link"
+                       onclick="showLoading('AdministerMeds')">
+                        <img src="~/css/icons/test.png" alt="Administer Meds Icon" class="nav_icon" />
+                        <span class="nav_name">Administer Meds</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-action="Discharged" asp-controller="Nurse"
+                       class="nav-link text-light nav_link"
+                       onclick="showLoading('DischargedPatients')">
+                        <img src="~/css/icons/discharge.png" alt="Discharged Patients Icon" class="nav_icon" />
+                        <span class="nav_name">Discharged Patients</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-action="SearchPatient" asp-controller="Nurse"
+                       class="nav-link text-light nav_link"
+                       onclick="showLoading('PatientFile')">
+                        <img src="~/css/icons/folder.png" alt="Patient File Icon" class="nav_icon" />
+                        <span class="nav_name">Patient File</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-action="RetakeVitals" asp-controller="Nurse"
+                       class="nav-link text-light nav_link"
+                       onclick="showLoading('RetakeVitals')">
+                        <img src="~/css/icons/vital-signs.png" alt="Retake Vitals Icon" class="nav_icon" />
+                        <span class="nav_name">Retake Vitals</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-action="ReportDate" asp-controller="Nurse"
+                       class="nav-link text-light nav_link"
+                       onclick="showLoading('ReportDate')">
+                        <img src="~/images/report_icon.png" alt="Report Icon" class="nav_icon" />
+                        <span class="nav_name">Report</span>
+                    </a>
+                </li>
+
+               
+            </ul>
+
+            <script src="~/js/PharmacistDesktop.js"></script>
+        }
+
+        else if (User.IsInRole("Anesthesiologist"))
+        {
+            <style>
+                .nav_icon {
+                    width: 24px; /* Adjust the width to your desired size */
+                    height: auto; /* Maintain the aspect ratio */
+                    margin-right: 8px; /* Space between the icon and the text */
+                    vertical-align: middle; /* Align the image with the text */
+                }
+            </style>
+            <!-- Show other links for authenticated users -->
+            <li class="nav-item">
+                <a asp-area="" asp-controller="Home" asp-action="AnaesthesiologistDashboard" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/images/dashboard.png" alt="Nurse Dashboard Icon" class="nav_icon" />
+                    <span class="nav_name" style="font-size:0.8rem">My Dashboard</span>
+                 
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-area="" asp-controller="BookedPatient" asp-action="Index" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/css/icons/medical-appointment.png" alt="Bookings Icon" class="nav_icon" />
+                    <span class="nav_name" style="font-size:0.8rem">Booked patients</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a asp-area="" asp-controller="Admitted_Patient" asp-action="Index" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/css/icons/hospital.png" alt="Bookings Icon" class="nav_icon" />
+                    <span class="nav_name" style="font-size:0.8rem">Admitted Patients</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-area="" asp-controller="ExistingOrders" asp-action="Index" class="nav-link text-light nav_link d-flex align-items-center">
+                    <i class="fa-solid fa-list"></i>
+                    <span class="nav_name" style="font-size:0.8rem">Existing Medication Orders</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a asp-area="" asp-controller="Notification" asp-action="Index" class="nav-link text-light nav_link d-flex align-items-center">
+                    <i class="fa fa-bell"></i>
+                    <span class="nav_name" style="font-size:0.8rem">Notification</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a asp-area="" asp-controller="Anaesthesiologist_Reports" asp-action="Index" class="nav-link text-light nav_link d-flex align-items-center">
+                    <img src="~/images/report_icon.png" alt="Report Icon" class="nav_icon" />
+                    <span class="nav_name" style="font-size:0.8rem">Reports</span>
+                </a>
+            </li>
+        }
+        
+    }
+        
+    else
+    {
+
+
+        <style>
+            .nav_icon {
+                width: 24px; /* Adjust the width to your desired size */
+                height: auto; /* Maintain the aspect ratio */
+                margin-right: 8px; /* Space between the icon and the text */
+                vertical-align: middle; /* Align the image with the text */
+            }
+        </style>
+
+
+        <li class="nav-item">
+            <a id="admin-reg-link" asp-area="Identity" asp-page="/Account/Register" class="nav-link text-light nav_link">
+                <img src="~/images/registration.png" alt="Admin Registration Icon" class="nav_icon" />
+                <span class="nav_name">Admin Registration</span>
+            </a>
+        </li>
+
+
+
+
+    }
+</ul>
+
+<div class="modal fade" style="z-index: 5;" id="modal-d-report" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Report</h5>
+                </div>
+                <div class="modal-body">
+                    <form asp-action="Report" asp-controller="Nurse" method="post">
+                        <div class="row">
+                            <h5>Date range</h5>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label class="control-label">Date From:</label>
+                                    <input type="date" name="f" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label class="control-label">Date To:</label>
+                                    <input type="date" name="t" class="form-control" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                    
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+

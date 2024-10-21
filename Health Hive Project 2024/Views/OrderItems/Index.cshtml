@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.OrderItem>
+
+@{
+    ViewData["Title"] = "Order Items";
+}
+
+@if (ViewBag.Success != null && (bool)ViewBag.Success)
+{
+    <div class="alert alert-success">
+        Prescription has been dispensed successfully.
+    </div>
+}
+
+<div class="card">
+    <div class="card-body">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <form asp-action="Index" method="get">
+                    <div class="input-group mb-3">
+                        <input type="text" name="searchString" class="form-control" placeholder="Search by medication name" value="@ViewBag.SearchString" aria-label="Search by medication name" aria-describedby="button-search">
+                        <button class="btn btn-outline-primary" type="submit" id="button-search">Search</button>
+                    </div>
+                </form>
+               
+            </div>
+        </div>
+        <br />
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Medication.MedicationName)</th>
+                    <th>@Html.DisplayNameFor(model => model.Quantity)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Medication.MedicationName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Quantity)</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.ItemID" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <a asp-action="Details" asp-route-id="@item.ItemID" class="btn btn-sm btn-outline-info">Details</a>
+                            <a asp-action="Delete" asp-route-id="@item.ItemID" class="btn btn-sm btn-outline-danger">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+

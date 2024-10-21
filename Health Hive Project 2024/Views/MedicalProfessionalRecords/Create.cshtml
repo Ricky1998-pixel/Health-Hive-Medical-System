@@ -1,0 +1,289 @@
+﻿@model Health_Hive_Project_2024.Models.MedicalProfessionalRecords
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<style>
+    /* Custom Styles */
+    body {
+        background-image: url('/images/pexels-thirdman-5327647.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .modern-form-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 56px);
+        padding: 20px;
+    }
+
+    .modern-form {
+        width: 100%;
+        max-width: 500px;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        margin-top: 20px;
+    }
+
+    .modern-form h4 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #007bff;
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .modern-form h4 img {
+        border-radius: 50%;
+        width: 50px; /* Adjust the size of the image */
+        height: 50px; /* Adjust the size of the image */
+    }
+
+    .modern-form .form-group {
+        margin-bottom: 20px;
+    }
+
+    .modern-form label {
+        font-weight: bold;
+        color: #555;
+    }
+
+    .modern-form input[type="text"],
+    .modern-form select {
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        padding: 12px;
+        width: 100%;
+        transition: border-color 0.3s;
+        font-size: 1rem;
+    }
+
+    .modern-form input[type="text"]:focus,
+    .modern-form select:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .modern-form input[type="submit"] {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-size: 1rem;
+    }
+
+    .modern-form input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+
+    .modern-form .text-danger {
+        color: #dc3545;
+    }
+
+    .text-center {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .text-center a {
+        color: #007bff;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .text-center a:hover {
+        color: #0056b3;
+    }
+
+  
+
+    /* Custom Styles for Label Icons */
+    .label-icon {
+        width: 20px; /* Adjust the size as needed */
+        height: 20px; /* Adjust the size as needed */
+        border-radius: 50%; /* Make the icon rounded */
+        margin-right: 8px; /* Space between icon and text */
+        vertical-align: middle; /* Align the icon with the text */
+    }
+</style>
+
+<link rel="stylesheet" type="text/css" href="~/css/spinner.css" />
+
+<div class="modern-form-container">
+    <div class="modern-form">
+        <h4>
+            <img src="/images/medical professional registration.png" alt="Registration Icon" />
+            Medical Professional Registration
+        </h4>
+        <form id="createForm" asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label">
+                    <img src="/images/name registration.png" alt="Name Icon" class="label-icon" />
+                    Name
+                </label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Surname" class="control-label">
+                    <img src="/images/name registration.png" alt="Surname Icon" class="label-icon" />
+                    Surname
+                </label>
+                <input asp-for="Surname" class="form-control" />
+                <span asp-validation-for="Surname" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ContactNumber" class="control-label">
+                    <img src="/images/contact number.png" alt="Contact Number Icon" class="label-icon" />
+                    Contact Number
+                </label>
+                <input asp-for="ContactNumber" class="form-control" />
+                <span asp-validation-for="ContactNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EmailAddress" class="control-label">
+                    <img src="/images/email.png" alt="Email Address Icon" class="label-icon" />
+                    Email Address
+                </label>
+                <input asp-for="EmailAddress" class="form-control" />
+                <span asp-validation-for="EmailAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Specialization" class="control-label">
+                    <img src="/images/specialization.png" alt="Specialization Icon" class="label-icon" />
+                    Specialization
+                </label>
+                <select asp-for="Specialization" asp-items="Html.GetEnumSelectList<Health_Hive_Project_2024.Models.SpecializationType>()" class="form-control">
+                    <option value="">-- Select Specialization --</option>
+                </select>
+                <span asp-validation-for="Specialization" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="HealthCouncilRegistrationNumber" class="control-label">
+                    <img src="/images/hc registration number.png" alt="Health Council Icon" class="label-icon" />
+                    Health Council Registration Number
+                </label>
+                <input asp-for="HealthCouncilRegistrationNumber" class="form-control" />
+                <span asp-validation-for="HealthCouncilRegistrationNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Register" class="btn btn-primary" id="registerButton" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="text-center">
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<!-- Spinner HTML -->
+<div id="spinner-container">
+    <div id="spinner"></div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Registration Successful</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                The medical professional has been successfully registered. An email will be sent to them containing login credentials.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Function to show the spinner
+        function showSpinner() {
+            $('#spinner-container').show();
+        }
+
+        // Function to hide the spinner
+        function hideSpinner() {
+            $('#spinner-container').hide();
+        }
+
+        // Initially hide the spinner
+        hideSpinner();
+
+        $('#createForm').submit(function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            var $registerButton = $('#registerButton');
+            $registerButton.prop('disabled', true); // Disable the submit button
+
+            showSpinner(); // Show the spinner
+
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    hideSpinner(); // Hide the spinner
+                    $registerButton.prop('disabled', false); // Re-enable the submit button
+
+                    // Show the success modal
+                    $('#successModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    hideSpinner(); // Hide the spinner
+                    $registerButton.prop('disabled', false); // Re-enable the submit button
+
+                    // Handle error
+                    console.error(error);
+                    alert("An error occurred. Please try again.");
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

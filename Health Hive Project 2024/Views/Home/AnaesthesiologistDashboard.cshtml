@@ -1,0 +1,225 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<head>
+    <link href="~/css/AnaestheDashboard.css" rel="stylesheet" asp-append-version="true" />
+    <style>
+        /* Background Image for the Dashboard */
+        body {
+            background-image: url('/images/surgeon dashboard.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .datetime-container {
+            float: right;
+            text-align: right; /* Align text to the right */
+        }
+
+        .yes-greeting-container {
+            position: relative;
+            margin: 10px;
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+            border: 1px solid #f0f0f0;
+            box-shadow: 0 20px 30px #19222b0d;
+            border-radius: 20px;
+        }
+
+        .wrap {
+            margin-top: 40px;
+            padding: 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            }
+
+        .login-heading {
+            font-weight: 700;
+            font-size: 30px;
+            line-height: 41px;
+        }
+
+        .message {
+            font-size: 14px;
+            line-height: 19px;
+            color: #19222b;
+        }
+    </style>
+</head>
+
+<div class="mt-5 mb-3 yes-greeting-container" backgrond="transparent">
+    <div class="p-4 mb-4">
+        <div class="datetime-container">
+            <div class="time" id="time"></div>
+            <div class="date" id="date"></div>
+        </div>
+        <h2 class="login-heading mb-3 fw-800">
+            <span class="primary-text">Good Afternoon</span> @ViewData["Name"]
+        </h2>
+        <p class="message">Welcome to your dashboard</p>
+    </div>
+</div>
+
+<div class="row justify-content-center" style="margin-top: 2%;">
+    <div>
+        <div class="row card-body">
+            <div class="col-md-4">
+                <a asp-action="Index" asp-controller="SearchEngine">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <img src="~/css/icons/2355692.png" style="width:150px" />
+                            </div>
+                            <div class="row justify-content-center">
+                                <h5 class="text-center">Patient Record & Management</h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a asp-action="Index" asp-controller="VitalPatient">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <img src="~/css/icons/medical-appointment.png" style="width:150px" />
+                            </div>
+                            <div class="row justify-content-center">
+                                <h5 class="text-center">Vitals</h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a asp-action="Process" asp-controller="OrderMedication">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <img src="~/css/icons/vital-signs.png" style="width:150px" />
+                            </div>
+                            <div class="row justify-content-center">
+                                <h5 class="text-center">Quick Order Medication</h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="row card-body">
+            <div class="col-md-4">
+                <a asp-action="Index" asp-controller="BookedPatient">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <img src="~/css/icons/test.png" style="width:150px" />
+                            </div>
+                            <div class="row justify-content-center">
+                                <h5 class="text-center">View Booked Patients</h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a asp-action="Index" asp-controller="PostSurgery">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <img src="~/css/icons/medical-prescription_4239431.png" style="width:150px" />
+                            </div>
+                            <div class="row justify-content-center">
+                                <h5 class="text-center">Post Surgery</h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a asp-action="Index" asp-controller="Anaesthesiologist_Reports">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <img src="~/css/icons/report_1321938.png" style="width:150px" />
+                            </div>
+                            <div class="row justify-content-center">
+                                <h5 class="text-center">Reports</h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateDateTime() {
+        const now = new Date();
+        document.getElementById('time').textContent = now.toLocaleTimeString();
+        document.getElementById('date').textContent = now.toLocaleDateString();
+    }
+
+    setInterval(updateDateTime, 1000); // Update time every second
+    updateDateTime(); // Initialize immediately
+</script>
+
+<script>
+    async function fetchWeather() {
+        const apiKey = 'd3c5b0078ead4cecb51161433241909 ';
+        const city = 'Port Elizabeth';  // Set the city based on your location
+        const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&aqi=no`;
+
+        try {
+            const response = await fetch(url);
+            const weatherData = await response.json();
+            const temperature = weatherData.current.temp_c;
+            const description = weatherData.current.condition.text;
+            const icon = weatherData.current.condition.icon;
+
+            document.getElementById('weather').innerHTML = `
+                    <div>
+                        <img src="${icon}" alt="Weather Icon" style="width:50px; height:50px;" />
+                        <span style="font-size: 1.2rem;">${temperature}°C, ${description}</span>
+                    </div>
+                `;
+        } catch (error) {
+            console.error('Error fetching weather data:', error);
+            document.getElementById('weather').innerText = 'Weather info unavailable';
+        }
+    }
+
+    window.onload = function () {
+        fetchWeather();
+        updateTime();
+    };
+
+    function updateTime() {
+        const now = new Date();
+        const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const date = now.toLocaleDateString();
+
+        document.getElementById('time').innerText = time;
+        document.getElementById('date').innerText = date;
+
+        setTimeout(updateTime, 60000); // Update every minute
+    }
+</script>

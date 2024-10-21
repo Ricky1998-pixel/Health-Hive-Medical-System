@@ -1,0 +1,200 @@
+﻿.border-radius-lg {
+    border-radius: 0.5rem;
+}
+
+.loader {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 20px;
+}
+
+    .loader div {
+        display: inline-block;
+        position: absolute;
+        left: 8px;
+        width: 16px;
+        background: #4723D9;
+        animation: loaderAnimation 1.4s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+    }
+
+        .loader div:nth-child(1) {
+            left: 8px;
+            animation-delay: -0.32s;
+        }
+
+        .loader div:nth-child(2) {
+            left: 32px;
+            animation-delay: -0.16s;
+        }
+
+        .loader div:nth-child(3) {
+            left: 56px;
+            animation-delay: 0;
+        }
+
+@keyframes loaderAnimation {
+    0% {
+        top: 0px;
+        height: 20px;
+    }
+
+    50%, 100% {
+        top: 8px;
+        height: 4px;
+    }
+}
+
+.bg-gradient-primary {
+    background-image: linear-gradient(181deg, #4723D9 0%, #4d4945 100%);
+}
+
+.shadow-primary {
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(233, 30, 99, 0.4) !important;
+}
+
+.card {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.h6, .h6 {
+    font-weight: 600;
+    font-family: var(--bs-font-sans-serif);
+}
+
+.h6, .h6 {
+    /* font-size: 1rem; */
+    line-height: 1.625;
+}
+
+.card .card-body {
+    /* font-family: "Roboto", Helvetica, Arial, sans-serif; */
+    padding: 1.5rem;
+}
+
+.containerr {
+    height: 20vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.heading {
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+}
+
+.searchInputWrapper {
+    position: relative;
+}
+
+.searchInput {
+    background-image: linear-gradient(181deg, #4723D9 0%, #4d4945 100%);
+    width: 20rem;
+    height: 2rem;
+    padding: 0 1rem;
+    border-radius: 2rem;
+    border: none;
+    transition: transform 0.1s ease-in-out;
+    color: #fff !important;
+}
+
+::placeholder {
+    color: #a1a1a1;
+}
+
+.searchButton {
+    background: none; /* Removes the default button background */
+    border: none; /* Removes the default button border */
+    padding: 0; /* Removes any default padding */
+    margin: 0; /* Removes any default margin */
+    /* position: relative; */ /* Ensure the button does not affect layout */
+}
+/* hide the placeholder text on focus */
+:focus::placeholder {
+    text-indent: -999px
+}
+
+.searchInput:focus {
+    outline: none;
+    transform: scale(1.1);
+    transition: all 0.1s ease-in-out;
+}
+
+.searchInputIcon {
+    position: absolute;
+    right: 0.8rem;
+    top: 0.5rem;
+    color: #a1a1a1;
+    transition: all 0.1s ease-in-out;
+}
+
+.containerr:focus-within >
+.searchInputWrapper > .searchInputIcon {
+    right: 0.2rem;
+}
+
+
+
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+    /* Style the buttons that are used to open the tab content */
+    .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+    }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+            background-color: #ccc;
+        }
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+   /* border: 1px solid #ccc;*/
+    border-top: none;
+}
+
+.tabcontent {
+    animation: fadeEffect 1s; /* Fading effect takes 1 second */
+}
+
+/* Go from zero to full opacity */
+@keyframes fadeEffect {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Style the tab content */
+.tabconten {
+    display: none;
+    padding: 6px 12px;
+    /* border: 1px solid #ccc;*/
+    border-top: none;
+}
+
+.tabconten {
+    animation: fadeEffect 1s; /* Fading effect takes 1 second */
+}

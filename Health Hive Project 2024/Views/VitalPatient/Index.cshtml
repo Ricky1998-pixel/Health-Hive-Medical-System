@@ -1,0 +1,261 @@
+﻿@model IEnumerable<Vitals>
+
+@{
+    ViewData["Title"] = "Create Vital Patient";
+    int row = 0;
+}
+
+<head>
+    <style>
+        .success:hover {
+            background-color: #04AA6D;
+            color: white;
+        }
+    </style>
+    <link href="~/css/Anaesthe_SearchEngine.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/Anae_OrderStatus.css" rel="stylesheet" asp-append-version="true" />
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- JS, Popper.js, and Bootstrap JS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+</head>
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                    <h6 class="text-white text-capitalize ps-3">Vital Types & Values</h6>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="d-flex px-2" style="flex-direction: row-reverse;">
+                    <div class="my-auto mr-5 mt-2">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newVitalModal">New Vital Type</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive p-0">
+                    @if (Model.Any())
+                    {
+                        <table class="table align-items-center justify-content-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7" style="width:5px !important;"></th>
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Vital Name</th>
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Name Optional(1)</th>
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Name Optional(2)</th>
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Min Value</th>
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Max Value</th>
+                                    <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Unit Measure</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var vv in Model)
+                                {
+                                    row++;
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@row</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@vv.Name</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@vv.VitalName</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@vv.VitalName2</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@vv.MinimumValue</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@vv.MaxValue</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                      
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 text-sm">@vv.UnitOfMeasure</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                                <div class="my-auto">
+
+                                                    <button class="btn btn-warning btn-sm edit-button"
+                                                            data-id="@vv.VitalID">
+                                                        Edit
+                                                    </button>
+                                                    <button class="btn btn-danger btn-sm delete-button"
+                                                            data-id="@vv.VitalID">
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    }
+                    else
+                    {
+                        <div>
+                            <h5 class="text-danger">No Data Found</h5>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="newVitalModal" tabindex="-1" aria-labelledby="newVitalModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newVitalModalLabel">Add New Vital</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="AddVital" method="post">
+                    <div class="mb-3">
+                        <label for="VitalName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="Name" name="Name" required>
+                    </div>
+                      <div class="mb-3">
+                        <label for="VitalName" class="form-label">Name Optional(1)</label>
+                        <input type="text" class="form-control" id="VitalName" name="VitalName" >
+                    </div>
+                    <div class="mb-3">
+                        <label for="VitalName" class="form-label">Name Optional(2)</label>
+                        <input type="text" class="form-control" id="VitalName2" name="VitalName2" >
+                    </div>
+                    <div class="mb-3">
+                        <label for="MinValue" class="form-label">Min Value</label>
+                        <input type="number" class="form-control" id="MinimumValue" name="MinimumValue" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="MaxValue" class="form-label">Max Value</label>
+                        <input type="number" class="form-control" id="MaxValue" name="MaxValue" required>
+                    </div>
+                  
+                    <div class="mb-3">
+                        <label for="VitalName" class="form-label">Unit Measure</label>
+                        <input type="text" class="form-control" id="UnitOfMeasure" name="UnitOfMeasure" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Vital</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Vital</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="editModalContent"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div id="deleteModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Vital</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="deleteModalContent"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Handle Edit button click
+            $(".edit-button").click(function () {
+                const id = $(this).data("id");
+                $.get(`/VitalPatient/Edit/${id}`, function (data) {
+                    $("#editModalContent").html(data);
+                    $("#editModal").modal("show");
+                });
+            });
+
+       
+
+            // Handle Edit form submission
+            $(document).on("submit", "#editForm", function (e) {
+                e.preventDefault();
+                const form = $(this);
+                $.post(form.attr("action"), form.serialize(), function (data) {
+                    if (data.success) {
+                        location.reload(); // Reload the page on success
+                    }
+                });
+            });
+
+
+            // Handle Delete button click
+            $(".delete-button").click(function () {
+                const id = $(this).data("id");
+                $.get(`/VitalPatient/Delete/${id}`, function (data) {
+                    $("#deleteModalContent").html(data);
+                    $("#deleteModal").modal("show");
+                });
+            });
+
+            // Handle Delete form submission
+            $(document).on("submit", "#deleteForm", function (e) {
+                e.preventDefault();
+                const form = $(this);
+                $.post(form.attr("action"), form.serialize(), function (data) {
+                    if (data.success) {
+                        location.reload(); // Reload the page on success
+                    } else {
+                        alert(data.message || "Failed to delete the item."); // Handle error
+                    }
+                }).fail(function () {
+                    alert("An error occurred. Please try again.");
+                });
+            });
+        });
+    </script>
+}

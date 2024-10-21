@@ -1,0 +1,79 @@
+﻿@model Health_Hive_Project_2024.Models.Vitals
+
+@{
+    ViewData["Title"] = "Create";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <button type="button" class="btn btn-outline-primary" onclick="location.href='@Url.Action("Index", "PatientVitals")'">View Current Vitals</button>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            @* <div class="form-group">
+                <label asp-for="Name" class="control-label">Patient Name</label>
+                <input asp-for="Name" class="form-control" placeholder="Enter patient name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="Name" class="control-label">Patient Name</label>
+                <input asp-for="Name" class="form-control" placeholder="Enter patient name" style="width: 100px;" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="VitalName" class="control-label">Vital Name</label>
+                <select asp-for="VitalName" class="form-control">
+                    <option value="">-- Select a Vital --</option>
+                    <option value="Heart Rate">Heart Rate</option>
+                    <option value="Blood Pressure">Blood Pressure</option>
+                    <option value="Temperature">Temperature</option>
+                    <option value="Respiratory Rate">Respiratory Rate</option>
+                </select>
+                <span asp-validation-for="VitalName" class="text-danger"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label asp-for="MinimumValue" class="control-label">Minimum Value</label>
+                    <input asp-for="MinimumValue" class="form-control" placeholder="Min value" />
+                    <span asp-validation-for="MinimumValue" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="MaxValue" class="control-label">Maximum Value</label>
+                    <input asp-for="MaxValue" class="form-control" placeholder="Max value" />
+                    <span asp-validation-for="MaxValue" class="text-danger"></span>
+                </div>
+                @* <div class="form-group col-md-4">
+                    <label asp-for="CurrentValue" class="control-label">Current Value</label>
+                    <input asp-for="CurrentValue" class="form-control" placeholder="Current value" />
+                    <span asp-validation-for="CurrentValue" class="text-danger"></span>
+                </div> *@
+            </div>
+
+            @* <div class="form-group">
+                <label asp-for="Date" class="control-label">Submitted Date</label>
+                <input asp-for="Date" class="form-control" placeholder="MM/DD/YYYY" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+ *@
+            <div class="form-group text-right">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

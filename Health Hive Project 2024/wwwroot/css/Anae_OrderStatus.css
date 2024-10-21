@@ -1,0 +1,53 @@
+﻿/* Container for the animated status */
+.status-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Circle that represents the status */
+.status-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-bottom: 5px;
+    animation: blink 1s infinite; /* Blink effect with 1 second duration, repeating infinitely */
+}
+
+/* Blinking animation */
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Status text below the circle */
+.status-text {
+    font-size: 0.9em;
+    text-transform: capitalize;
+}
+
+/* Colors for different statuses */
+.status-Ordered {
+    background-color: blue;
+}
+
+.status-Dispensed {
+    background-color: green;
+}
+
+.status-Rejected {
+    background-color: red;
+}
+
+.status-Received {
+    background-color: orange;
+}

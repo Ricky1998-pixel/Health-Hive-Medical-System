@@ -1,0 +1,36 @@
+﻿@model Health_Hive_Project_2024.Models.VitalPatient
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>@Model.PatientName</h2>
+
+<div>
+    <h3>Vitals</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Vital Name</th>
+                <th>Min Value</th>
+                <th>Max Value</th>
+                <th>Current Value</th>
+                <th>Date Recorded</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vital in Model.Vitals)
+            {
+                <tr>
+                    <td>@vital.VitalName</td>
+                    <td>@vital.MinValue</td>
+                    <td>@vital.MaxValue</td>
+                    <td>@vital.CurrentValue</td>
+                    <td>@vital.DateRecorded.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<a class="btn btn-secondary" asp-action="Index">Back to List</a>

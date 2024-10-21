@@ -1,0 +1,171 @@
+﻿@model Health_Hive_Project_2024.Models.Patient
+
+@{
+    ViewData["Title"] = "Patient Details";
+}
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- Include jQuery and Bootstrap JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<style>
+    #patient-details {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        margin-top: 20px;
+    }
+
+        #patient-details p {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+            #patient-details p strong {
+                color: #333;
+            }
+
+        #patient-details .patient-info {
+            margin-top: 10px;
+        }
+
+    .not-found {
+        color: #dc3545;
+        font-weight: bold;
+    }
+
+    .btn-container {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px; /* Adjust spacing between buttons */
+    }
+
+        .btn-container .btn {
+            font-size: 0.875rem; /* Smaller font size */
+            padding: 0.5rem 1rem; /* Smaller padding */
+        }
+</style>
+
+<div id="patient-details">
+    @if (Model != null)
+    {
+        <input type="hidden" id="selectedPatientId" name="PatientID" value="@Model.PatientID" />
+        <div class="patient-info">
+            <p><strong>ID Number:</strong> @Model.PatientIDNumber</p>
+            <p><strong>Name:</strong> @Model.Name @Model.Surname</p>
+            <p><strong>Address:</strong> @Model.Address</p>
+            <p><strong>Contact Number:</strong> @Model.ContactNumber</p>
+            <p><strong>Email Address:</strong> @Model.EmailAddress</p>
+            <p><strong>Date of Birth:</strong> @Model.DateOfBirth.ToString("yyyy-MM-dd")</p>
+            <p><strong>Gender:</strong> @Model.Gender</p>
+        </div>
+        <div class="btn-container">
+            <a href="#" id="showVitals" data-id="@Model.PatientID" class="btn btn-primary">Patient Vitals</a>
+            <a href="#" id="showMedicalHistory" data-id="@Model.PatientID" class="btn btn-primary">Patient Medical History</a>
+        </div>
+    }
+    else
+    {
+        <p class="not-found">
+            Patient not found.
+            <a href="~/Patients/Create" class="btn btn-primary ml-2">Add Patient</a>
+        </p>
+    }
+</div>
+
+<!-- Modal Structure: Patient Vitals -->
+<div class="modal fade" id="patientVitalsModal" tabindex="-1" role="dialog" aria-labelledby="patientVitalsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="patientVitalsModalLabel">Patient Vitals</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="patientVitalsContent">
+                    <!-- Content will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Structure: Patient Medical History -->
+<div class="modal fade" id="medicalHistoryModal" tabindex="-1" role="dialog" aria-labelledby="medicalHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="medicalHistoryModalLabel">Patient Medical History</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="patientMedicalHistoryContent">
+                    <!-- Content will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Event handler for the "Patient Vitals" button
+        $('#showVitals').on('click', function (e) {
+            e.preventDefault(); // Prevent default link behavior
+
+            var patientId = $(this).data('id'); // Get the patient ID from the button's data attribute
+
+            // Make an AJAX request to fetch the patient vitals
+            $.ajax({
+                url: '@Url.Action("GetPatientVitals", "PatientVitals")', // Updated URL to match controller and action
+                type: 'GET',
+                data: { id: patientId },
+                success: function (data) {
+                    // Load the response into the modal body
+                    $('#patientVitalsContent').html(data);
+
+                    // Show the modal
+                    $('#patientVitalsModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error('An error occurred:', error);
+                }
+            });
+        });
+
+        // Event handler for the "Patient Medical History" button
+        $('#showMedicalHistory').on('click', function (e) {
+            e.preventDefault(); // Prevent default link behavior
+
+            var patientId = $(this).data('id'); // Get the patient ID from the button's data attribute
+
+            // Make an AJAX request to fetch the patient's medical history
+            $.ajax({
+                url: '@Url.Action("GetPatientMedicalHistory", "MedicalHistories")', // Updated URL to match your controller and action
+                type: 'GET',
+                data: { id: patientId },
+                success: function (data) {
+                    // Load the response into the modal body
+                    $('#patientMedicalHistoryContent').html(data);
+
+                    // Show the modal
+                    $('#medicalHistoryModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error('An error occurred:', error);
+                    alert('An error occurred while fetching the patient\'s medical history. Please try again.');
+                }
+            });
+        });
+
+    });
+
+</script>
+

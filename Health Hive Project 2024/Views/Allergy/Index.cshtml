@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.Allergy>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Severity)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Severity)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.AllergyID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.AllergyID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.AllergyID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

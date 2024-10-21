@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Data.ViewModels.AdmitPat>
+
+<h2>Admitted Patient Details</h2>
+
+<div class="row">
+    @foreach (var patient in Model)
+    {
+        <div class="col-md-6 col-lg-4 mb-3">
+            <!-- Adjust column sizes as needed -->
+            <div class="card p-3" style="background-color: #e6ffe6; border-radius: 15px;">
+                <h3>Patient Information</h3>
+                <p><strong>Name:</strong> @patient.Patient.Name @patient.Patient.Surname</p>
+                <p><strong>Address:</strong> @patient.Patient.Address</p>
+                <p><strong>Contact Number:</strong> @patient.Patient.ContactNumber</p>
+                <p><strong>Email:</strong> @patient.Patient.EmailAddress</p>
+            </div>
+
+            <div class="card p-3 mt-3" style="background-color: #e6ffe6; border-radius: 15px;">
+                <h3>Ward and Bed Information</h3>
+                <p><strong>Ward Number:</strong> @patient.Ward</p>
+                <p><strong>Bed Number:</strong> @patient.Bed</p>
+            </div>
+
+            <div class="card p-3 mt-3" style="background-color: #e6ffe6; border-radius: 15px;">
+                <h3>Physical Details</h3>
+                <p><strong>Height:</strong> @patient.Height cm</p>
+                <p><strong>Weight:</strong> @patient.Weight kg</p>
+            </div>
+
+            <div class="card p-3 mt-3" style="background-color: #e6ffe6; border-radius: 15px;">
+                <h3>Booking Information</h3>
+                <p><strong>Booking ID:</strong> @patient.BookingID</p>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+
+

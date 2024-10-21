@@ -1,0 +1,185 @@
+﻿@* @model IEnumerable<Health_Hive_Project_2024.Models.RejectedPrescription>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.PrescriptionID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SurgeonID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PatientID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PrescriptionStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PharmacistID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MedicationID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Instructions)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RejectionReason)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RejectedOn)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PrescriptionID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SurgeonID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PatientID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PrescriptionStatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PharmacistID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MedicationID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Instructions)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RejectionReason)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RejectedOn)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.RejectedPrescriptionID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.RejectedPrescriptionID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.RejectedPrescriptionID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+ *@
+
+
+
+
+
+
+@model IEnumerable<Health_Hive_Project_2024.Models.RejectedPrescription>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Prescription Records</h1>
+
+@{
+    var groupedPrescriptions = Model.GroupBy(p => p.PrescriptionID);
+}
+
+<div class="container">
+    @foreach (var group in groupedPrescriptions)
+    {
+        <div class="card mb-3">
+            <div class="card-header bg-primary text-white">
+                <h5>Prescription ID: @group.Key</h5> <!-- Group by PrescriptionID -->
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Surgeon:</strong> @group.First().Surgeon.Name @group.First().Surgeon.Surname
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Pharmacist:</strong> @group.First().Pharmacist.Name @group.First().Pharmacist.Surname
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Patient:</strong> @group.First().Patient.Name @group.First().Patient.Surname
+                    </div>
+                </div>
+
+                <!-- Display medications in sub-sections -->
+                <hr />
+                <div class="row">
+                    <div class="col-md-12">
+                        <h6>Medications</h6>
+                        <ul class="list-group">
+                            @foreach (var item in group)
+                            {
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <strong>Medication:</strong> @item.Medication.MedicationName
+                                        </div>
+                                        <div class="col-md-2">
+                                            <strong>Quantity:</strong> @item.Quantity
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Instructions:</strong> @item.Instructions
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Display rejection info -->
+                <hr />
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Rejection Reason:</strong> @group.First().RejectionReason
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Rejected On:</strong> @group.First().RejectedOn.ToShortDateString()
+                    </div>
+                </div>
+
+                <!-- Action Links -->
+                <hr />
+                <div class="row">
+                    <div class="col-md-12">
+                        <a asp-action="Edit" asp-route-id="@group.First().RejectedPrescriptionID" class="btn btn-warning">Edit</a>
+                        <a asp-action="Details" asp-route-id="@group.First().RejectedPrescriptionID" class="btn btn-info">Details</a>
+                        <a asp-action="Delete" asp-route-id="@group.First().RejectedPrescriptionID" class="btn btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

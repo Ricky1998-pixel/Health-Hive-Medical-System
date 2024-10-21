@@ -1,0 +1,74 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.DispensedPrescription>
+
+@{
+    ViewData["Title"] = "Dispensed Prescriptions";
+}
+
+<h1>Dispensed Prescriptions</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+@{
+    // Group dispensed prescriptions by PrescriptionID
+    var groupedPrescriptions = Model.GroupBy(p => p.PrescriptionID);
+}
+
+@foreach (var prescriptionGroup in groupedPrescriptions)
+{
+    <div class="prescription-container" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 10px;">
+        <h3>Prescription ID: @prescriptionGroup.Key</h3>
+
+        <div class="prescription-details" style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 10px;">
+            <div style="border: 1px solid #ddd; padding: 10px; border-radius: 8px;">
+                <strong>Surgeon:</strong>
+                @Html.DisplayFor(model => prescriptionGroup.FirstOrDefault().Surgeon.Name) @Html.DisplayFor(model => prescriptionGroup.FirstOrDefault().Surgeon.Surname)
+            </div>
+
+            <div style="border: 1px solid #ddd; padding: 10px; border-radius: 8px;">
+                <strong>Patient:</strong>
+                @Html.DisplayFor(model => prescriptionGroup.FirstOrDefault().Patient.Name) @Html.DisplayFor(model => prescriptionGroup.FirstOrDefault().Patient.Surname)
+            </div>
+
+            <div style="border: 1px solid #ddd; padding: 10px; border-radius: 8px;">
+                <strong>Date:</strong>
+                @Html.DisplayFor(model => prescriptionGroup.FirstOrDefault().Date)
+            </div>
+
+            <div style="border: 1px solid #ddd; padding: 10px; border-radius: 8px;">
+                <strong>Status:</strong>
+                @Html.DisplayFor(model => prescriptionGroup.FirstOrDefault().PrescriptionStatus)
+            </div>
+
+            <div style="border: 1px solid #ddd; padding: 10px; border-radius: 8px;">
+                <strong>Pharmacist:</strong>
+                @Html.DisplayFor(model => prescriptionGroup.FirstOrDefault().Pharmacist.Name) @Html.DisplayFor(model => prescriptionGroup.FirstOrDefault().Pharmacist.Surname)
+            </div>
+        </div>
+
+        <div class="medication-list" style="margin-top: 15px;">
+            <h4>Medications</h4>
+            <ul style="list-style-type: none; padding-left: 0;">
+                @foreach (var medication in prescriptionGroup)
+                {
+                    <li style="border: 1px solid #eee; padding: 10px; margin-bottom: 10px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>Medication:</strong> @Html.DisplayFor(modelItem => medication.Medication.MedicationName)<br />
+                                <strong>Quantity:</strong> @Html.DisplayFor(modelItem => medication.Quantity)<br />
+                                <strong>Instructions:</strong> @Html.DisplayFor(modelItem => medication.Instructions)
+                            </div>
+                            <div>
+                                <a asp-action="Edit" asp-route-id="@medication.DispensedPrescriptionID">Edit</a> |
+                                <a asp-action="Details" asp-route-id="@medication.DispensedPrescriptionID">Details</a> |
+                                <a asp-action="Delete" asp-route-id="@medication.DispensedPrescriptionID">Delete</a>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+

@@ -1,0 +1,2600 @@
+﻿@model Health_Hive_Project_2024.Models.PatientDetailJoinedModel
+@{
+    int row = 0;
+    int roww = 0;
+    int rowww = 0;
+    int rowwww = 0;
+    int rowwwww = 0;
+    int vital = 0;
+    int chronicM = 0;
+    int alleg = 0;
+    int ingrd = 0;
+
+}
+<head>
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+    <!-- jQuery (required for toastr) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <style>
+        .toast-success {
+            background-color: rgba(40, 167, 69, 1) !important; /* Change to a green background */
+            opacity: 1 !important; /* Set opacity to 100% */
+            color: white !important; /* Ensure the text is white for better contrast */
+        }
+
+        .toast-message {
+            color: black !important; /* Ensure the text is visible */
+        }
+    </style>
+    <style>
+        .success:hover {
+            background-color: #04AA6D;
+            color: white;
+        }
+    </style>
+    <link href="~/css/Anaesthe_SearchEngine.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/Anae_OrderStatus.css" rel="stylesheet" asp-append-version="true" />
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- JS, Popper.js, and Bootstrap JS -->
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+</head>
+<script>
+    $(document).ready(function () {
+        var successMessage = '@TempData["SuccessMessage"]';
+
+        // Log the message in the browser's console for debugging
+        console.log("Success Message: ", successMessage);
+
+        if (successMessage && successMessage !== '') {
+            toastr.success(successMessage, 'Success', {
+                positionClass: 'toast-top-right',
+                timeOut: 5000
+            });
+        }
+    });
+</script>
+
+
+<input type="hidden" value="@Model.PatientID" id="PatientID" name="PatientID" />
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                    <h6 class="text-white text-capitalize ps-3">Patient Information</h6>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <!-- Load icon library -->
+                <div class="table-responsive p-0">
+                    <table class="table align-items-center justify-content-center mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary  font-weight-bolder opacity-7">View, manage and gain insights</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                              
+                                                <div class="my-auto">
+                                                <h6 class="mb-0 ml-3 text-sm">Identity No : @Model.Patient.PatientIDNumber</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                              
+                                                <div class="my-auto">
+
+                                                <h6 class="mb-0 ml-3 text-sm">Full Names : @Model.Patient.Name @Model.Patient.Surname</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                     <td>
+                                        <div class="d-flex px-2">
+                                           
+                                            <div class="my-auto">
+
+                                                <h6 class="mb-0 ml-3 text-sm">DateOfBirth : @Model.Patient.DateOfBirth</h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex px-2">
+                                              
+                                                <div class="my-auto">
+                                                <h6 class="mb-0 ml-3 text-sm">Gender : @Model.Patient.Gender</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+
+                                            <div class="d-flex px-2">
+                                              
+                                                <div class="my-auto">
+                                                <h6 class="mb-0 ml-3 text-sm">Contact Number : @Model.Patient.ContactNumber</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                       <td>
+
+                                        <div class="d-flex px-2">
+                                           
+                                            <div class="my-auto">
+                                                <h6 class="mb-0 ml-3 text-sm">Address : @Model.Patient.Address 
+                                                    </h6>
+                                            </div>
+                                            </div>
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"><hr /></td>
+                                    </tr>
+                                     @if (Model.GetAdmission.Any())
+                                {
+                            <tr>
+                               
+                                    @foreach (var med in Model.GetAdmission)
+                                    {
+                                        <td>
+                                            <div class="d-flex px-2">
+
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 ml-3 text-sm">Admit Date : @med.AdmissionDate</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+
+                                            <div class="d-flex px-2">
+
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 ml-3 text-sm">Ward : @med.Ward.WardName</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+
+                                            <div class="d-flex px-2">
+
+                                                <div class="my-auto">
+                                                    <h6 class="mb-0 ml-3 text-sm">
+                                                       Bed No : @med.Bed.BedNo
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    }
+                              
+                            </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="alert alert-warning text-center" role="alert">
+                                            No yet Admitted! Check scheduled date.
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Tab links -->
+                <div class="tab">
+                    <button class="tablinks" id="defaultOpen" onclick="openCity(event, 'London')">Medication Orders</button>
+                    <button class="tablinks" onclick="openCity(event, 'Paris')">Vitals</button>
+                    <button class="tablinks" onclick="openCity(event, 'Tokyo')">Allergies</button>
+                    <button class="tablinks" onclick="openCity(event, 'Condition')">Chronic Condition</button>
+                    <button class="tablinks" onclick="openCity(event, 'CurrentMed')">Chronic Medication</button>
+                </div>
+
+                <!-- Tab content -->
+                <div id="London" class="tabcontent">
+                    <div class="d-flex px-2" style="flex-direction: row-reverse;">
+                        <div class="my-auto mr-5 mt-2">
+                            <button id="showNewOrderForm" class="btn btn-primary">New Order</button>
+                        </div>
+                    </div>
+
+
+
+                    <div class="d-flex justify-content-start mb-3">
+                        <button id="default" class="btn btn-outline-primary tablinks active" onclick="filterOrders(event, 'allOrders')">All Orders</button>
+                        <button class="btn btn-outline-primary ml-2 tablinks" onclick="filterOrders(event, 'orderedOrders')">Ordered</button>
+                        <button class="btn btn-outline-primary ml-2 tablinks" onclick="filterOrders(event, 'dispensedOrders')">Dispensed</button>
+                        
+                        <button class="btn btn-outline-primary ml-2 tablinks" onclick="filterOrders(event, 'receivedOrders')">Received</button>
+                        <button class="btn btn-outline-primary ml-2 tablinks" onclick="filterOrders(event, 'rejectedOrders')">Rejected</button>
+                    </div>
+
+                    <br />
+                  
+                    @if (Model.MedicationOrders.Any())
+                    {
+                        <div class="table-responsive p-0">
+
+                            <div class="tabconten" id="allOrders">
+                                <table class="table align-items-center justify-content-center mb-0">
+                                    <thead style="height:50px;width:50px;">
+                                        <tr>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7" style="width:5px !important; "></th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">#Order No</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Is Urgent</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Instruction</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Status</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Time Ordered</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        @foreach (var med in Model.MedicationOrders.OrderBy(a => a.Status))
+                                        {
+                                            row++;
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@row</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.PrescriptionOrder</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm @(med.IsUrgent ? "text-danger" : "")">
+                                                                @(med.IsUrgent ? "Yes" : "No")
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.Instructions</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="status-container">
+                                                        <div class="status-circle @("status-" + med.Status)"></div>
+                                                        <div class="status-text">@med.Status</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.Date</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                <!-- View Medication Button -->
+                                                
+                                                    <td>
+                                                    @if (med.GetMedicationData.Any())
+                                                    {
+                                                        @if (med.Status == OrderStatus.Received)
+                                                        {
+
+                                                            <button type="button" class="btn btn-primary view-med-btn"
+                                                                    data-bs-toggle="modal" data-bs-target="#viewMedicationModal"
+                                                                    data-order-id="@med.OrderMedicationID">
+                                                                View Medications
+                                                            </button>
+
+
+                                                        }
+                                                        @if (med.Status == OrderStatus.Dispensed)
+                                                        {
+                                                            <button type="button" class="btn btn-primary view-meddd-btn"
+                                                                    data-bs-toggle="modal" data-bs-target="#viewMedicationModal"
+                                                                    data-order-id="@med.OrderMedicationID">
+                                                                View Medications
+                                                            </button>
+
+                                                        }
+                                                        else if (med.Status == OrderStatus.Ordered)
+                                                        {
+                                                            <button type="button" class="btn btn-primary view-medication-btn"
+                                                                    data-bs-toggle="modal" data-bs-target="#viewMedicationModal"
+                                                                    data-order-id="@med.OrderMedicationID">
+                                                                View Medications
+                                                            </button>
+                                                        }
+                                                        else if (med.Status == OrderStatus.Rejected)
+                                                        {
+                                                            <button type="button" class="btn btn-primary view-meddd-btn"
+                                                                    data-bs-toggle="modal" data-bs-target="#viewMedicationModal"
+                                                                    data-order-id="@med.OrderMedicationID">
+                                                                View Medications
+                                                            </button>
+                                                        }
+                                                        <!-- View Medication Button (inside a loop if needed) -->
+                                                        
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="alert alert-warning text-center" role="alert">
+                                                            No medications added yet!
+                                                        </div>
+                                                    }
+                                                </td>
+                                                
+                                                <!-- Add Medication Button -->
+                                                <!-- View Medication Button -->
+                                                @if (med.Status == OrderStatus.Received)
+                                                {
+
+                                                    <!-- Edit Order Button -->
+                                                    <td>
+                                                        <div class="alert alert-success text-center" role="alert">
+                                                            Received in Theater!
+                                                        </div>
+
+                                                    </td>
+
+
+                                                }
+                                                @if (med.Status == OrderStatus.Dispensed){
+                                                    <td>
+                                                        @* <a class="btn success" style=" border-color: #04AA6D;color: green; ">
+                                                            Receive
+                                                        </a> *@
+                                                        <a asp-controller="OrderMedication" asp-action="ChangeStatus" asp-route-id="@med.OrderMedicationID" asp-route-PatientID="@Model.Patient.PatientID" style="background-color:white; box-shadow: 0 4px 6px 0 black;" class="btn btn-shadow-primary" asp-route-newStatus="Received">Receive</a>
+                                                    </td>
+
+                                                }
+
+
+                                                @if (med.Status == OrderStatus.Ordered)
+                                                {
+                                                    <td>
+                                                        <button type="button" class="btn btn-primary add-medication-btn" data-bs-toggle="modal"
+                                                                data-bs-target="#addMedicationModal" data-order-id="@med.OrderMedicationID">
+                                                            Add Medications
+                                                        </button>
+
+                                                    </td>
+                                                    <!-- Edit Order Button -->
+                                                    <td>
+                                                        <button type="button" class="btn btn-secondary edit-order-btn"
+                                                                data-bs-toggle="modal" data-bs-target="#editOrderModal"
+                                                                data-order-id="@med.OrderMedicationID" data-patient-id="@Model.PatientID"
+                                                                data-is-urgent="@med.IsUrgent" data-instructions="@med.Instructions"
+                                                                title="Edit Order">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+
+                                                    </td>
+
+
+                                                }
+                                            </tr>
+
+                                         @*    <!-- Modal for Editing IsUrgent and Instructions -->
+                                            <div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <form method="post" action="/OrderMedication/EditOrder">
+                                                            <input type="hidden" id="orderId" name="OrderMedicationID">
+                                                            <input type="hidden" id="patientId" name="PatientID" value="@Model.Patient.PatientID"> <!-- Pass PatientID -->
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="editOrderModalLabel">Edit Order</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <input type="hidden" id="orderId" name="OrderMedicationID">
+                                                                <div class="mb-3">
+                                                                    <label for="isUrgent" class="form-label">Is Urgent</label>
+                                                                    <select class="form-select" id="isUrgent" name="IsUrgent">
+                                                                        <option value="true">Yes</option>
+                                                                        <option value="false">No</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="instructions" class="form-label">Instructions</label>
+                                                                    <textarea class="form-control" id="instructions" name="Instructions" rows="3"></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div> *@
+                                            <!-- Modal Structure -->
+                                            <div class="modal fade" id="newOrderModal" tabindex="-1" role="dialog" aria-labelledby="newOrderModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <div class="alert alert-info mt-4" role="alert">
+                                                                <strong>Note:</strong> Creating an order does not mean medication is automatically added to the order.
+                                                                You will need to manually add medications to this order after it is created.
+                                                            </div>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body" id="modalBodyContent">
+                                                            <!-- The form will be injected here -->
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Add Medication Modal -->
+                                            <div class="modal fade" id="addMedicationModal" tabindex="-1" aria-labelledby="addMedicationModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="addMedicationModalLabel">Add Medication - Order #@med.PrescriptionOrder</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form id="addMedicationForm" method="post" asp-controller="OrderMedication" asp-action="AddMedication">
+                                                                <!-- Corrected hidden field for OrderMedicationID -->
+                                                                <input type="hidden" value="@med.OrderMedicationID" id="OrderMedicationID" name="OrderMedicationID" />
+
+                                                                <div class="mb-3">
+                                                                    <label for="MedicationId" class="form-label">Select Medication</label>
+                                                                    <select class="form-select" id="MedicationId" name="MedicationId">
+                                                                        @foreach (var medication in Model.MedicationRecords.OrderBy(a => a.MedicationName))
+                                                                        {
+                                                                            <option value="@medication.MedicationID">@medication.MedicationName</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="Quantity" class="form-label">Quantity</label>
+                                                                    <input type="number" class="form-control" id="Quantity" name="Quantity" required />
+                                                                </div>
+
+                                                              @*   <div class="mb-3">
+                                                                    <label for="Note" class="form-label">Note</label>
+                                                                    <input type="text" class="form-control" id="Note" name="Note" required />
+                                                                </div> *@
+                                                            </form>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <button type="submit" form="addMedicationForm" class="btn btn-primary">Add Medication</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Medication list Modal -->
+                                            <div class="modal fade" id="viewMedicationModal" tabindex="-1" aria-labelledby="viewMedicationModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="viewMedicationModalLabel">Medication Details</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div id="medicationListContent">
+                                                                <!-- Loading message or data will appear here -->
+                                                                Loading medications...
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </tbody>
+                                   
+                                </table>
+                            </div>
+                            <div class="tabconten" id="dispensedOrders">
+                                <table class="table align-items-center justify-content-center mb-0">
+                                    <thead style="height:50px;width:50px;">
+                                        <tr>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7" style="width:5px !important; "></th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">#Order No</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Is Urgent</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Instruction</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Status</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Time Ordered</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                                        </tr>
+                                    </thead>
+
+                                  
+                                    <tbody>
+
+                                        @foreach (var med in Model.MedicationOrders.Where(A => A.Status == OrderStatus.Dispensed))
+                                        {
+                                            roww++;
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@roww</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.PrescriptionOrder</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm @(med.IsUrgent ? "text-danger" : "")">
+                                                                @(med.IsUrgent ? "Yes" : "No")
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.Instructions</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="status-container">
+                                                        <div class="status-circle @("status-" + med.Status)"></div>
+                                                        <div class="status-text">@med.Status</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.Date</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                <!-- View Medication Button -->
+                                                <td>
+                                                    <!-- View Medication Button (inside a loop if needed) -->
+                                                    <button type="button" class="btn btn-primary medication"
+                                                            data-bs-toggle="modal" data-bs-target="#viewMedicationM"
+                                                            data-order-id="@med.OrderMedicationID">
+                                                        View Medications
+                                                    </button>
+                                                </td>
+
+                                                @if (med.Status == OrderStatus.Dispensed)
+                                                {
+                                                    <!-- Edit Order Button -->
+                                                    <td>
+                                                        @* <a class="btn success" style=" border-color: #04AA6D;color: green; ">
+                                            Receive
+                                            </a> *@
+                                                        <a asp-controller="OrderMedication" asp-action="ChangeStatus" asp-route-id="@med.OrderMedicationID" asp-route-PatientID="@Model.Patient.PatientID" style="background-color:white; box-shadow: 0 4px 6px 0 black;" class="btn btn-shadow-primary" asp-route-newStatus="Received">Receive</a>
+                                                    </td>
+
+                                                  
+                                                }
+
+                                            </tr>
+                                            <style>
+                                                .success:hover {
+                                                    background-color: #04AA6D;
+                                                    color: white;
+                                                }
+                                            </style>
+
+
+                                            <!-- Medication list Modal -->
+                                            <div class="modal fade" id="viewMedicationM" tabindex="-1" aria-labelledby="viewMedicationModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="viewMedicationModalLabel">Medication Details</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div id="medicationListCon">
+                                                                <!-- Loading message or data will appear here -->
+                                                                Loading medications...
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Update Note Modal -->
+                                            <div class="modal fade" id="updateNoteModal" tabindex="-1" aria-labelledby="updateNoteModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <form id="updateNoteForm">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="updateNoteModalLabel">Update Medication Note</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <input type="hidden" id="medicineStoreId">
+                                                                <div class="mb-3">
+                                                                    <label for="noteInput" class="form-label">Note</label>
+                                                                    <input type="text" class="form-control" id="noteInput" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        }
+
+                                    </tbody>
+                                   
+                                </table>
+
+                            </div>
+                            <div class="tabconten" id="orderedOrders">
+
+                                <table class="table align-items-center justify-content-center mb-0">
+                                    <thead style="height:50px;width:50px;">
+                                        <tr>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7" style="width:5px !important; "></th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">#Order No</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Is Urgent</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Instruction</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Status</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Time Ordered</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        @foreach (var med in Model.MedicationOrders.Where(A => A.Status == OrderStatus.Ordered))
+                                        {
+                                            rowww++;
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@rowww</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.PrescriptionOrder</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm @(med.IsUrgent ? "text-danger" : "")">
+                                                                @(med.IsUrgent ? "Yes" : "No")
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.Instructions</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="status-container">
+                                                        <div class="status-circle @("status-" + med.Status)"></div>
+                                                        <div class="status-text">@med.Status</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.Date</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                <!-- View Medication Button -->
+
+                                                <td>
+                                                    @if (med.GetMedicationData.Any())
+                                                    {
+                                                        <!-- View Medication Button (inside a loop if needed) -->
+                                                        <button type="button" class="btn btn-primary view-medica"
+                                                                data-bs-toggle="modal" data-bs-target="#viewMedicatio"
+                                                                data-order-id="@med.OrderMedicationID">
+                                                            View Medications
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="alert alert-warning text-center" role="alert">
+                                                            No medications added yet!
+                                                        </div>
+                                                    }
+                                                </td>
+
+                                                <!-- Add Medication Button -->
+                                                <!-- View Medication Button -->
+                                                <td>
+                                                    <button type="button" class="btn btn-primary add-medication" data-bs-toggle="modal"
+                                                            data-bs-target="#MedicationModal" order-id="@med.OrderMedicationID">
+                                                        Add Medications
+                                                    </button>
+                                                </td>
+
+                                                @if (med.Status == OrderStatus.Ordered)
+                                                {
+                                                    <!-- Edit Order Button -->
+                                                    <td>
+                                                        <button type="button" class="btn btn-secondary edit-order-btn"
+                                                                data-bs-toggle="modal" data-bs-target="#editOrderModal"
+                                                                data-order-id="@med.OrderMedicationID" data-patient-id="@Model.PatientID"
+                                                                data-is-urgent="@med.IsUrgent" data-instructions="@med.Instructions"
+                                                                title="Edit Order">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+
+                                                    </td>
+
+
+                                                }
+                                            </tr>
+
+                                         
+
+                                            <!-- Add Medication Modal -->
+                                            <div class="modal fade" id="MedicationModal" tabindex="-1" aria-labelledby="addMedicationModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <form id="MedicationForm" method="post" asp-controller="OrderMedication" asp-action="AddMedication">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="addMedicationModalLabel">Add Medication - Order #@med.PrescriptionOrder</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                       
+                                                                <!-- Corrected hidden field for OrderMedicationID -->
+                                                                <input type="hidden"  id="OrderMedication" name="OrderMedicationID" />
+
+                                                                <div class="mb-3">
+                                                                    <label for="MedicationId" class="form-label">Select Medication</label>
+                                                                    <select class="form-select" id="MedicationId" name="MedicationId">
+                                                                        @foreach (var medication in Model.MedicationRecords)
+                                                                        {
+                                                                            <option value="@medication.MedicationID">@medication.MedicationName</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="Quantity" class="form-label">Quantity</label>
+                                                                    <input type="number" class="form-control" id="Quantity" name="Quantity" required />
+                                                                </div>
+
+                                                              @*   <div class="mb-3">
+                                                                    <label for="Note" class="form-label">Note</label>
+                                                                    <input type="text" class="form-control" id="Note" name="Note" required />
+                                                                </div> *@
+                                                        
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <button type="submit"  class="btn btn-primary">Add Medication</button>
+                                                        </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Medication list Modal -->
+                                            <div class="modal fade" id="viewMedicatio" tabindex="-1" aria-labelledby="viewMedicationModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="viewMedicationModalLabel">Medication Details</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div id="medicationList">
+                                                                <!-- Loading message or data will appear here -->
+                                                                Loading medications...
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </tbody>
+                                   
+                                </table>
+                            </div>
+
+                            <div class="tabconten" id="receivedOrders">
+
+                                <table class="table align-items-center justify-content-center mb-0">
+                                    <thead style="height:50px;width:50px;">
+                                        <tr>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7" style="width:5px !important; "></th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">#Order No</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Is Urgent</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Instruction</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Status</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Time Ordered</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                                        </tr>
+                                    </thead>
+
+                                   
+                                    <tbody>
+
+                                        @foreach (var med in Model.MedicationOrders.Where(A => A.Status == OrderStatus.Received))
+                                        {
+                                            rowwww++;
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@rowwww</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.PrescriptionOrder</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm @(med.IsUrgent ? "text-danger" : "")">
+                                                                @(med.IsUrgent ? "Yes" : "No")
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.Instructions</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="status-container">
+                                                        <div class="status-circle @("status-" + med.Status)"></div>
+                                                        <div class="status-text">@med.Status</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.Date</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                <!-- View Medication Button -->
+                                                <td>
+                                                    <!-- View Medication Button (inside a loop if needed) -->
+                                                    <button type="button" class="btn btn-primary view-medication"
+                                                            data-bs-toggle="modal" data-bs-target="#viewMedicationModa"
+                                                            data-order-id="@med.OrderMedicationID">
+                                                        View Medications
+                                                    </button>
+                                                </td>
+                                                @if (med.Status == OrderStatus.Received)
+                                                {
+                                                    <!-- Edit Order Button -->
+                                                    <td>
+                                                        <div class="alert alert-success text-center" role="alert">
+                                                           Received in Theater!
+                                                        </div>
+
+                                                    </td>
+
+
+                                                }
+                                            </tr>
+
+
+                                          
+
+                                            <!-- Medication Modal -->
+                                            <div class="modal fade" id="viewMedicationModa" tabindex="-1" aria-labelledby="viewMedicationModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="viewMedicationModalLabel">Medication Details</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div id="medicationListConten">
+                                                                <!-- Loading message or data will appear here -->
+                                                                Loading medications...
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Update Note Modal -->
+                                            <div class="modal fade" id="updateNoteModa" tabindex="-1" aria-labelledby="updateNoteModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <form id="updateNoteForm">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="updateNoteModalLabel">Update Medication Note</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <input type="hidden" id="medicineStoreId">
+                                                                <div class="mb-3">
+                                                                    <label for="noteInput" class="form-label">Note</label>
+                                                                    <input type="text" class="form-control" id="noteInput" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </tbody>
+                                 
+                                </table>
+                            </div>
+
+                            <div class="tabconten" id="rejectedOrders">
+                                <table class="table align-items-center justify-content-center mb-0">
+                                    <thead style="height:50px;width:50px;">
+                                        <tr>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7" style="width:5px !important; "></th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">#Order No</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Is Urgent</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Instruction</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Status</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Time Ordered</th>
+                                            <th class="text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                                        </tr>
+                                    </thead>
+
+                                  
+                                    <tbody>
+
+                                        @foreach (var med in Model.MedicationOrders.Where(A => A.Status == OrderStatus.Rejected))
+                                        {
+                                            rowwwww++;
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@rowwwww</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.PrescriptionOrder</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm @(med.IsUrgent ? "text-danger" : "")">
+                                                                @(med.IsUrgent ? "Yes" : "No")
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.Instructions</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="status-container">
+                                                        <div class="status-circle @("status-" + med.Status)"></div>
+                                                        <div class="status-text">@med.Status</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex px-2">
+                                                        <div class="my-auto">
+                                                            <h6 class="mb-0 text-sm">@med.Date</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                <!-- View Medication Button -->
+                                                <td>
+                                                    <!-- View Medication Button (inside a loop if needed) -->
+                                                    <button type="button" class="btn btn-primary medication-btn"
+                                                            data-bs-toggle="modal" data-bs-target="#viewMedicationMod"
+                                                            data-order-id="@med.OrderMedicationID">
+                                                        View Medications
+                                                    </button>
+                                                </td>
+
+                                              
+
+                                            </tr>
+
+
+                                            <!-- Add Medication Modal -->
+                                         
+
+                                            <!-- Medication Modal -->
+                                            <div class="modal fade" id="viewMedicationMod" tabindex="-1" aria-labelledby="viewMedicationModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="viewMedicationModalLabel">Medication Details</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div id="medicationListConte">
+                                                                <!-- Loading message or data will appear here -->
+                                                                Loading medications...
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <!-- Medication list Modal -->
+                          
+                        </div>
+
+                        <!-- Modal for Editing IsUrgent and Instructions -->
+                        <div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form method="post" action="/OrderMedication/EditOrder">
+                                        <input type="hidden" id="orderId" name="OrderMedicationID">
+                                        <input type="hidden" id="patientId" name="PatientID" value="@Model.Patient.PatientID"> <!-- Pass PatientID -->
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editOrderModalLabel">Edit Order</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" id="orderId" name="OrderMedicationID">
+                                            <div class="mb-3">
+                                                <label for="isUrgent" class="form-label">Is Urgent</label>
+                                                <select class="form-select" id="isUrgent" name="IsUrgent">
+                                                    <option value="true">Yes</option>
+                                                    <option value="false">No</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="instructions" class="form-label">Instructions</label>
+                                                <textarea class="form-control" id="instructions" name="Instructions" rows="3"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                       
+                    }
+                    else
+                    {
+                        <h5>No medication order</h5>
+                    }
+                </div>
+                <div class="modal fade" id="newOrderModal" tabindex="-1" role="dialog" aria-labelledby="newOrderModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div class="alert alert-info mt-4" role="alert">
+                                    <strong>Note:</strong> Creating an order does not mean medication is automatically added to the order.
+                                    You will need to manually add medications to this order after it is created.
+                                </div>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="modalBodyContent">
+                                <!-- The form will be injected here -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="Paris" class="tabcontent">
+                    <div class="d-flex px-2" style="flex-direction: row-reverse;">
+                        <div class="my-auto mr-5 mt-2">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewVital">New Vital</button>
+                        </div>
+                    </div>
+                    <!-- Search by Vital Type -->
+                    <div class="mb-3">
+                        <label for="vitalSearchDropdown" class="form-label">Search by Vital Type</label>
+                        <select id="vitalSearchDropdown" class="form-select" onchange="searchVitals()">
+                            <option value="">Select Vital</option>
+                            @foreach (var vita in Model.GetVitals.Select(v => v.Vitals.Name).Distinct())
+                            {
+                                <option value="@vita">@vita</option>
+                            }
+                        </select>
+                    </div>
+                    <table class="table align-items-center justify-content-center mb-0">
+                        <thead style="height:50px;width:50px;">
+                            <tr>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7" style="width:5px !important;">#</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Vital Type</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Reading Value()</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Reading Value()</th>
+
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Time Taken</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Range</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="vitalResults">
+                            @foreach (var vt in Model.GetVitals.OrderByDescending(a => a.DateTime))
+                            {
+                                vital++;
+                               @*  vital++;
+                                bool isWithinRange = vt.Value1 &&
+                                reading >= vt.Vitals.MinimumValue && reading <= vt.Vitals.MaxValue;
+
+                                string rangeStatus = isWithinRange ? "Within Range" : "Over/Under Range";
+                                string statusClass = isWithinRange ? "text-success" : "text-danger"; // Green if normal, red if danger *@
+                                <tr>
+                                    <td>
+                                        <div class="d-flex px-2">
+                                            <div class="my-auto">
+                                                <h6 class="mb-0 text-sm">@vital</h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex px-2">
+                                            <div class="my-auto">
+                                                <h6 class="mb-0 text-sm">@vt.Vitals.Name</h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex px-2">
+                                            <div class="my-auto">
+                                                <h6 class="mb-0 text-sm">@vt.Value1</h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex px-2">
+                                            <div class="my-auto">
+                                                <h6 class="mb-0 text-sm">@vt.Value2</h6>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="d-flex px-2">
+                                            <div class="my-auto">
+                                                <h6 class="mb-0 text-sm">@vt.DateTime</h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex px-2">
+                                            <div class="my-auto">
+                                             @*    <h6 class="mb-0 text-sm @statusClass">@rangeStatus</h6> *@
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <!-- Modal for Adding New Vital -->
+                    <div class="modal fade" id="addNewVital" tabindex="-1" aria-labelledby="addNewVitalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addNewVitalLabel">New Vital Reading</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form id="addNewVitalForm" method="post" asp-action="AddVitals" asp-controller="OrderMedication">
+                                    <div class="modal-body">
+                                        <!-- Hidden field for PatientID -->
+                                        <input type="hidden" value="@Model.Patient.PatientID" name="PatientID" />
+
+                                        <div class="mb-3">
+                                            <label for="VitalID" class="form-label">Select Vital</label>
+                                            <select class="form-select" id="VitalID" name="VitalID" required>
+                                                @foreach (var nm in Model.GetVitalsList)
+                                                {
+                                                    <option value="@nm.VitalID">@nm.Name</option>
+                                                }
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="Value1" class="form-label">Reading Value</label>
+                                            <input class="form-control" id="Value1" name="Value1" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="Value3" class="form-label">Reading Value</label>
+                                            <input class="form-control" id="Value2" name="Value2" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="Value3" class="form-label">Reading Value</label>
+                                            <input class="form-control" id="Value3" name="Value3" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="Notes" class="form-label">Notes</label>
+                                            <input class="form-control" id="Notes" name="Notes" />
+                                        </div>
+
+                                        <!-- Placeholder for validation errors -->
+                                        <div id="validation-errors"></div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Add Vital</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="Tokyo" class="tabcontent">
+                   @*  <div class="d-flex px-2" style="flex-direction: row-reverse;">
+                        <div class="my-auto mr-5 mt-2">
+                            <button class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#addNewAlllergy">
+                                New Vital
+                            </button>
+                        </div>
+
+                    </div> *@
+                    <table class="table align-items-center justify-content-center mb-0">
+                        <thead style="height:50px;width:50px;">
+                            <tr>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7" style="width:5px !important; ">#</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Allergy Name</th>
+                               
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            
+                            @foreach (var ga in (Model.MedicalHistory?.MedicalHistoryAllergies ?? new List<MedicalHistoryAllergy>())
+                            .OrderBy(a => a.ActiveIngredientRecords?.IngredientName))
+                            {
+                                ingrd++;
+                                <tr>
+                                    <td>@ingrd</td>
+                                    <td>@(ga.ActiveIngredientRecords?.IngredientName ?? "N/A")</td>
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <div id="Condition" class="tabcontent">
+
+                    <table class="table align-items-center justify-content-center mb-0">
+                        <thead style="height:50px;width:50px;">
+                            <tr>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7" style="width:5px !important; ">#</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Condition Codee</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Condition Diagnosis</th>
+                            
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var gc in (Model.MedicalHistory?.MedicalHistoryCondition ?? new List<MedicalHistoryCondition>())
+                            .OrderBy(a => a.Condition?.Diagnosis))
+                            {
+                                alleg++;
+                                <tr>
+                                    <td>@alleg</td>
+                                    <td>@(gc.Condition?.CODE ?? "N/A")</td>
+                                    <td>@(gc.Condition?.Diagnosis ?? "N/A")</td>
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <div id="CurrentMed" class="tabcontent">
+                    <table class="table align-items-center justify-content-center mb-0">
+                        <thead style="height:50px;width:50px;">
+                            <tr>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7" style="width:5px !important; ">#</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Medication Name</th>
+                       
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var cm in (Model.MedicalHistory?.MedicalHistoryMedications ?? new List<MedicalHistoryMedication>())
+                            .OrderBy(a => a.MedicationRecords?.MedicationName))
+                            {
+                                chronicM++;
+                                <tr>
+                                    <td>@chronicM</td>
+                                    <td>@(cm.MedicationRecords?.MedicationName ?? "N/A")</td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+
+                 </div>
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#showNewOrderForm').click(function () {
+            var patientId = '@Model.Patient.PatientID'; // Ensure this is accessible
+
+            $.ajax({
+                url: '@Url.Action("LoadNewOrderForm", "OrderMedication")',
+                data: { patientId: patientId },
+                type: 'GET',
+                success: function (result) {
+                    $('#modalBodyContent').html(result); // Inject the form into the modal
+                    $('#newOrderModal').modal('show'); // Show the modal after loading the content
+                },
+                error: function (xhr, status, error) {
+                    alert("An error occurred while trying to load the form. Please check the console for details.");
+                    console.log(xhr.responseText); // Log the error details
+                }
+            });
+        });
+    });
+</script>
+
+
+<script>
+    function searchVitals() {
+        var selectedVital = document.getElementById("vitalSearchDropdown").value;
+
+        $.ajax({
+            url: '@Url.Action("FilterVitals", "OrderMedication")', // Adjust controller and action if necessary
+            type: 'GET',
+            data: { vitalName: selectedVital, id: @Model.Patient.PatientID },
+            success: function (result) {
+                // Update the vitalResults table with the filtered results
+                $('#vitalResults').html(result);
+            },
+            error: function () {
+                alert("Error fetching vital data.");
+            }
+        });
+    }
+</script>
+                    <script>
+    function openCity(evt, cityName) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(cityName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+                    </script>
+
+<script>
+    // Handle opening the 'Edit' modal for editing IsUrgent and Instructions
+    document.querySelectorAll('.edit-order-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            var orderId = this.getAttribute('data-order-id');
+            var patientId = this.getAttribute('data-patient-id'); // Pass PatientID dynamically if needed
+
+            // Populate the form's hidden input with the OrderMedicationID and PatientID
+            document.getElementById('orderId').value = orderId;
+            document.getElementById('patientId').value = patientId; // Ensure this hidden input exists
+
+            // Set other values (IsUrgent, Instructions)
+            document.getElementById('isUrgent').value = this.getAttribute('data-is-urgent');
+            document.getElementById('instructions').value = this.getAttribute('data-instructions');
+        });
+    });
+
+</script>
+
+<script>
+    function filterOrders(evt, Name) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabconten");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(Name).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    document.getElementById("default").click();
+</script>
+
+ <script>
+    document.addEventListener('click', function (event) {
+        if (event.target && event.target.classList.contains('add-medication-btn')) {
+            var orderMedicationID = event.target.getAttribute('data-order-id');
+
+            // Set the hidden input field in the modal
+            document.getElementById('OrderMedicationID').value = orderMedicationID;
+        }
+    });
+
+    // Update the modal title dynamically when shown
+    $('#addMedicationModal').on('show.bs.modal', function (event) {
+        // Get the button that triggered the modal
+        var button = $(event.relatedTarget);
+        var orderMedicationID = button.data('data-order-id');
+
+        // Update the modal title or any other content using this ID
+        var modal = $(this);
+        modal.find('.modal-title').text('Add Medication - Order #' + orderMedicationID);
+    });
+
+
+ </script>
+
+<script>
+    document.addEventListener('click', function (event) {
+        if (event.target && event.target.classList.contains('add-medication')) {
+            var orderMedicationID = event.target.getAttribute('order-id');
+
+            // Set the hidden input field in the modal
+            document.getElementById('OrderMedication').value = orderMedicationID;
+        }
+    });
+
+    // Update the modal title dynamically when shown
+    $('#MedicationModal').on('show.bs.modal', function (event) {
+        // Get the button that triggered the modal
+        var button = $(event.relatedTarget);
+        var orderMedication = button.data('order-id');
+
+        // Update the modal title or any other content using this ID
+        var modal = $(this);
+        modal.find('.modal-title').text('Add Medication - Order #' + orderMedication);
+    });
+</script>
+
+        <style>
+    .d-flex{
+        display: flex !important;
+   /*  flex-direction: row-reverse; */
+    }
+        </style>
+
+<script>
+    // Get the element with id="defaultOpen" and click on it
+    document.getElementById("defaultOpen").click();
+</script>
+@* <script>
+    $(document).ready(function () {
+        $('#addNewVitalForm').submit(function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            var formData = $(this).serialize();
+
+            $.ajax({
+                url: '@Url.Action("AddVitals", "OrderMedication")',
+                type: 'POST',
+                data: formData,
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Include the CSRF token
+                },
+                success: function (response) {
+                    window.location.href = '@Url.Action("Information", "PatientRecord", new { id = Model.Patient.PatientID })';
+                },
+                error: function (xhr, status, error) {
+                    $('#validation-errors').html(xhr.responseText);
+                }
+            });
+        });
+    });
+
+</script> *@
+
+<script>
+    document.getElementById('addMedicationForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        var formData = new FormData(this); // Gather form data
+
+        fetch('/OrderMedication/AddMedication', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Medication added successfully:', data.message);
+
+                    // Close the modal using Bootstrap's Modal API
+                    var modalElement = document.getElementById('addMedicationModal');
+                    var modal = bootstrap.Modal.getInstance(modalElement);
+                    modal.hide(); // Close the modal
+
+                    // Redirect to the patient information page
+                    if (data.redirectUrl) {
+                        window.location.href = data.redirectUrl;
+                    }
+                } else {
+                    // Display validation errors
+                    var errorMessages = document.getElementById('errorMessages');
+                    errorMessages.innerHTML = data.errors.join('<br>');
+                    errorMessages.style.display = 'block'; // Show the error messages
+                    console.error('Error adding medication:', data.errors);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+
+
+
+<script>
+    document.querySelectorAll('.add-medication').forEach(button => {
+        button.addEventListener('click', function () {
+            // Get the OrderMedicationID from the button's data attribute
+            var orderId = this.getAttribute('order-id');
+
+            // Set the hidden field value in the form
+            document.getElementById('OrderMedication').value = orderId;
+        });
+    });
+
+    document.getElementById('MedicationForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        var formData = new FormData(this); // Gather form data
+
+        fetch('/OrderMedication/AddMedication', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Medication added successfully:', data.message);
+
+                    // Close the modal using Bootstrap's Modal API
+                    var modalElement = document.getElementById('MedicationModal');
+                    var modal = bootstrap.Modal.getInstance(modalElement);
+                    modal.hide(); // Close the modal
+
+                    // Redirect to the patient information page
+                    if (data.redirectUrl) {
+                        window.location.href = data.redirectUrl;
+                    }
+                } else {
+                    // Display validation errors
+                    var errorMessages = document.getElementById('errorMessages');
+                    errorMessages.innerHTML = data.errors.join('<br>');
+                    errorMessages.style.display = 'block'; // Show the error messages
+                    console.error('Error adding medication:', data.errors);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+
+</script>
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#showNewOrderForm').click(function () {
+                var patientId = '@Model.Patient.PatientID';
+
+                $.ajax({
+                    url: '@Url.Action("LoadNewOrderForm", "OrderMedication")',
+                    data: { patientId: patientId },
+                    type: 'GET',
+                    success: function (result) {
+                        $('#newOrderFormContainer').html(result); // Inject the form into the container
+                    },
+                    error: function (xhr, status, error) {
+                        alert("An error occurred while trying to load the form. Please check the console for details.");
+                        console.log(xhr.responseText);
+                    }
+                });
+            });
+        });
+
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#addNewVitalForm').submit(function (e) {
+                var patientId = '@Model.Patient.PatientID';
+
+                $.ajax({
+                    url: '@Url.Action("AddVitals", "OrderMedication")',
+                    data: { patientId: patientId },
+                    type: 'POST',
+                    body: formData,
+                    success: function (result) {
+                        window.location.href = '@Url.Action("Information", "PatientRecord", new { id = Model.Patient.PatientID })';
+                    },
+                    error: function (xhr, status, error) {
+                        alert("An error occurred while trying to load the form. Please check the console for details.");
+                        console.log(xhr.responseText);
+                    }
+                });
+            });
+        });
+
+
+    </script>
+
+
+@*     <script>
+        $(document).ready(function () {
+            $('.view-medication-btn').on('click', function () {
+                var OrderMedicationID = $(this).data('order-id');
+
+                // Display loading message
+                $('#medicationListContent').html('Fetching medications for Order ID: ' + OrderMedicationID);
+
+                $.ajax({
+                    url: '/OrderMedication/GetMedications',
+                    type: 'GET',
+                    data: { OrderMedicationID: OrderMedicationID },
+                    success: function (response) {
+                        console.log(response); // Ensure you inspect this in the browser's dev tools
+                        // Check the properties in the console, e.g., response[0].MedicationName
+                        if (response.length > 0) {
+                            // Ensure the keys exist in response objects
+                            var medicationListHtml = '';
+                            $.each(response, function (index, medication) {
+                                medicationListHtml += '<p><strong>Medication:</strong> ' + medication.MedicationName + '</p>';
+                                medicationListHtml += '<p><strong>Quantity:</strong> ' + medication.Quantity + '</p>';
+                                medicationListHtml += '<p><strong>Note:</strong> ' + medication.Note + '</p>';
+                                medicationListHtml += '<hr />';
+                            });
+                            $('#medicationListContent').html(medicationListHtml);
+                        } else {
+                            $('#medicationListContent').html('<p>No medications found for this order.</p>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching medications:', xhr.responseText); // Log full response
+                        $('#medicationListContent').html('<p>An error occurred while loading medications. Please try again.</p>');
+                    }
+
+                });
+            });
+        });
+
+
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var viewMedicationButtons = document.querySelectorAll('.view-medication-btn');
+
+            viewMedicationButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    var orderId = this.getAttribute('data-order-id');
+
+                    // Fetch data for the specific orderId
+                    fetch(`/OrderMedication/GetMedicationData?orderId=${orderId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            var tableBody = document.getElementById('patientTab');
+                            tableBody.innerHTML = ''; // Clear previous data
+
+                            data.forEach((item, index) => {
+                                var row = `<tr>
+                                    <td>${index + 1}</td>
+                                    <td>${item.medicationName}</td>
+                                    <td>${item.quantity}</td>
+                                    <td>${item.note}</td>
+                                </tr>`;
+                                tableBody.innerHTML += row;
+                            });
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            });
+        });
+
+
+    </script> *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var viewMedicationButtons = document.querySelectorAll('.view-meddd-btn');
+
+            viewMedicationButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    var orderId = this.getAttribute('data-order-id'); // Get the OrderMedicationID from the button
+
+                    // Update modal title with the OrderMedicationID (optional)
+                    document.getElementById('addMedicationModalLabel').innerText = 'Add Medication - Order #' + orderId;
+
+                    // Display loading message while fetching data
+                    document.getElementById('medicationListContent').innerHTML = 'Fetching medications for Order ID: ' + orderId;
+
+                    // Fetch medication data for the specific OrderMedicationID
+                    fetch(`/OrderMedication/GetMedications?OrderMedicationID=${orderId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            var tableBody = document.getElementById('medicationListContent');
+                            tableBody.innerHTML = ''; // Clear previous data
+
+                            if (data.length > 0) {
+                                // Start building the table HTML structure
+                                var medicationListHtml = `
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>Medication Name</th>
+                                                                <th>Quantity</th>
+                                                                         <th>Note</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>`;
+
+                                // Loop through each medication and create table rows
+                                data.forEach((item, index) => {
+                                    medicationListHtml += `
+                                                        <tr>
+                                                            <td>${index + 1}</td>
+                                                            <td>${item.medicationName}</td>
+                                                            <td>${item.quantity}</td>
+                                                                       <td>${item.note}</td>
+
+                                                        </tr>`;
+                                });
+
+                                medicationListHtml += `</tbody></table>`; // Close the table structure
+
+                                // Update the modal content with the table
+                                tableBody.innerHTML = medicationListHtml;
+
+                                // Attach event listeners to delete buttons
+                                var deleteButtons = document.querySelectorAll('.delete-medication-btn');
+                                deleteButtons.forEach(btn => {
+                                    btn.addEventListener('click', function () {
+                                        var medicineStoreId = this.getAttribute('data-id');
+                                        console.log("Selected MedicineStoreId:", medicineStoreId); // Debugging
+                                        if (confirm("Are you sure you want to delete this medication?")) {
+                                            deleteMedication(medicineStoreId);
+                                        }
+                                    });
+                                });
+                            } else {
+                                // If no data is found, display a message
+                                tableBody.innerHTML = '<p>No medications found for this order.</p>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // Display an error message in the modal content
+                            document.getElementById('medicationListContent').innerHTML = '<p>An error occurred while loading medications. Please try again.</p>';
+                        });
+                });
+            });
+        });
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var viewMedicationButtons = document.querySelectorAll('.view-med-btn');
+
+            viewMedicationButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    var orderId = this.getAttribute('data-order-id'); // Get the OrderMedicationID from the button
+
+                    // Update modal title with the OrderMedicationID (optional)
+                    document.getElementById('addMedicationModalLabel').innerText = 'Add Medication - Order #' + orderId;
+
+                    // Display loading message while fetching data
+                    document.getElementById('medicationListContent').innerHTML = 'Fetching medications for Order ID: ' + orderId;
+
+                    // Fetch medication data for the specific OrderMedicationID
+                    fetch(`/OrderMedication/GetMedications?OrderMedicationID=${orderId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            var tableBody = document.getElementById('medicationListContent');
+                            tableBody.innerHTML = ''; // Clear previous data
+
+                            if (data.length > 0) {
+                                // Start building the table HTML structure
+                                var medicationListHtml = `
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Medication Name</th>
+                                                        <th>Quantity</th>
+                                                                 <th>Note</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>`;
+
+                                // Loop through each medication and create table rows
+                                data.forEach((item, index) => {
+                                    medicationListHtml += `
+                                                <tr>
+                                                    <td>${index + 1}</td>
+                                                    <td>${item.medicationName}</td>
+                                                    <td>${item.quantity}</td>
+                                                               <td>${item.note}</td>
+                                                   
+                                                </tr>`;
+                                });
+
+                                medicationListHtml += `</tbody></table>`; // Close the table structure
+
+                                // Update the modal content with the table
+                                tableBody.innerHTML = medicationListHtml;
+
+                                // Attach event listeners to delete buttons
+                                var deleteButtons = document.querySelectorAll('.delete-medication-btn');
+                                deleteButtons.forEach(btn => {
+                                    btn.addEventListener('click', function () {
+                                        var medicineStoreId = this.getAttribute('data-id');
+                                        console.log("Selected MedicineStoreId:", medicineStoreId); // Debugging
+                                        if (confirm("Are you sure you want to delete this medication?")) {
+                                            deleteMedication(medicineStoreId);
+                                        }
+                                    });
+                                });
+                            } else {
+                                // If no data is found, display a message
+                                tableBody.innerHTML = '<p>No medications found for this order.</p>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // Display an error message in the modal content
+                            document.getElementById('medicationListContent').innerHTML = '<p>An error occurred while loading medications. Please try again.</p>';
+                        });
+                });
+            });
+        });
+      
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var viewMedicationButtons = document.querySelectorAll('.view-medication-btn');
+
+            viewMedicationButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    var orderId = this.getAttribute('data-order-id'); // Get the OrderMedicationID from the button
+
+                    // Update modal title with the OrderMedicationID (optional)
+                    document.getElementById('viewMedicationModalLabel').innerText = 'Medication Details - Order #' + orderId;
+
+                    // Display loading message while fetching data
+                    document.getElementById('medicationListContent').innerHTML = 'Fetching medications for Order ID: ' + orderId;
+
+                    // Fetch medication data for the specific OrderMedicationID
+                    fetch(`/OrderMedication/GetMedications?OrderMedicationID=${orderId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            updateModalContent(data, orderId);  // Populate modal with fetched data
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // Display an error message in the modal content
+                            document.getElementById('medicationListContent').innerHTML = '<p>An error occurred while loading medications. Please try again.</p>';
+                        });
+                });
+            });
+        });
+
+        function deleteMedication(medicineStoreId, orderId) {
+            if (!medicineStoreId || medicineStoreId === 0) {
+                alert("Invalid medication ID");
+                return;
+            }
+
+            fetch(`/ExistingOrders/DeleteMedication?medicineStoreId=${medicineStoreId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to delete medication.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);  // Display the result message
+                    }
+
+                    if (data.message === "Medication deleted successfully. Please reload to see the changes!") {
+                        // After deletion, re-fetch the updated list
+                        fetch(`/OrderMedication/GetMedications?OrderMedicationID=${orderId}`)
+                            .then(response => response.json())
+                            .then(updatedData => {
+                                updateModalContent(updatedData, orderId);  // Update modal with the remaining medications
+                            })
+                            .catch(error => {
+                                console.error('Error fetching updated medications:', error);
+                                alert("An error occurred while fetching updated medications.");
+                            });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("An error occurred while deleting the medication.");
+                });
+        }
+
+        function updateModalContent(data, orderId) {
+            var tableBody = document.getElementById('medicationListContent');
+            tableBody.innerHTML = '';  // Clear the previous content
+
+            if (data.length > 0) {
+                var medicationListHtml = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Medication Name</th>
+                                <th>Quantity</th>
+                                <th>Note</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                // Loop through the updated medications list
+                data.forEach((item, index) => {
+                    medicationListHtml += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${item.medicationName}</td>
+                            <td>${item.quantity}</td>
+                            <td>${item.note}</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm delete-medication-btn"
+                                        data-id="${item.medicineStoreId}" data-order-id="${orderId}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+
+                medicationListHtml += `</tbody></table>`;
+                tableBody.innerHTML = medicationListHtml;  // Inject new content into the modal
+
+                // Re-attach event listeners to the new delete buttons
+                var deleteButtons = document.querySelectorAll('.delete-medication-btn');
+                deleteButtons.forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        var medicineStoreId = this.getAttribute('data-id');
+                        var orderId = this.getAttribute('data-order-id');
+                        if (confirm("Are you sure you want to delete this medication?")) {
+                            deleteMedication(medicineStoreId, orderId);
+                        }
+                    });
+                });
+            } else {
+                tableBody.innerHTML = '<p>No medications found for this order.</p>';
+            }
+        }
+
+
+
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var viewMedicationButtons = document.querySelectorAll('.view-medication');
+
+            viewMedicationButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    var orderId = this.getAttribute('data-order-id'); // Get the OrderMedicationID from the button
+
+                    // Update modal title with the OrderMedicationID (optional)
+                    document.getElementById('addMedicationModalLabel').innerText = 'Add Medication - Order #' + orderId;
+
+                    // Display loading message while fetching data
+                    document.getElementById('medicationListConten').innerHTML = 'Fetching medications for Order ID: ' + orderId;
+
+                    // Fetch medication data for the specific OrderMedicationID
+                    fetch(`/OrderMedication/GetMedications?OrderMedicationID=${orderId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            var tableBody = document.getElementById('medicationListConten');
+                            tableBody.innerHTML = ''; // Clear previous data
+
+                            if (data.length > 0) {
+                                // Start building the table HTML structure
+                                var medicationListHtml = `
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Medication Name</th>
+                                                        <th>Quantity</th>
+                                                        <th>Note</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>`;
+
+                                // Loop through each medication and create table rows
+                                data.forEach((item, index) => {
+                                    medicationListHtml += `
+                                                <tr>
+                                                    <td>${index + 1}</td>
+                                                    <td>${item.medicationName}</td>
+                                                    <td>${item.quantity}</td>
+                                                    <td>${item.note}</td>
+                                                                    <td>
+                                                            <button type="button" class="btn btn-info btn-sm update-medication-not"
+                                                                data-id="${item.medicineStoreId}" data-note="${item.note}">
+                                                                Update Note
+                                                            </button>
+                                                        </td>
+                                                </tr>`;
+                                });
+
+                                medicationListHtml += `</tbody></table>`; // Close the table structure
+
+                                // Update the modal content with the table
+                                tableBody.innerHTML = medicationListHtml;
+                                // Add event listeners for each update button
+                                document.querySelectorAll('.update-medication-not').forEach(updateBtn => {
+                                    updateBtn.addEventListener('click', function () {
+                                        var medicineStoreId = this.getAttribute('data-id');
+                                        var note = this.getAttribute('data-note');
+
+                                        // Set the form input values
+                                        document.getElementById('medicineStoreId').value = medicineStoreId;
+                                        document.getElementById('noteInput').value = note;
+
+                                        // Close the view medication modal if it is open
+                                        var viewMedicationModal = bootstrap.Modal.getInstance(document.getElementById('viewMedicationModa'));
+                                        viewMedicationModal.hide();
+
+                                        // Open the update note modal
+                                        var updateNoteModal = new bootstrap.Modal(document.getElementById('updateNoteModa'));
+                                        updateNoteModal.show();
+
+                                        // Focus on the note input field when the modal is shown
+                                        updateNoteModal._element.addEventListener('shown.bs.modal', function () {
+                                            document.getElementById('noteInput').focus();
+                                        });
+                                    });
+                                });
+                            } else {
+                                // If no data is found, display a message
+                                tableBody.innerHTML = '<p>No medications found for this order.</p>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // Display an error message in the modal content
+                            document.getElementById('medicationListConten').innerHTML = '<p>An error occurred while loading medications. Please try again.</p>';
+                        });
+                });
+            });
+            // Handle form submission for updating the note
+            var updateNoteForm = document.getElementById('updateNoteForm');
+            updateNoteForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                var medicineStoreId = document.getElementById('medicineStoreId').value;
+                var noteValue = document.getElementById('noteInput').value;
+
+                // Send the updated note to the server
+                fetch(`/OrderMedication/UpdateMedicationNote`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        medicineStoreId: medicineStoreId,
+                        note: noteValue
+                    })
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Note updated successfully!');
+
+                            // Close the update note modal
+                            var updateNoteModal = bootstrap.Modal.getInstance(document.getElementById('updateNoteModa'));
+                            updateNoteModal.hide();
+
+                            // Reload the medications to show the updated list
+                            var orderId = document.getElementById('addMedicationModalLabel').innerText.split('#')[1].trim();
+                            document.querySelector(`.medication[data-order-id="${orderId}"]`).click();
+                        } else {
+                            alert('Failed to update the note.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while updating the note.');
+                    });
+            });
+        });
+        function deleteMedication(medicineStoreId) {
+            if (!medicineStoreId || medicineStoreId === 0) {
+                alert("Invalid medication ID");
+                return;
+            }
+
+            fetch(`/ExistingOrders/DeleteMedication?medicineStoreId=${medicineStoreId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);  // Display success or failure message
+                    } else {
+                        alert("An unknown error occurred.");
+                    }
+
+                    if (data.message === "Medication deleted successfully") {
+                        location.reload();  // Reload page to reflect changes
+                        alert("Medication deleted successfully");
+
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("An error occurred while deleting the medication.");
+                });
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var viewMedicationButtons = document.querySelectorAll('.medication-btn');
+
+            viewMedicationButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    var orderId = this.getAttribute('data-order-id'); // Get the OrderMedicationID from the button
+
+                    // Update modal title with the OrderMedicationID (optional)
+                    document.getElementById('addMedicationModalLabel').innerText = 'Add Medication - Order #' + orderId;
+
+                    // Display loading message while fetching data
+                    document.getElementById('medicationListConte').innerHTML = 'Fetching medications for Order ID: ' + orderId;
+
+                    // Fetch medication data for the specific OrderMedicationID
+                    fetch(`/OrderMedication/GetMedications?OrderMedicationID=${orderId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            var tableBody = document.getElementById('medicationListConte');
+                            tableBody.innerHTML = ''; // Clear previous data
+
+                            if (data.length > 0) {
+                                // Start building the table HTML structure
+                                var medicationListHtml = `
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>Medication Name</th>
+                                                                <th>Quantity</th>
+                                                                <th>Note</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>`;
+
+                                // Loop through each medication and create table rows
+                                data.forEach((item, index) => {
+                                    medicationListHtml += `
+                                                        <tr>
+                                                            <td>${index + 1}</td>
+                                                            <td>${item.medicationName}</td>
+                                                            <td>${item.quantity}</td>
+                                                            <td>${item.note}</td>
+                                                                
+                                                        </tr>`;
+                                });
+
+                                medicationListHtml += `</tbody></table>`; // Close the table structure
+
+                                // Update the modal content with the table
+                                tableBody.innerHTML = medicationListHtml;
+                            } else {
+                                // If no data is found, display a message
+                                tableBody.innerHTML = '<p>No medications found for this order.</p>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // Display an error message in the modal content
+                            document.getElementById('medicationListConte').innerHTML = '<p>An error occurred while loading medications. Please try again.</p>';
+                        });
+                });
+            });
+        });
+
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var viewMedicationButtons = document.querySelectorAll('.medication');
+
+            viewMedicationButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    var orderId = this.getAttribute('data-order-id'); // Get the OrderMedicationID from the button
+
+                    // Update modal title with the OrderMedicationID
+                    document.getElementById('addMedicationModalLabel').innerText = 'Add Medication - Order #' + orderId;
+
+                    // Display loading message while fetching data
+                    document.getElementById('medicationListCon').innerHTML = 'Fetching medications for Order ID: ' + orderId;
+
+                    // Fetch medication data for the specific OrderMedicationID
+                    fetch(`/OrderMedication/GetMedications?OrderMedicationID=${orderId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            var tableBody = document.getElementById('medicationListCon');
+                            tableBody.innerHTML = ''; // Clear previous data
+
+                            if (data.length > 0) {
+                                // Start building the table HTML structure
+                                var medicationListHtml = `
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Medication Name</th>
+                                                    <th>Quantity</th>
+                                                    <th>Note</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>`;
+
+                                // Loop through each medication and create table rows
+                                data.forEach((item, index) => {
+                                    medicationListHtml += `
+                                            <tr>
+                                                <td>${index + 1}</td>
+                                                <td>${item.medicationName}</td>
+                                                <td>${item.quantity}</td>
+                                                <td>${item.note}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-info btn-sm update-medication-note"
+                                                        data-id="${item.medicineStoreId}" data-note="${item.note}">
+                                                        Update Note
+                                                    </button>
+                                                </td>
+                                            </tr>`;
+                                });
+
+                                medicationListHtml += `</tbody></table>`; // Close the table structure
+
+                                // Update the modal content with the table
+                                tableBody.innerHTML = medicationListHtml;
+
+                                // Add event listeners for each update button
+                                document.querySelectorAll('.update-medication-note').forEach(updateBtn => {
+                                    updateBtn.addEventListener('click', function () {
+                                        var medicineStoreId = this.getAttribute('data-id');
+                                        var note = this.getAttribute('data-note');
+
+                                        // Set the form input values
+                                        document.getElementById('medicineStoreId').value = medicineStoreId;
+                                        document.getElementById('noteInput').value = note;
+
+                                        // Close the view medication modal if it is open
+                                        var viewMedicationModal = bootstrap.Modal.getInstance(document.getElementById('viewMedicationM'));
+                                        viewMedicationModal.hide();
+
+                                        // Open the update note modal
+                                        var updateNoteModal = new bootstrap.Modal(document.getElementById('updateNoteModal'));
+                                        updateNoteModal.show();
+
+                                        // Focus on the note input field when the modal is shown
+                                        updateNoteModal._element.addEventListener('shown.bs.modal', function () {
+                                            document.getElementById('noteInput').focus();
+                                        });
+                                    });
+                                });
+                            } else {
+                                // If no data is found, display a message
+                                tableBody.innerHTML = '<p>No medications found for this order.</p>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // Display an error message in the modal content
+                            document.getElementById('medicationListCon').innerHTML = '<p>An error occurred while loading medications. Please try again.</p>';
+                        });
+                });
+            });
+
+            // Handle form submission for updating the note
+            var updateNoteForm = document.getElementById('updateNoteForm');
+            updateNoteForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                var medicineStoreId = document.getElementById('medicineStoreId').value;
+                var noteValue = document.getElementById('noteInput').value;
+
+                // Send the updated note to the server
+                fetch(`/OrderMedication/UpdateMedicationNote`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        medicineStoreId: medicineStoreId,
+                        note: noteValue
+                    })
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Note updated successfully!');
+
+                            // Close the update note modal
+                            var updateNoteModal = bootstrap.Modal.getInstance(document.getElementById('updateNoteModal'));
+                            updateNoteModal.hide();
+
+                            // Reload the medications to show the updated list
+                            var orderId = document.getElementById('addMedicationModalLabel').innerText.split('#')[1].trim();
+                            document.querySelector(`.medication[data-order-id="${orderId}"]`).click();
+                        } else {
+                            alert('Failed to update the note.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while updating the note.');
+                    });
+            });
+        });
+    </script>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var viewMedicationButtons = document.querySelectorAll('.view-medica');
+
+            viewMedicationButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    var orderId = this.getAttribute('data-order-id'); // Get the OrderMedicationID from the button
+
+                    // Update modal title with the OrderMedicationID (optional)
+                    document.getElementById('addMedicationModalLabel').innerText = 'Add Medication - Order #' + orderId;
+
+                    // Display loading message while fetching data
+                    document.getElementById('medicationList').innerHTML = 'Fetching medications for Order ID: ' + orderId;
+
+                    // Fetch medication data for the specific OrderMedicationID
+                    fetch(`/OrderMedication/GetMedications?OrderMedicationID=${orderId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            var tableBody = document.getElementById('medicationList');
+                            tableBody.innerHTML = ''; // Clear previous data
+
+                            if (data.length > 0) {
+                                // Start building the table HTML structure
+                                var medicationListHtml = `
+                                                                    <table class="table">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>#</th>
+                                                                                <th>Medication Name</th>
+                                                                                <th>Quantity</th>
+                                                                             
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>`;
+
+                                // Loop through each medication and create table rows
+                                data.forEach((item, index) => {
+                                    medicationListHtml += `
+                                                                        <tr>
+                                                                            <td>${index + 1}</td>
+                                                                            <td>${item.medicationName}</td>
+                                                                            <td>${item.quantity}</td>
+                                                                           <td>
+                                                <button type="button" class="btn btn-danger btn-sm delete-medication-b"
+                                                            data-id="${item.medicineStoreId}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+
+                                                                        </tr>`;
+                                });
+
+                                medicationListHtml += `</tbody></table>`; // Close the table structure
+
+                                // Update the modal content with the table
+                                tableBody.innerHTML = medicationListHtml;
+                                var deleteButtons = document.querySelectorAll('.delete-medication-b');
+                                deleteButtons.forEach(btn => {
+                                    btn.addEventListener('click', function () {
+                                        var medicineStoreId = this.getAttribute('data-id');
+                                        console.log("Selected MedicineStoreId:", medicineStoreId); // Debugging
+                                        if (confirm("Are you sure you want to delete this medication?")) {
+                                            deleteMedicatio(medicineStoreId);
+                                        }
+                                    });
+                                });
+                            } else {
+                                // If no data is found, display a message
+                                tableBody.innerHTML = '<p>No medications found for this order.</p>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // Display an error message in the modal content
+                            document.getElementById('medicationList').innerHTML = '<p>An error occurred while loading medications. Please try again.</p>';
+                        });
+                });
+            });
+        });
+        function deleteMedicatio(medicineStoreId) {
+            if (!medicineStoreId || medicineStoreId === 0) {
+                alert("Invalid medication ID");
+                return;
+            }
+
+            fetch(`/ExistingOrders/DeleteMedication?medicineStoreId=${medicineStoreId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);  // Display success or failure message
+                    } else {
+                        alert("An unknown error occurred.");
+                    }
+
+                    if (data.message === "Medication deleted successfully") {
+                        location.reload();  // Reload page to reflect changes
+                        alert("Medication deleted successfully");
+
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("An error occurred while deleting the medication.");
+                });
+        }
+    </script>
+}
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>

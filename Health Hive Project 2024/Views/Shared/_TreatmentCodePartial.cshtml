@@ -1,0 +1,19 @@
+﻿@model IEnumerable<SurgeryBookingTreatment>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Treatment Code</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tc in Model)
+        {
+            <tr>
+                <td>@tc.TreatmentRecords.TreatmentCode</td> <!-- Adjust to your property -->
+                <td>@tc.TreatmentRecords.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,223 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.Patient>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@if (TempData["error"] != null)
+{
+    <div class="row justify-content-center">
+        <div class="alert alert-danger">
+            @TempData["error"]
+        </div>
+    </div>
+}
+@if (TempData["pass"] != null)
+{
+    <div class="row justify-content-center">
+        <div class="alert alert-success">
+            @TempData["pass"]
+        </div>
+    </div>
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <div class="row justify-content-center">
+                <div>
+                    <form id="searchForm" method="post" onsubmit="return false;">
+                        <div class="row justify-content-end">
+                            <div class="col-md-8">
+                                <input type="text" id="searchInput" autocomplete="off" placeholder="Patient ID Number" name="id" class="form-control w-50 float-end" maxlength="13">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <br />
+            <br />
+            <div id="patientTableContainer" class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 120px;">Patient ID Number</th>
+                            <th style="width: 150px;">Name</th>
+                            <th style="width: 150px;">Surname</th>
+                            <th style="width: 200px;">Address</th>
+                            <th style="width: 150px;">Contact Number</th>
+                            <th style="width: 200px;">Email Address</th>
+                            <th style="width: 150px;">Date of Birth</th>
+                            <th style="width: 100px;">Gender</th>
+                            <th style="width: 100px;">Select</th>
+                            <th style="width: 250px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patientTableBody">
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.PatientIDNumber)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Surname)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                                <td>@Html.DisplayFor(modelItem => item.ContactNumber)</td>
+                                <td>@Html.DisplayFor(modelItem => item.EmailAddress)</td>
+                                <td>@Html.DisplayFor(modelItem => item.DateOfBirth)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Gender)</td>
+                                <td><input type="checkbox" class="patientCheckbox" data-patient-id="@item.PatientID" /></td>
+                                <td>
+                                    <a href="#" class="btn btn-info btn-sm showMedicalHistory" data-id="@item.PatientID">View Medical History</a>
+
+                                    <a href="#" class="btn btn-success btn-sm showVitals" data-id="@item.PatientID">View Vital History</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Structure: Patient Vital History -->
+<div class="modal fade" id="patientVitalsModal" tabindex="-1" role="dialog" aria-labelledby="patientVitalsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="patientVitalsModalLabel">Patient Vital History</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="patientVitalsContent">
+                    <!-- Content will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Structure: Patient Medical History -->
+<div class="modal fade" id="medicalHistoryModal" tabindex="-1" role="dialog" aria-labelledby="medicalHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="medicalHistoryModalLabel">Patient Medical History</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="patientMedicalHistoryContent">
+                    <!-- Content will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Prescribe Medication button -->
+<a id="prescribeMedicationBtn" href="~/PrescriptionRecords/Create" class="btn btn-primary" style="display:none;">Prescribe Medication</a>
+
+@section Scripts {
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#searchInput').on('input', function () {
+                let searchValue = $(this).val();
+
+                if (searchValue.length >= 1) {
+                    $('#patientTableBody').html('<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>');
+                    $.ajax({
+                        url: '@Url.Action("SearchPatientIndex", "Patients")',
+                        type: 'POST',
+                        data: { id: searchValue },
+                        success: function (data) {
+                            $('#patientTableBody').html(data);
+                            togglePrescribeButton();
+                        },
+                        error: function (xhr, status, error) {
+                            $('#patientTableBody').html('<tr><td colspan="10" class="text-danger">Error loading data. Please try again.</td></tr>');
+                            console.error("AJAX error:", status, error);
+                        }
+                    });
+                } else {
+                    $('#patientTableBody').html('<tr><td colspan="10">Please enter a search term.</td></tr>');
+                }
+            });
+
+            function togglePrescribeButton() {
+                const patientCheckboxes = $('.patientCheckbox');
+                const prescribeMedicationBtn = $('#prescribeMedicationBtn');
+                if (patientCheckboxes.filter(':checked').length > 0) {
+                    prescribeMedicationBtn.show();
+                } else {
+                    prescribeMedicationBtn.hide();
+                }
+            }
+
+            // Handle click event for 'View Vital History' button
+            $(document).on('click', '.showVitals', function (e) {
+                e.preventDefault(); // Prevent default link behavior
+
+                var patientId = $(this).data('id'); // Get the patient ID from the button's data attribute
+
+                // Make an AJAX request to fetch the patient vitals
+                $.ajax({
+                    url: '@Url.Action("GetPatientVitals", "PatientVitals")', // Update URL to match your controller and action
+                    type: 'GET',
+                    data: { id: patientId },
+                    success: function (data) {
+                        // Load the response into the modal body
+                        $('#patientVitalsContent').html(data);
+
+                        // Show the modal
+                        $('#patientVitalsModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('An error occurred:', error);
+                    }
+                });
+            });
+
+
+            // Handle click event for 'View Medical History' button
+            $(document).on('click', '.showMedicalHistory', function (e) {
+                e.preventDefault(); // Prevent default link behavior
+
+                var patientId = $(this).data('id'); // Get the patient ID from the button's data attribute
+
+                // Make an AJAX request to fetch the patient medical history
+                $.ajax({
+                    url: '@Url.Action("GetPatientMedicalHistory", "MedicalHistories")', // Update URL if needed
+                    type: 'GET',
+                    data: { id: patientId },
+                    success: function (data) {
+                        // Load the response into the modal body
+                        $('#patientMedicalHistoryContent').html(data);
+
+                        // Show the modal
+                        $('#medicalHistoryModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('An error occurred:', error);
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+
+
+
+
+
+
+
+
+

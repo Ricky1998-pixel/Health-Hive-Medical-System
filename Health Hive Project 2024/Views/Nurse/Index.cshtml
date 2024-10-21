@@ -1,0 +1,289 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+@if (@TempData["error"] != null)
+{
+    <div class="row justify-content-center">
+        <div class="alert alert-danger w-50 text-center">
+            <p>@TempData["error"]</p>
+        </div>
+    </div>
+}
+
+@{
+    ViewBag.Title = "Nurse Dashboard";
+}
+
+
+@if (@TempData["pass"] != null)
+{
+    <div class="row justify-content-center">
+        <div class="alert alert-success w-50 text-center">
+            <p>@TempData["pass"]</p>
+        </div>
+    </div>
+}
+
+
+
+
+
+@model Health_Hive_Project_2024.Data.ViewModels.DashboardCount
+
+
+<style>
+    body {
+        background-image: url('/images/DashboardBackground.jpg'); /* Set the background image */
+        background-size: cover;
+        background-position: center;
+        font-family: Arial, sans-serif;
+        color: black
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .datetime-container { padding: 20px;
+        
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        color: #fff;
+        font-family: 'Mont Blanc', sans-serif;
+    }
+
+        .datetime-container .time {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .datetime-container .date {
+            font-size: 1rem;
+           
+        }
+
+    .card {
+        margin-inline-start: 10px; /* Add some space between cards */
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for scale and shadow */
+        border: none; /* Remove border for a cleaner look */
+        background: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+    }
+
+    .statistics {
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for scale and shadow */
+        border: none; /* Remove border for a cleaner look */
+        background: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+
+    }
+
+        .card:hover {
+            transform: scale(1.05); /* Scale the card slightly on hover */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Add shadow effect */
+        }
+
+    /* Optional: Add some padding and center the badge */
+    .badge {
+        padding: 0.5em 0.75em; /* Adjust padding for badges */
+    }
+</style>
+
+<div >
+    <!-- Greet the nurse -->
+    <h1 style="color: white;">Welcome, @ViewBag.NurseName</h1>
+
+
+    <div>
+        <h3 style="color: white">Summary</h3>
+        <ul style="color: white" >
+            <li>Number of surgeries booked: @Model.Booking</li>
+            <li>Number of patients admitted: @Model.Admitted</li>
+            <li>Number of patients administered: @Model.Administer</li>
+            <li>Number of patients discharged today: @Model.Discharge</li>
+        </ul>
+
+        <div class="datetime-container">
+
+            <div class="time" id="time"></div>
+            <div class="date" id="date"></div>
+            <div id="weather" class="mt-2" style="font-size: 1rem; color: #fff;"></div>
+            <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#calendarModal">
+                <i class="bi bi-calendar"></i> Open Calendar
+            </button>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row justify-content-center" style="margin-top:10%">
+    <div>
+        <div class="row card-body">
+            <div class="col-md-4">
+                <a asp-action="Admitted" asp-controller="Nurse">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <img src="~/css/icons/hospital.png" style="width:150px" />
+                            </div>
+                            <div class="row justify-content-center">
+                                <h5 class="text-center">
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                                        @Model.Admitted
+                                    </span> @* COUNT *@Admitted Patients
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a asp-action="Bookings" asp-controller="Nurse">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <img src="~/css/icons/medical-appointment.png" style="width:150px" />
+                            </div>
+                            <div class="row justify-content-center">
+                                <h5 class="text-center">
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                                        @Model.Booking
+                                    </span> @* COUNT *@Booked Surgeries
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a asp-action="Administers">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <img src="~/css/icons/test.png" style="width:150px" />
+                            </div>
+                            <div class="row justify-content-center">
+                                <h5 class="text-center">
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        @Model.Administer
+                                    </span> @* COUNT *@Administer Medication
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="row card-body">
+            <div class="col-md-4">
+                <a asp-action="RetakeVitals" asp-controller="Nurse">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <img src="~/css/icons/vital-signs.png" style="width:150px" />
+                            </div>
+                            <div class="row justify-content-center">
+                                <h5 class="text-center">
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        @Model.Administer
+                                    </span> @* COUNT *@Retake Vitals
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a asp-action="Discharged">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <img src="~/css/icons/discharge.png" style="width:150px" />
+                            </div>
+                            <div class="row justify-content-center">
+                                <h5 class="text-center">
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                                        @Model.Discharge
+                                    </span> @* COUNT *@Discharged Patient
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a asp-action="SearchPatient">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <img src="~/css/icons/folder.png" style="width:150px" />
+                            </div>
+                            <div class="row justify-content-center">
+                                <h5 class="text-center">Patient File</h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+
+
+<script>
+    function updateDateTime() {
+        const now = new Date();
+        document.getElementById('time').textContent = now.toLocaleTimeString();
+        document.getElementById('date').textContent = now.toLocaleDateString();
+    }
+
+    setInterval(updateDateTime, 1000); // Update time every second
+    updateDateTime(); // Initialize immediately
+</script>
+
+<script>
+    async function fetchWeather() {
+        const apiKey = 'd3c5b0078ead4cecb51161433241909 ';
+        const city = 'Port Elizabeth';  // Set the city based on your location
+        const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&aqi=no`;
+
+        try {
+            const response = await fetch(url);
+            const weatherData = await response.json();
+            const temperature = weatherData.current.temp_c;
+            const description = weatherData.current.condition.text;
+            const icon = weatherData.current.condition.icon;
+
+            document.getElementById('weather').innerHTML = `
+                                            <div>
+                                        <img src="${icon}" alt="Weather Icon" style="width:50px; height:50px;" />
+                                        <span style="font-size: 1.2rem;">${temperature}°C, ${description}</span>
+                                    </div>
+                                `;
+        } catch (error) {
+            console.error('Error fetching weather data:', error);
+            document.getElementById('weather').innerText = 'Weather info unavailable';
+        }
+    }
+
+    window.onload = function () {
+        fetchWeather();
+        updateTime();
+    };
+
+    function updateTime() {
+        const now = new Date();
+        const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const date = now.toLocaleDateString();
+
+        document.getElementById('time').innerText = time;
+        document.getElementById('date').innerText = date;
+
+        setTimeout(updateTime, 60000); // Update every minute
+    }
+</script>

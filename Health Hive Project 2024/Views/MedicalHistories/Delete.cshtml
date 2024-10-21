@@ -1,0 +1,75 @@
+﻿@model Health_Hive_Project_2024.Models.MedicalHistory
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Medical History</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Patient)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Patient.Address) <!-- Assuming Address is a property of Patient -->
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DateRecorded)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DateRecorded)
+        </dd>
+
+        <!-- Display medications -->
+        <dt class="col-sm-2">
+            Medications
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.MedicalHistoryMedications != null && Model.MedicalHistoryMedications.Any())
+            {
+                <ul>
+                    @foreach (var medHistoryMedication in Model.MedicalHistoryMedications)
+                    {
+                        <li>@medHistoryMedication.MedicationRecords.MedicationName</li> <!-- Assuming MedicationName is a property of MedicationRecords -->
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No medications recorded.</p>
+            }
+        </dd>
+
+        <!-- Display allergies -->
+        <dt class="col-sm-2">
+            Allergies
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.MedicalHistoryAllergies != null && Model.MedicalHistoryAllergies.Any())
+            {
+                <ul>
+                    @foreach (var allergy in Model.MedicalHistoryAllergies)
+                    {
+                        <li>@allergy.ActiveIngredientRecords.IngredientName</li> <!-- Assuming IngredientName is a property of ActiveIngredientRecords -->
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No allergies recorded.</p>
+            }
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="MedicalHistoryID" />
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
+

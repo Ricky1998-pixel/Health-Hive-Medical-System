@@ -1,0 +1,28 @@
+﻿@media (max-width: 768px) {
+    .wrap[_ngcontent-ng-c167416638] {
+        margin-top: 0;
+        margin-right: 10px
+    }
+
+        .wrap[_ngcontent-ng-c167416638] p[_ngcontent-ng-c167416638] {
+            width: 57%;
+            font-size: 13px
+        }
+
+    .blockico[_ngcontent-ng-c167416638] {
+        margin-top: -20%;
+        width: 135px;
+        height: 135px;
+        position: absolute;
+        right: -25px
+    }
+
+    .login-heading[_ngcontent-ng-c167416638] {
+        font-size: 18px
+    }
+
+    .primary-text[_ngcontent-ng-c167416638] {
+        display: block;
+        line-height: 5px
+    }
+}

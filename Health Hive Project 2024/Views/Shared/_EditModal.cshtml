@@ -1,0 +1,37 @@
+﻿@model Vitals
+
+<form id="editForm" asp-action="Edit" method="post">
+    @Html.AntiForgeryToken() <!-- Ensure this is present for validation -->
+    <!-- Hidden input to bind the primary key -->
+    <input type="hidden" asp-for="VitalID" />
+
+    <div class="mb-3">
+        <label for="VitalName" class="form-label">Vital Name</label>
+        <input type="text" class="form-control" asp-for="Name" required />
+    </div>
+    <div class="mb-3">
+        <label for="VitalName" class="form-label">Vital Name</label>
+        <input type="text" class="form-control" asp-for="VitalName"  />
+    </div>
+    <div class="mb-3">
+        <label for="VitalName" class="form-label">Vital Name</label>
+        <input type="text" class="form-control" asp-for="VitalName2" />
+    </div>
+
+    <div class="mb-3">
+        <label for="MinValue" class="form-label">Min Value</label>
+        <input type="number" class="form-control" asp-for="MinimumValue" required />
+    </div>
+    <div class="mb-3">
+        <label for="MinValue" class="form-label">Min Value</label>
+        <input type="number" class="form-control" asp-for="MaxValue" required />
+    </div>
+
+
+    <div class="mb-3">
+        <label for="MaxValue" class="form-label">Max Value</label>
+        <input type="text" class="form-control" asp-for="UnitOfMeasure" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>

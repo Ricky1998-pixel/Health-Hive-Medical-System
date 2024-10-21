@@ -1,0 +1,145 @@
+﻿@model Health_Hive_Project_2024.Models.AnaesthesiaOrder
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="row justify-content-center">
+    <div class="card w-75">
+        <div class="card-body" id="b-1">
+            <h3 class="text-center">Create Medication Order</h3>
+            <h5 class="">Step 1/3: Patient Info</h5>
+            <br />
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label class="control-label">Patient Name</label>
+                        <input id="pat-name" value="@Model.Name" autocomplete="off" type="text" class="form-control" />
+                        <span class="text-danger" style="display:none" id="pat-name-er">Required field</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Order Date</label>
+                        <input id="order-date" value="@Model.Date.ToShortDateString()" autocomplete="off" type="date" class="form-control" />
+                        <span class="text-danger" style="display:none" id="order-date-er">Required field</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Urgent Order</label>
+                        <select id="order-urgency" class="form-select">
+                            <option value="Normal">Normal</option>
+                            <option value="Urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Medications</label>
+                        <select id="medications" class="form-select" asp-items="ViewBag.Medications"></select>
+                        <input type="button" value="Add Medication" onclick="AddMedication()" class="btn btn-outline-success mt-2" />
+                        <div class="mt-4">
+                            <table class="table w-75 table-striped">
+                                <tbody id="meds-list">
+                                    <!-- Dynamically added medications will appear here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" onclick="Next1()" class="btn btn-primary">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add more steps as needed -->
+
+        <div class="card-body" id="b-3" style="display:none;">
+            <h3 class="text-center">Review Order</h3>
+            <h5 class="">Step 2/3: Review and Confirm</h5>
+            <br />
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Display a summary of the order -->
+                    <div class="form-group">
+                        <label class="control-label">Patient Name: <span id="review-pat-name"></span></label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Order Date: <span id="review-order-date"></span></label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Urgency: <span id="review-urgency"></span></label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Medications:</label>
+                        <ul id="review-medications"></ul>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" onclick="Prev1()" class="btn btn-primary">Previous</button>
+                        <button type="button" onclick="SubmitOrder()" class="btn btn-primary">Submit Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var Medications = [];
+
+        function AddMedication() {
+            var med = { Id: $('#medications option:selected').val(), name: $('#medications option:selected').text() };
+            for (let i = 0; i < Medications.length; i++) {
+                if (Medications[i].Id == med.Id) {
+                    return;
+                }
+            }
+            Medications.push(med);
+            RefreshMedications();
+        }
+
+        function RefreshMedications() {
+            var s = '';
+            for (let i = 0; i < Medications.length; i++) {
+                s += '<tr><td>' + Medications[i].name + '</td><td><button type="button" onclick="RemoveMedication(\'' + Medications[i].Id + '\')" class="btn btn-outline-danger">Remove</button></td></tr>';
+            }
+            $('#meds-list').html(s);
+        }
+
+        function RemoveMedication(id) {
+            Medications = Medications.filter(function (med) { return med.Id != id; });
+            RefreshMedications();
+        }
+
+        function Next1() {
+            var name = $('#pat-name').val();
+            var orderDate = $('#order-date').val();
+            var urgency = $('#order-urgency').val();
+
+            if (!name || !orderDate) {
+                if (!name) $('#pat-name-er').show();
+                if (!orderDate) $('#order-date-er').show();
+                return;
+            }
+
+            $('#review-pat-name').text(name);
+            $('#review-order-date').text(orderDate);
+            $('#review-urgency').text(urgency);
+            $('#review-medications').html(Medications.map(function (med) { return '<li>' + med.name + '</li>'; }).join(''));
+
+            $('#b-1').hide();
+            $('#b-3').show();
+        }
+
+        function Prev1() {
+            $('#b-3').hide();
+            $('#b-1').show();
+        }
+
+        function SubmitOrder() {
+            // Submit order logic here
+        }
+    </script>
+}
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

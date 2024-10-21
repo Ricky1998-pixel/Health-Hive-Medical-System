@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.OrderMedication>
+
+@{
+    ViewData["Title"] = "Order List";
+}
+
+<h2>Order List</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Anaesthesiologist</th>
+            <th>Patient</th>
+            <th>Order Date</th>
+            <th>Urgency</th>
+            <th>Status</th>
+            <th>Medications</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.AnaesthesiologistName</td>
+                <td>@order.PatientName</td>
+                <td>@order.OrderDate.ToShortDateString()</td>
+                <td>@order.OrderUrgency</td>
+                <td>@order.OrderStatus</td>
+                <td>
+                    <ul>
+                        @foreach (var med in order.MedicationOrders)
+                        {
+                            <li>@med.MedicationName - Quantity: @med.Quantity</li>
+                        }
+                    </ul>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create" class="btn btn-primary">Create New Order</a>

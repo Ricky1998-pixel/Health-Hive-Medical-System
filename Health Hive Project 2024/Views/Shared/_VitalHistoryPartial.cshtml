@@ -1,0 +1,21 @@
+﻿@model IEnumerable<VitalModel>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Vital Name</th>
+            <th>Reading Value</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var vital in Model)
+        {
+            <tr>
+                <td>@vital.GetNormalRange.VitalName</td>
+                <td>@vital.ReadingValue</td> <!-- Adjust to your property -->
+                <td>@vital.TimeStamp.ToString("g")</td>
+            </tr>
+        }
+    </tbody>
+</table>

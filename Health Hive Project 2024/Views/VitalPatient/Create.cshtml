@@ -1,0 +1,109 @@
+﻿@model Health_Hive_Project_2024.Models.VitalPatient
+
+@{
+    ViewData["Title"] = "Create Vital Patient";
+}
+
+
+
+<!-- Add a container for the button -->
+<div style="position: relative;">
+    <a href="@Url.Action("RetakeVitals", "Nurse")" class="btn btn-secondary" style="position: absolute; top: 0; right: 0; margin: 10px;">View Patients Vitals</a>
+</div>
+
+<form asp-action="Create" method="post" id="vitalPatientForm">
+
+    <div class="form-group">
+        <label asp-for="PatientName" class="control-label">Patient Name</label>
+        <input asp-for="PatientName" class="form-control" placeholder="Enter patient name" style="width: 250px;" />
+        <span asp-validation-for="PatientName" class="text-danger"></span>
+    </div>
+
+
+    <div id="vitalsContainer">
+        <h3>Vitals</h3>
+        <div class="vital-entry">
+            <div class="form-group">
+                <label for="VitalName">Vital Name</label>
+                <select name="Vitals[0].VitalName" class="form-control">
+                    @foreach (var vital in ViewBag.VitalNames)
+                    {
+                        <option value="@vital">@vital</option>
+                    }
+                </select>
+                <span asp-validation-for="Vitals[0].VitalName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Vitals[0].MinValue" class="control-label">Minimum Vital Value</label>
+                <input asp-for="Vitals[0].MinValue" class="form-control" type="number" step="any" placeholder="Enter minimum value" />
+                <span asp-validation-for="Vitals[0].MinValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Vitals[0].MaxValue" class="control-label">Maximum Vital Value</label>
+                <input asp-for="Vitals[0].MaxValue" class="form-control" type="number" step="any" placeholder="Enter maximum value" />
+                <span asp-validation-for="Vitals[0].MaxValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Vitals[0].CurrentValue" class="control-label">Current Vital Value</label>
+                <input asp-for="Vitals[0].CurrentValue" class="form-control" type="number" step="any" placeholder="Enter current value" />
+                <span asp-validation-for="Vitals[0].CurrentValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Vitals[0].DateRecorded" class="control-label">Date Recorded</label>
+                <input asp-for="Vitals[0].DateRecorded" class="form-control" type="date" />
+                <span asp-validation-for="Vitals[0].DateRecorded" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Send</button>
+</form>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let vitalIndex = 1;
+
+            document.getElementById("addVitalButton").addEventListener("click", function() {
+                const container = document.getElementById("vitalsContainer");
+                const vitalEntry = document.createElement("div");
+                vitalEntry.classList.add("vital-entry");
+                vitalEntry.innerHTML = `
+                            <hr />
+                            <div class="form-group">
+                                <label for="VitalName">Vital Name</label>
+                                <select name="Vitals[${vitalIndex}].VitalName" class="form-control">
+        @foreach (var vital in ViewBag.VitalNames)
+        {
+                                            <option value="@vital">@vital</option>
+        }
+                                </select>
+                                <span asp-validation-for="Vitals[${vitalIndex}].VitalName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Vitals[${vitalIndex}].MinValue" class="control-label">Minimum Vital Value</label>
+                                <input asp-for="Vitals[${vitalIndex}].MinValue" class="form-control" type="number" step="any" placeholder="Enter minimum value" />
+                                <span asp-validation-for="Vitals[${vitalIndex}].MinValue" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Vitals[${vitalIndex}].MaxValue" class="control-label">Maximum Vital Value</label>
+                                <input asp-for="Vitals[${vitalIndex}].MaxValue" class="form-control" type="number" step="any" placeholder="Enter maximum value" />
+                                <span asp-validation-for="Vitals[${vitalIndex}].MaxValue" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Vitals[${vitalIndex}].CurrentValue" class="control-label">Current Vital Value</label>
+                                <input asp-for="Vitals[${vitalIndex}].CurrentValue" class="form-control" type="number" step="any" placeholder="Enter current value" />
+                                <span asp-validation-for="Vitals[${vitalIndex}].CurrentValue" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Vitals[${vitalIndex}].DateRecorded" class="control-label">Date Recorded</label>
+                                <input asp-for="Vitals[${vitalIndex}].DateRecorded" class="form-control" type="date" />
+                                <span asp-validation-for="Vitals[${vitalIndex}].DateRecorded" class="text-danger"></span>
+                            </div>
+                        `;
+                container.appendChild(vitalEntry);
+                vitalIndex++;
+            });
+        });
+    </script>
+}

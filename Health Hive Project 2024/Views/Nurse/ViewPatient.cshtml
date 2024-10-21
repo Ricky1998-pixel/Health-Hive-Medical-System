@@ -1,0 +1,442 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Health_Hive_Project_2024.Data.ViewModels.ViewPatient
+<div class="row justify-content-center">
+    <div class="card w-100">
+        <div class="card-body" id="b-1">
+            <h3 class="text-center">Patient Info</h3>
+            <h5 class="">Patient Info</h5>
+            <br />
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label class="control-label">Name</label>
+                        <dd class="col-sm-10" style="margin-left:15%">
+                            @Model.Patient.Name
+                        </dd>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Surname</label>
+                        <dd class="col-sm-10" style="margin-left:15%">
+                            @Model.Patient.Surname
+                        </dd>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">ID Number</label>
+                        <dd class="col-sm-10" style="margin-left:15%">
+                            @Model.Patient.PatientIDNumber
+                        </dd>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Address</label>
+                        <dd class="col-sm-10" style="margin-left:15%">
+                            @Model.Patient.Address
+                        </dd>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Date of Birth</label>
+                        <dd class="col-sm-10" style="margin-left:15%">
+                            @Model.Patient.DateOfBirth.ToShortDateString()
+                        </dd>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Contact Number</label>
+                        <dd class="col-sm-10" style="margin-left:15%">
+                            @Model.Patient.ContactNumber
+                        </dd>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Email Address</label>
+                        <dd class="col-sm-10" style="margin-left:15%">
+                            @Model.Patient.EmailAddress
+                        </dd>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Gender</label>
+                        <dd class="col-sm-10" style="margin-left:15%">
+                            @Model.Patient.Gender
+                        </dd>
+
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" onclick="Next1()" value="Next" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="display:none" id="b-2">
+            <h3 class="text-center">@Model.Patient.Name @Model.Patient.Surname</h3>
+            <h5 class="">Medical History</h5>
+            <br />
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <h4 class="control-label text-center">Chronic Conditions</h4>
+                        <div class="mt-4">
+                            <table class="table w-75 table-striped">
+                                <tbody id="con-list">
+
+                                    @if (Model.MedicalHistory != null && Model.MedicalHistory.Any())
+                                    {
+                                        foreach (var i in Model.MedicalHistory)
+                                        {
+                                            @foreach (var allergy in i.MedicalHistoryCondition)
+                                            {
+
+                                                <tr>
+                                                    <td>
+                                                        @allergy.Condition.Diagnosis
+                                                    </td>
+                                                </tr>
+                                            }
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td class="text-danger">
+                                                No Data
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <h4 class="control-label text-center">Current Medication</h4>
+                        <div class="mt-4">
+                            <table class="table w-75 table-striped">
+                                <tbody id="allergies-list">
+                                    @if (Model.MedicalHistory != null && Model.MedicalHistory.Any())
+                                    {
+                                        foreach (var i in Model.MedicalHistory)
+                                        {
+                                            @foreach (var allergy in i.MedicalHistoryMedications)
+                                            {
+
+                                                <tr>
+                                                    <td>
+                                                        @allergy.MedicationRecords.MedicationName
+                                                    </td>
+                                                </tr>
+                                            }
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td class="text-danger">
+                                                No Data
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <h4 class="control-label text-center">Allergies</h4>
+                        <div class="mt-4">
+                            <table class="table w-75 table-striped">
+                                <tbody id="meds-list">
+                                    @if (Model.MedicalHistory != null && Model.MedicalHistory.Any())
+                                    {
+                                        foreach (var i in Model.MedicalHistory)
+                                        {
+                                            @foreach (var allergy in i.MedicalHistoryAllergies)
+                                            {
+
+                                                <tr>
+                                                    <td>
+                                                        @allergy.ActiveIngredientRecords.IngredientName
+                                                    </td>
+                                                </tr>
+                                            }
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td class="text-danger">
+                                                No Data
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" value="Previous" onclick="Prev1()" class="btn btn-primary">Previous</button>
+                        <button type="submit" value="Submit" onclick="Next2()" class="btn btn-primary">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="display:none" id="b-3">
+            <h3 class="text-center">@Model.Patient.Name @Model.Patient.Surname</h3>
+            <h5 class="text-center">Vitals History</h5>
+            <br />
+
+            <div class="row">
+                @if ((IEnumerable<Vitals>)ViewBag.Vitals != null)
+                {
+                    foreach (var item in (IEnumerable<Vitals>)ViewBag.Vitals)
+                    {
+                        <div class="col-md-6 mt-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                            <h4 class="card-title text-center"> @item.Name</h4>
+                            <canvas id="@item.VitalID" width="465" height="232" style="display: block; width: 465px; height: 232px;" class="chartjs-render-monitor"></canvas>
+                        </div>
+                    </div>
+                </div>
+                    }
+                }
+                
+                
+            </div>
+            <br />
+            <div class="row">
+                @if ((IEnumerable<Vitals>)ViewBag.Vitals != null)
+                {
+                    foreach (var item in (IEnumerable<Vitals>)ViewBag.Vitals)
+                    {
+                        <h4 class="text-center">@item.Name</h4>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="t-@item.VitalID">
+
+                            </tbody>
+                        </table>
+                        <br />
+                    }
+                }
+                
+            </div>
+            <br />
+            <br />
+            <div class="form-group">
+                <button type="submit" value="Previous" onclick="Prev2()" class="btn btn-primary">Previous</button>
+                <button type="submit" value="Submit" onclick="Retake()" class="btn btn-outline-success">Retake Vitals</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-center" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Addmit Patient</h5>
+            </div>
+            <div class="modal-body">
+                <div class="text-center" id="modalbody">
+                    <div class="spinner-border text-primary" id="spinner" role="status"></div><br /><span class="sr-only">Loading...</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+@section Scripts {
+    <script>
+        function Retake(){
+            location.href = "@Url.Action("RetakeVitals","Nurse", new {id = Model.Patient.PatientIDNumber})"
+        }
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetVitals", "Nurse", new {id  = Model.Patient.PatientID})",
+                dataType: "Json",
+                contentType: "application/json",
+                success: function (res) {
+                   for (let j = 0; j < res.length; j++) {
+                   var s = '#'+res[j].vitals.vitalID
+                        SetGraphs(res[j].patientVitals, res[j].vitals.unitOfMeasure , s, res[j].vitals.name)
+                        SetTable(res[j].patientVitals)
+                   }
+
+                }
+            });
+
+        });
+        function getRandomRgbColor() {
+            const r = Math.floor(Math.random() * 256);
+            const g = Math.floor(Math.random() * 256);
+            const b = Math.floor(Math.random() * 256);
+            return `rgba(${r}, ${g}, ${b}, 0.4)`;
+        }
+        function SetTable(data){
+            console.log(data)
+            id = ''
+            s = ''
+            for (let j = 0; j < data.length; j++) {
+                let a = data[j]
+                if(a.value2 > 0){
+                    s += '<tr><td>' + a.dateTime.split('T')[0] + '</td><td>' + a.dateTime.split('T')[1].split('.')[0] + '</td><td>' + a.value1 + ' / ' + a.value2 + '</td > <td></td></tr > '
+                }else{
+                    s += '<tr><td>' + a.dateTime.split('T')[0] + '</td><td>' + a.dateTime.split('T')[1].split('.')[0] + '</td><td>' + a.value1 + '</td><td>' + a.value2 + '</td></tr>'
+                }
+                
+                id = '#t-' + a.vitalID
+               
+            }
+            $(id).empty()
+            $(id).append(s)
+        }
+        function SetGraphs(date, y, id, l) {
+            var da = []
+            var val = []
+            var val1 = []
+            for (let j = 0; j < date.length; j++) {
+                let a = date[j]
+                da.push(a.dateTime.split('T')[0] + " " + a.dateTime.split('T')[1].split('.')[0])
+                val.push(a.value1)
+                if (a.value2 > 0) {
+                    val1.push(a.value2)
+                }
+            }
+            
+
+            if(val1.length > 0){
+                var data = {
+                    labels: da,
+                    datasets: [{
+                        label: date[0].vitals.vitalName,
+                        data: val,
+                        backgroundColor: [
+                            getRandomRgbColor(),
+                        ],
+                        borderWidth: 2
+                    }, {
+                        label: date[0].vitals.vitalName2,
+                        data: val1,
+                        backgroundColor: [
+                            getRandomRgbColor(),
+                        ],
+                        borderWidth: 1
+                    }],
+
+
+                };
+                var options = {
+                    scales: {
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Date And Time'
+                            }
+                        }],
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: date[0].vitals.unitOfMeasure,
+                            },
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: true
+                    },
+                    responsive: false
+
+                };
+                if ($(id).length) {
+                    var lineChartCanvas = $(id).get(0).getContext("2d");
+                    var lineChart = new Chart(lineChartCanvas, {
+                        type: 'line',
+                        data: data,
+                        options: options
+                    });
+                }
+            }
+            else{
+                var data = {
+                    labels: da,
+                    datasets: [{
+                        label: l,
+                        data: val,
+                        backgroundColor: [
+                            getRandomRgbColor(),
+                        ],
+                        borderWidth: 1
+                    }],
+                };
+                var options = {
+                    scales: {
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Date And Time'
+                            }
+                        }],
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: y
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: true
+                    }
+
+                };
+                if ($(id).length) {
+                    var lineChartCanvas = $(id).get(0).getContext("2d");
+                    var lineChart = new Chart(lineChartCanvas, {
+                        type: 'line',
+                        data: data,
+                        options: options
+                    });
+                }
+            }
+            
+        }
+        function Next1() {
+            
+            $('#b-1,#b-2').toggle("slow", "swing")
+        }
+        function Prev1(){
+            $('#b-1,#b-2').toggle("slow", "swing")
+        }
+        function Prev2(){
+            $('#b-3,#b-2').toggle("slow", "swing")
+        }
+        function Prev3(){
+            $('#b-4,#b-3').toggle("slow", "swing")
+        }
+
+        function Next2(){
+            $('#b-3,#b-2').toggle("slow", "swing")
+        }
+        function Next3() {
+            $('#b-3,#b-4').toggle("slow", "swing")
+        }
+        
+    </script>
+}

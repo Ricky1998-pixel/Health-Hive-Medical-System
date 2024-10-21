@@ -1,0 +1,79 @@
+﻿@model Health_Hive_Project_2024.Models.PatientVitals
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>PatientVitals</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="PatientVitalID" />
+            <div class="form-group">
+                <label asp-for="PatientID" class="control-label"></label>
+                <select asp-for="PatientID" class="form-control" asp-items="ViewBag.PatientID"></select>
+                <span asp-validation-for="PatientID" class="text-danger"></span>
+            </div>
+            @* <div class="form-group">
+                <label asp-for="HeartRate" class="control-label"></label>
+                <input asp-for="HeartRate" class="form-control" />
+                <span asp-validation-for="HeartRate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SystolicBloodPressure" class="control-label"></label>
+                <input asp-for="SystolicBloodPressure" class="form-control" />
+                <span asp-validation-for="SystolicBloodPressure" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DiastolicBloodPressure" class="control-label"></label>
+                <input asp-for="DiastolicBloodPressure" class="form-control" />
+                <span asp-validation-for="DiastolicBloodPressure" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RespirationRate" class="control-label"></label>
+                <input asp-for="RespirationRate" class="form-control" />
+                <span asp-validation-for="RespirationRate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BodyTemperature" class="control-label"></label>
+                <input asp-for="BodyTemperature" class="form-control" />
+                <span asp-validation-for="BodyTemperature" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OxygenSaturation" class="control-label"></label>
+                <input asp-for="OxygenSaturation" class="form-control" />
+                <span asp-validation-for="OxygenSaturation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BloodGlucoseLevel" class="control-label"></label>
+                <input asp-for="BloodGlucoseLevel" class="form-control" />
+                <span asp-validation-for="BloodGlucoseLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RecordedDateTime" class="control-label"></label>
+                <input asp-for="RecordedDateTime" class="form-control" />
+                <span asp-validation-for="RecordedDateTime" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="Notes" class="control-label"></label>
+                <input asp-for="Notes" class="form-control" />
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

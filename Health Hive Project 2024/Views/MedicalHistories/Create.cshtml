@@ -1,0 +1,234 @@
+﻿@model Health_Hive_Project_2024.Models.MedicalHistory
+
+@{
+    ViewData["Title"] = "Create Medical History";
+}
+
+<h1>Create Medical History</h1>
+
+<h4>Medical History</h4>
+<hr />
+
+<!-- Container with rounded corners -->
+<div class="container rounded p-4 shadow-sm" style="background-color: #f9f9f9; max-width: 600px; margin: auto; border-radius: 15px;">
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <!-- Patient -->
+        <div class="form-group mb-3">
+            <label asp-for="PatientID" class="form-label"></label>
+            <select asp-for="PatientID" class="form-control rounded-pill" asp-items="ViewBag.Patients"></select>
+            <span asp-validation-for="PatientID" class="text-danger"></span>
+        </div>
+
+        <!-- Date Recorded -->
+        <div class="form-group mb-3">
+            <label asp-for="DateRecorded" class="form-label"></label>
+            <input asp-for="DateRecorded" type="date" class="form-control rounded-pill" />
+            <span asp-validation-for="DateRecorded" class="text-danger"></span>
+        </div>
+
+
+        <!-- Allergies -->
+        <div class="form-group mb-3">
+            <label>Allergies</label>
+            <select asp-for="MedicalHistoryAllergies" class="form-control rounded-pill d-none" asp-items="ViewBag.Allergies" multiple="multiple" name="selectedAllergies" id="selectedAllergies"></select>
+            <input type="text" class="form-control rounded-pill" readonly placeholder="Click to select allergies" onclick="$('#allergiesModal').modal('show');" id="selectedAllergiesDisplay">
+            <span asp-validation-for="MedicalHistoryAllergies" class="text-danger"></span>
+        </div>
+
+        <!-- Medications -->
+        <div class="form-group mb-3">
+            <label>Medications</label>
+            <select asp-for="MedicalHistoryMedications" class="form-control rounded-pill d-none" asp-items="ViewBag.Medications" multiple="multiple" name="selectedMedications" id="selectedMedications"></select>
+            <input type="text" class="form-control rounded-pill" readonly placeholder="Click to select medications" onclick="$('#medicationsModal').modal('show');" id="selectedMedicationsDisplay">
+            <span asp-validation-for="MedicalHistoryMedications" class="text-danger"></span>
+        </div>
+
+
+        <!-- Conditions -->
+        <div class="form-group mb-3">
+            <label>Conditions</label>
+            <select class="form-control rounded-pill d-none" asp-for="MedicalHistoryCondition" asp-items="ViewBag.Conditions" multiple="multiple" name="selectedConditions" id="selectedConditions"></select>
+            <input type="text" class="form-control rounded-pill" readonly placeholder="Click to select conditions" onclick="$('#conditionsModal').modal('show');" id="selectedConditionsDisplay">
+            <span asp-validation-for="MedicalHistoryCondition" class="text-danger"></span>
+        </div>
+
+
+
+
+        <!-- Submit Button -->
+        <div class="form-group mb-3">
+            <input type="submit" value="Create" class="btn btn-primary rounded-pill w-100" />
+        </div>
+    </form>
+</div>
+
+
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary rounded-pill">Back to List</a>
+</div>
+
+
+<!-- Allergies Modal -->
+<div class="modal fade" id="allergiesModal" tabindex="-1" aria-labelledby="allergiesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <!-- Larger modal -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="allergiesModalLabel">Select Allergies</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="allergiesForm" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <!-- Flexbox layout with gap -->
+                    @foreach (var allergy in ViewBag.Allergies)
+                    {
+                        <div class="form-check flex-grow-1" style="flex-basis: calc(33% - 10px);">
+                            <!-- Flex item with width adjustment -->
+                            <input class="form-check-input" type="checkbox" value="@allergy.Value" id="allergy_@allergy.Value">
+                            <label class="form-check-label" for="allergy_@allergy.Value">
+                                @allergy.Text
+                            </label>
+                        </div>
+                    }
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveAllergies">Save Selection</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Medications Modal -->
+<div class="modal fade" id="medicationsModal" tabindex="-1" aria-labelledby="medicationsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <!-- Larger modal -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="medicationsModalLabel">Select Medications</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="medicationsForm" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <!-- Flexbox layout with gap -->
+                    @foreach (var medication in ViewBag.Medications)
+                    {
+                        <div class="form-check flex-grow-1" style="flex-basis: calc(33% - 10px);">
+                            <!-- Flex item with width adjustment -->
+                            <input class="form-check-input" type="checkbox" value="@medication.Value" id="medication_@medication.Value">
+                            <label class="form-check-label" for="medication_@medication.Value">
+                                @medication.Text
+                            </label>
+                        </div>
+                    }
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveMedications">Save Selection</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Conditions Modal -->
+<div class="modal fade" id="conditionsModal" tabindex="-1" aria-labelledby="conditionsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <!-- Larger modal -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="conditionsModalLabel">Select Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="conditionsForm" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <!-- Flexbox layout with gap -->
+                    @foreach (var condition in ViewBag.Conditions)
+                    {
+                        <div class="form-check flex-grow-1" style="flex-basis: calc(33% - 10px);">
+                            <!-- Flex item with width adjustment -->
+                            <input class="form-check-input" type="checkbox" value="@condition.Value" id="condition_@condition.Value">
+                            <label class="form-check-label" for="condition_@condition.Value">
+                                @condition.Text
+                            </label>
+                        </div>
+                    }
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveConditions">Save Selection</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Trigger Allergies Modal
+            $('select[name="selectedAllergies"]').on('click', function (event) {
+                event.preventDefault(); // Prevent dropdown from opening
+                $('#allergiesModal').modal('show');
+            });
+
+            // Trigger Medications Modal
+            $('select[name="selectedMedications"]').on('click', function (event) {
+                event.preventDefault(); // Prevent dropdown from opening
+                $('#medicationsModal').modal('show');
+            });
+
+            // Trigger Conditions Modal
+            $('select[name="selectedConditions"]').on('click', function (event) {
+                event.preventDefault(); // Prevent dropdown from opening
+                $('#conditionsModal').modal('show');
+            });
+
+
+
+            // Save selected Allergies
+            $('#saveAllergies').on('click', function () {
+                let selectedAllergies = [];
+                let selectedAllergiesText = [];
+                $('#allergiesForm input[type="checkbox"]:checked').each(function () {
+                    selectedAllergies.push($(this).val());
+                    selectedAllergiesText.push($(this).next('label').text());
+                });
+                $('#selectedAllergies').val(selectedAllergies).change();
+                $('#selectedAllergiesDisplay').val(selectedAllergiesText.join(', '));
+                $('#allergiesModal').modal('hide');
+            });
+
+            // Save selected Medications
+            $('#saveMedications').on('click', function () {
+                let selectedMedications = [];
+                let selectedMedicationsText = [];
+                $('#medicationsForm input[type="checkbox"]:checked').each(function () {
+                    selectedMedications.push($(this).val());
+                    selectedMedicationsText.push($(this).next('label').text());
+                });
+                $('#selectedMedications').val(selectedMedications).change();
+                $('#selectedMedicationsDisplay').val(selectedMedicationsText.join(', '));
+                $('#medicationsModal').modal('hide');
+            });
+
+            // Save selected Conditions
+            $('#saveConditions').on('click', function () {
+                let selectedConditions = [];
+                let selectedConditionsText = [];
+                $('#conditionsForm input[type="checkbox"]:checked').each(function () {
+                    selectedConditions.push($(this).val());
+                    selectedConditionsText.push($(this).next('label').text());
+                });
+                $('#selectedConditions').val(selectedConditions).change();
+                $('#selectedConditionsDisplay').val(selectedConditionsText.join(', '));
+                $('#conditionsModal').modal('hide');
+            });
+        });
+    </script>
+}
+

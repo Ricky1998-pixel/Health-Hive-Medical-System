@@ -1,0 +1,47 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.DispensingInformation>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Prescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DispensingPharmacist)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DispensingDateTime)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Prescription.PrescriptionID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DispensingPharmacist)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DispensingDateTime)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.DispensingID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.DispensingID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.DispensingID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
