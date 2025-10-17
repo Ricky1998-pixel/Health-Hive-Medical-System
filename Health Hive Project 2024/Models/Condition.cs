@@ -8,9 +8,6 @@ namespace Health_Hive_Project_2024.Models
         [Key]
         public int ConditionID { get; set; }
 
-        //[ForeignKey("PatientID")]
-        //public int PatientID { get; set; }
-        //public virtual Patient Patient { get; set; }
 
 
         public string? CODE { get; set; }

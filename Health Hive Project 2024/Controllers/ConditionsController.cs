@@ -47,7 +47,7 @@ namespace Health_Hive_Project_2024.Controllers
         // GET: Conditions/Create
         public IActionResult Create()
         {
-            ViewData["DiagnosisID"] = new SelectList(_context.ConditionDiagnosisRecords, "DiagnosisID", "DiagnosisCode");
+            //ViewData["DiagnosisID"] = new SelectList(_context.ConditionDiagnosisRecords, "DiagnosisID", "DiagnosisCode");
             return View();
         }
 
@@ -58,12 +58,11 @@ namespace Health_Hive_Project_2024.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ConditionID,CODE,Diagnosis")] Condition condition)
         {
-            if (ModelState.IsValid)
-            {
+            
                 _context.Add(condition);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
+            
             return View(condition);
         }
 

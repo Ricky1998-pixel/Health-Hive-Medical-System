@@ -1,56 +1,300 @@
 ﻿@model Health_Hive_Project_2024.Models.SurgeryBooking
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Surgery Booking";
 }
 
-<h1>Edit</h1>
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8 col-xl-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0 text-center">
+                        <i class="bi bi-calendar-check me-2"></i>Edit Surgery Booking
+                    </h2>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" id="surgeryBookingForm" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        <input type="hidden" asp-for="SurgeryID" />
 
-<h4>SurgeryBooking</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="SurgeryID" />
-            <div class="form-group">
-                <label asp-for="SurgeonID" class="control-label"></label>
-                <select asp-for="SurgeonID" class="form-control" asp-items="ViewBag.SurgeonID"></select>
-                <span asp-validation-for="SurgeonID" class="text-danger"></span>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <select asp-for="SurgeonID"
+                                            class="form-select"
+                                            asp-items="ViewBag.SurgeonID ?? new SelectList(Enumerable.Empty<SelectListItem>())"
+                                            required>
+                                        <option value="">Select a Surgeon</option>
+                                    </select>
+                                    <label asp-for="SurgeonID" class="form-label">Surgeon</label>
+                                    <div class="invalid-feedback">Please select a surgeon.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <select asp-for="PatientID"
+                                            class="form-select"
+                                            asp-items="ViewBag.PatientID ?? new SelectList(Enumerable.Empty<SelectListItem>())"
+                                            required>
+                                        <option value="">Select a Patient</option>
+                                    </select>
+                                    <label asp-for="PatientID" class="form-label">Patient</label>
+                                    <div class="invalid-feedback">Please select a patient.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="SurgeryDate"
+                                           class="form-control"
+                                           type="date"
+                                           required />
+                                    <label asp-for="SurgeryDate" class="form-label">Surgery Date</label>
+                                    <div class="invalid-feedback">Please select a surgery date.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input asp-for="Session"
+                                           class="form-control"
+                                           placeholder="Surgery Session"
+                                           required />
+                                    <label asp-for="Session" class="form-label">Session</label>
+                                    <div class="invalid-feedback">Please enter a session.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <select asp-for="AnaesthesiologistID"
+                                            class="form-select"
+                                            asp-items="ViewBag.Id ?? new SelectList(Enumerable.Empty<SelectListItem>())"
+                                            required>
+                                        <option value="">Select an Anaesthesiologist</option>
+                                    </select>
+                                    <label asp-for="AnaesthesiologistID" class="form-label">Anaesthesiologist</label>
+                                    <div class="invalid-feedback">Please select an anaesthesiologist.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <select asp-for="TheatreID"
+                                            class="form-select"
+                                            asp-items="ViewBag.TheatreID ?? new SelectList(Enumerable.Empty<SelectListItem>())"
+                                            required>
+                                        <option value="">Select a Theatre</option>
+                                    </select>
+                                    <label asp-for="TheatreID" class="form-label">Theatre</label>
+                                    <div class="invalid-feedback">Please select a theatre.</div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="bi bi-list-task me-2"></i>Selected Treatment Codes
+                                        </h5>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-hover mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>Code</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var treatment in ViewBag.SelectedTreatments as List<Health_Hive_Project_2024.Models.TreatmentRecords>)
+                                                    {
+                                                        <tr>
+                                                            <td>@treatment.TreatmentCode</td>
+                                                            <td>@treatment.Description</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="bi bi-clipboard-plus me-2"></i>Treatment Codes
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <select id="treatmentCodesList"
+                                                name="treatmentIDs"
+                                                class="form-select"
+                                                multiple
+                                                size="5">
+                                            <!-- Treatment codes will be populated by JavaScript -->
+                                        </select>
+                                        <input type="hidden"
+                                               id="SelectedTreatmentCodes"
+                                               name="SelectedTreatmentCodes">
+                                        <div class="d-grid mt-3">
+                                            <button type="button"
+                                                    id="openModal"
+                                                    class="btn btn-outline-primary">
+                                                <i class="bi bi-plus-circle me-2"></i>Select Treatment Codes
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-save me-2"></i>Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="PatientID" class="control-label"></label>
-                <select asp-for="PatientID" class="form-control" asp-items="ViewBag.PatientID"></select>
-                <span asp-validation-for="PatientID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SurgeryDate" class="control-label"></label>
-                <input asp-for="SurgeryDate" class="form-control" />
-                <span asp-validation-for="SurgeryDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Session" class="control-label"></label>
-                <input asp-for="Session" class="form-control" />
-                <span asp-validation-for="Session" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AnaesthesiologistID" class="control-label"></label>
-                <select asp-for="AnaesthesiologistID" class="form-control" asp-items="ViewBag.Id"></select>
-                <span asp-validation-for="AnaesthesiologistID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TheatreID" class="control-label"></label>
-                <select asp-for="TheatreID" class="form-control" asp-items="ViewBag.TheatreID"></select>
-                <span asp-validation-for="TheatreID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<!-- Modal for Treatment Codes -->
+<div class="modal fade" id="treatmentCodeModal" tabindex="-1" aria-labelledby="treatmentCodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="treatmentCodeModalLabel">Select Treatment Codes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul id="modalTreatmentCodesList" class="list-group" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Treatment codes will be dynamically added here -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="confirmSelection" class="btn btn-primary">Confirm Selection</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+@if (ViewBag.ShowModal != null && (bool)ViewBag.ShowModal)
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var modal = new bootstrap.Modal(document.getElementById('myModal'));
+            modal.show();
+        });
+    </script>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function updatePreview() {
+                document.getElementById('previewSurgeon').innerText = document.querySelector('select[name="SurgeonID"] option:checked')?.textContent || 'Not selected';
+                document.getElementById('previewPatient').innerText = document.querySelector('select[name="PatientID"] option:checked')?.textContent || 'Not selected';
+                document.getElementById('previewDate').innerText = document.querySelector('input[name="SurgeryDate"]').value || 'Not selected';
+                document.getElementById('previewSession').innerText = document.querySelector('input[name="Session"]').value || 'Not specified';
+                document.getElementById('previewAnaesthesiologist').innerText = document.querySelector('select[name="AnaesthesiologistID"] option:checked')?.textContent || 'Not selected';
+                document.getElementById('previewTheatre').innerText = document.querySelector('select[name="TheatreID"] option:checked')?.textContent || 'Not selected';
+
+                const treatmentCodesList = document.getElementById('treatmentCodesList');
+                const selectedOptions = treatmentCodesList.selectedOptions;
+                const treatmentCodes = Array.from(selectedOptions).map(option => option.text).join(', ');
+                document.getElementById('previewTreatmentCodes').innerText = treatmentCodes || 'None selected';
+            }
+
+            // Update preview on change
+            document.querySelectorAll('select, input').forEach(element => {
+                element.addEventListener('change', updatePreview);
+            });
+
+            // Function to fetch treatment codes
+            function fetchTreatmentCodes() {
+                fetch('/SurgeryBookings/GetTreatmentCodes')
+                    .then(response => response.json())
+                    .then(data => {
+                        const modalTreatmentCodesList = document.getElementById('modalTreatmentCodesList');
+                        modalTreatmentCodesList.innerHTML = ''; // Clear previous data
+
+                        if (data.length === 0) {
+                            modalTreatmentCodesList.innerHTML = '<li class="list-group-item">No treatment codes available</li>';
+                        } else {
+                            data.forEach(treatment => {
+                                const li = document.createElement('li');
+                                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                                li.innerHTML = `
+                                    <input type="checkbox" value="${treatment.treatmentID}" data-code="${treatment.treatmentCode}" data-description="${treatment.description}" />
+                                    <span>${treatment.treatmentCode} - ${treatment.description}</span>
+                                `;
+                                modalTreatmentCodesList.appendChild(li);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching treatment codes:', error);
+                        const modalTreatmentCodesList = document.getElementById('modalTreatmentCodesList');
+                        modalTreatmentCodesList.innerHTML = '<li class="list-group-item text-danger">Error fetching treatment codes</li>';
+                    });
+            }
+
+            // Open modal to select treatment codes
+            document.getElementById('openModal').addEventListener('click', function () {
+                fetchTreatmentCodes();
+                const modal = new bootstrap.Modal(document.getElementById('treatmentCodeModal'));
+                modal.show();
+            });
+
+            // Confirm selection of treatment codes
+            document.getElementById('confirmSelection').addEventListener('click', function () {
+                // Get selected treatment codes from the modal
+                const selectedCodes = Array.from(document.querySelectorAll('#modalTreatmentCodesList input:checked'))
+                    .map(checkbox => ({
+                        id: parseInt(checkbox.value),
+                        text: checkbox.dataset.code + ' - ' + checkbox.dataset.description
+                    }));
+
+                // Update the multi-select dropdown with the selected treatment codes
+                const treatmentCodesList = document.getElementById('treatmentCodesList');
+                treatmentCodesList.innerHTML = ''; // Clear previous options
+
+                selectedCodes.forEach(code => {
+                    const option = document.createElement('option');
+                    option.value = code.id;
+                    option.textContent = code.text;
+                    option.selected = true;
+                    treatmentCodesList.appendChild(option);
+                });
+
+                // Update the hidden input field with selected treatment codes as a JSON string
+                document.getElementById('SelectedTreatmentCodes').value = JSON.stringify(selectedCodes.map(code => code.id));
+
+                // Close the modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('treatmentCodeModal'));
+                modal.hide();
+
+                // Update preview
+                updatePreview();
+            });
+        });
+    </script>
+}
+
+
 

@@ -248,10 +248,15 @@ namespace Health_Hive_Project_2024.Controllers
                 .Select(m => new { m.Id, FullName = m.Name + " " + m.Surname }) 
                 .FirstOrDefault();
 
-            // Populate Anaesthesiologist dropdown
-            ViewBag.AnaesthesiologistID = new SelectList(_context.MedicalProfessionalRecords
-                .Where(m => m.Specialization == SpecializationType.Anesthesiologist)
-                .Select(m => new { m.Id, FullName = m.Name + " " + m.Surname }), "Id", "FullName"); 
+            // Populate Anaesthesiologist dropdown, sorted by FullName
+            ViewBag.AnaesthesiologistID = new SelectList(
+                _context.MedicalProfessionalRecords
+                       .Where(m => m.Specialization == SpecializationType.Anesthesiologist)
+                       .Select(m => new { m.Id, FullName = m.Name + " " + m.Surname })
+                       .OrderBy(m => m.FullName),  // Sort by FullName
+                "Id", "FullName"
+            );
+
 
             // Populate Patient dropdown and pre-select if patientID is provided
             var patients = _context.Patients
@@ -260,8 +265,13 @@ namespace Health_Hive_Project_2024.Controllers
 
             ViewBag.PatientID = new SelectList(patients, "PatientID", "FullName", patientID);
 
-            // Populate Theatre dropdown
-            ViewBag.TheatreID = new SelectList(_context.OperatingTheatreRecords, "TheatreID", "TheatreName");
+            // Populate Theatre dropdown, sorted by TheatreName
+            ViewBag.TheatreID = new SelectList(
+                _context.OperatingTheatreRecords
+                       .OrderBy(t => t.TheatreName),  // Sort by TheatreName
+                "TheatreID", "TheatreName"
+            );
+
 
             // Populate Treatment Codes (adjusted formatting if using dropdown or checkbox list)
             var treatmentCodes = _context.TreatmentRecords.ToList();
@@ -566,15 +576,31 @@ namespace Health_Hive_Project_2024.Controllers
                 return NotFound();
             }
 
-            var surgeryBooking = await _context.SurgeryBooking.FindAsync(id);
+            //var surgeryBooking = await _context.SurgeryBooking.FindAsync(id);
+            // Get the surgery booking or the relevant data that holds the treatment codes
+            var surgeryBooking = await _context.SurgeryBooking
+        .Include(s => s.SurgeryBookingTreatments)
+        .ThenInclude(st => st.TreatmentRecords)  // Include related TreatmentRecords to get the TreatmentCode and Description
+        .FirstOrDefaultAsync(s => s.SurgeryID == id);
             if (surgeryBooking == null)
             {
                 return NotFound();
             }
-            ViewData["AnaesthesiologistID"] = new SelectList(_context.MedicalProfessionalRecords, "Id", "FullName", surgeryBooking.AnaesthesiologistID);
-            ViewData["PatientID"] = new SelectList(_context.Patients, "PatientID", "Address", surgeryBooking.PatientID);
-            ViewData["SurgeonID"] = new SelectList(_context.MedicalProfessionalRecords, "Id", "FullName", surgeryBooking.SurgeonID);
-            ViewData["TheatreID"] = new SelectList(_context.OperatingTheatreRecords, "TheatreID", "TheatreName", surgeryBooking.TheatreID);
+            ViewBag.SurgeonID = new SelectList(_context.MedicalProfessionalRecords
+                .Where(u => u.Specialization == SpecializationType.Surgeon)
+                .Select(u => new { u.Id, FullName = u.Name + " " + u.Surname }), "Id", "FullName");
+            ViewBag.AnaesthesiologistID = new SelectList(_context.MedicalProfessionalRecords
+                .Where(u => u.Specialization == SpecializationType.Anesthesiologist)
+                .Select(u => new { u.Id, FullName = u.Name + " " + u.Surname }), "Id", "FullName");
+            ViewBag.PatientID = new SelectList(_context.Patients
+                .Select(p => new { p.PatientID, FullName = p.Name + " " + p.Surname }), "PatientID", "FullName");
+            ViewBag.TheatreID = new SelectList(_context.OperatingTheatreRecords, "TheatreID", "TheatreName");
+
+            // Pass selected treatments to the view
+            ViewBag.SelectedTreatments = surgeryBooking.SurgeryBookingTreatments
+                .Select(st => st.TreatmentRecords)  // Get the TreatmentRecords from the SurgeryBookingTreatments
+                .ToList();
+
             return View(surgeryBooking);
         }
 
@@ -582,46 +608,103 @@ namespace Health_Hive_Project_2024.Controllers
 
 
 
-
-        // POST: SurgeryBookings/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //// POST: SurgeryBookings/Edit/5
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SurgeryID,SurgeonID,PatientID,SurgeryDate,Session,AnaesthesiologistID,TheatreID")] SurgeryBooking surgeryBooking)
+        public async Task<IActionResult> Edit(int id, [Bind("SurgeryID,SurgeonID,PatientID,SurgeryDate,Session,AnaesthesiologistID,TheatreID")] SurgeryBooking surgeryBooking, string SelectedTreatmentCodes)
         {
             if (id != surgeryBooking.SurgeryID)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+
+            try
             {
-                try
+                _context.Update(surgeryBooking);
+                await _context.SaveChangesAsync();
+
+                // Save associated treatments
+                if (!string.IsNullOrEmpty(SelectedTreatmentCodes))
                 {
-                    _context.Update(surgeryBooking);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SurgeryBookingExists(surgeryBooking.SurgeryID))
+                    try
                     {
-                        return NotFound();
+                        var treatmentIDs = System.Text.Json.JsonSerializer.Deserialize<List<int>>(SelectedTreatmentCodes);
+                        foreach (var treatmentID in treatmentIDs)
+                        {
+                            var surgeryBookingTreatment = new SurgeryBookingTreatment
+                            {
+                                SurgeryID = surgeryBooking.SurgeryID,
+                                TreatmentID = treatmentID
+                            };
+                            _context.SurgeryBookingTreatments.Add(surgeryBookingTreatment);
+                        }
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (System.Text.Json.JsonException ex)
                     {
-                        throw;
+                        _logger.LogError($"Error parsing treatment codes: {ex.Message}");
+                        ModelState.AddModelError("", "Error processing selected treatment codes.");
+                        return View(surgeryBooking);
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["AnaesthesiologistID"] = new SelectList(_context.MedicalProfessionalRecords, "MedicalProfessionalID", "FullName", surgeryBooking.AnaesthesiologistID);
-            ViewData["PatientID"] = new SelectList(_context.Patients, "PatientID", "Address", surgeryBooking.PatientID);
-            ViewData["SurgeonID"] = new SelectList(_context.MedicalProfessionalRecords, "MedicalProfessionalID", "FullName", surgeryBooking.SurgeonID);
-            ViewData["TheatreID"] = new SelectList(_context.OperatingTheatreRecords, "TheatreID", "TheatreName", surgeryBooking.TheatreID);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!SurgeryBookingExists(surgeryBooking.SurgeryID))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
+            ViewBag.SurgeonID = new SelectList(_context.MedicalProfessionalRecords
+                .Where(u => u.Specialization == SpecializationType.Surgeon)
+                .Select(u => new { u.Id, FullName = u.Name + " " + u.Surname }), "Id", "FullName");
+            ViewBag.AnaesthesiologistID = new SelectList(_context.MedicalProfessionalRecords
+                .Where(u => u.Specialization == SpecializationType.Anesthesiologist)
+                .Select(u => new { u.Id, FullName = u.Name + " " + u.Surname }), "Id", "FullName");
+            ViewBag.PatientID = new SelectList(_context.Patients
+                .Select(p => new { p.PatientID, FullName = p.Name + " " + p.Surname }), "PatientID", "FullName");
+            ViewBag.TheatreID = new SelectList(_context.OperatingTheatreRecords, "TheatreID", "TheatreName");
             return View(surgeryBooking);
         }
 
+
+
+        // POST: SurgeryBookings/RemoveTreatment
+        //[HttpPost]
+        //public async Task<IActionResult> RemoveTreatment(int surgeryId, int treatmentId)
+        //{
+        //    var surgeryBooking = await _context.SurgeryBooking
+        //        .Include(s => s.SurgeryBookingTreatments)
+        //        .FirstOrDefaultAsync(s => s.SurgeryID == surgeryId);
+
+        //    if (surgeryBooking == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    // Find the treatment to remove
+        //    var treatmentToRemove = surgeryBooking.SurgeryBookingTreatments
+        //        .FirstOrDefault(st => st.TreatmentID == treatmentId);
+
+        //    if (treatmentToRemove != null)
+        //    {
+        //        // Remove the treatment from the SurgeryBookingTreatments collection
+        //        surgeryBooking.SurgeryBookingTreatments.Remove(treatmentToRemove);
+        //        await _context.SaveChangesAsync();
+        //    }
+
+        //    // Redirect to the edit page to reflect the changes
+        //    return RedirectToAction("Edit", new { id = surgeryId });
+        //}
 
 
 

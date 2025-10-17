@@ -171,6 +171,13 @@
     <i class="fas fa-info-circle"></i>
 </button>
 
+                            <!-- Add this to the Actions <td> section in your existing code -->
+                            <button class="btn btn-warning circular-btn"
+                                    onclick="window.location.href='@Url.Action("Edit", new { id = surgeryBooking.SurgeryID })'"
+                                    title="Edit Surgery Booking">
+                                <i class="fas fa-edit"></i>
+                            </button>
+
 
 
                         </div>

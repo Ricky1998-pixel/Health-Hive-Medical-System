@@ -117,50 +117,7 @@ namespace Health_Hive_Project_2024.Controllers
 
 
         // Function to check for alerts based on medical history and selected medications
-        //private async Task<List<string>> CheckForAlerts(MedicalHistory medicalHistory, List<string> selectedMedications)
-        //{
-        //    var alerts = new List<string>();
-
-        //    foreach (var medicationId in selectedMedications)
-        //    {
-        //        var medication = await _context.MedicationRecords
-        //            .Include(m => m.MedicationActiveIngredients)
-        //                .ThenInclude(mai => mai.ActiveIngredientRecords)
-        //            .FirstOrDefaultAsync(m => m.MedicationID.ToString() == medicationId);
-
-        //        if (medication != null)
-        //        {
-        //            // Check for allergies
-        //            foreach (var allergy in medicalHistory.MedicalHistoryAllergies)
-        //            {
-        //                if (medication.MedicationActiveIngredients.Any(mai => mai.ActiveIngredientRecords.IngredientID == allergy.ActiveIngredientRecords.IngredientID))
-        //                {
-        //                    alerts.Add($"Allergy warning: Patient is allergic to {allergy.ActiveIngredientRecords.IngredientName}, which is present in {medication.MedicationName}.");
-        //                }
-        //            }
-
-        //            // Check for contraindicated medications
-        //            if (medicalHistory.MedicalHistoryMedications.Any(mhm => mhm.MedicationRecords.MedicationID.ToString() == medicationId))
-        //            {
-        //                alerts.Add($"Medication warning: Patient is already taking {medication.MedicationName}. Consider possible interactions.");
-        //            }
-
-        //            // Check for conditions that may conflict with selected medications
-        //            //foreach (var condition in medicalHistory.MedicalHistoryCondition)
-        //            //{
-        //            //    var contraindicatedMedication = await _context.ContraindicatedMedications
-        //            //        .FirstOrDefaultAsync(cm => cm.ConditionID == condition.ConditionID && cm.MedicationID.ToString() == medicationId);
-
-        //            //    if (contraindicatedMedication != null)
-        //            //    {
-        //            //        alerts.Add($"Condition warning: Patient's condition {condition.Condition.Diagnosis} may be affected by {medication.MedicationName}.");
-        //            //    }
-        //            //}
-        //        }
-        //    }
-
-        //    return alerts;
-        //}
+        
 
         private static readonly Dictionary<string, List<string>> medicationInteractions = new Dictionary<string, List<string>>
 {
@@ -170,7 +127,7 @@ namespace Health_Hive_Project_2024.Controllers
     { "Ketalar", new List<string> { "Diprivan","Cardura" } },
     {"Compral", new List<string>{"Aspirin","Lopresor","Aspavor","Propofol"} },
             {"Migril",new List<string>{"Neo-Mercazole","Cardura","Propofol","Diprivan"} },
-            {"Cardura", new List<string>{"Aspavor", "Ketalar","Concerta"} },
+            {"Cardura", new List<string>{"Aspavor", "Ketalar","Concerta", "Doxazosin" } },
             {"Aspavor", new List<string>{"Mybulen","Diprivan","Propofol"} },
             {"Adco-Dol", new List<string>{"Concerta","Diprivan","Cardura"} },
             {"Mybulen", new List<string>{"Lopresor","Aspavor","Cardura","Propofol"} },
@@ -193,6 +150,13 @@ namespace Health_Hive_Project_2024.Controllers
         {
             var alerts = new List<string>();
             var checkedMedications = new List<MedicationRecords>();
+
+            // Retrieve patient's diagnosed conditions with full condition details
+            var patientConditions = await _context.MedicalHistoryCondition
+                .Include(mhc => mhc.Condition)
+                .Where(mhc => mhc.MedicalHistoryID == medicalHistory.MedicalHistoryID)
+                .Select(mhc => mhc.Condition)
+                .ToListAsync();
 
             foreach (var medicationId in selectedMedications)
             {
@@ -227,6 +191,28 @@ namespace Health_Hive_Project_2024.Controllers
                         }
                     }
 
+
+                    // New Contra-Indication Checks
+            // Check if any of the patient's conditions contraindicate this medication
+            var contraindicatedConditions = patientConditions
+                .Where(pc => 
+                    _context.Condition
+                        .Include(c => c.ContraindicatedMedications)
+                        .FirstOrDefault(c => c.ConditionID == pc.ConditionID)?
+                        .ContraindicatedMedications
+                        .Any(cm => cm.MedicationID == medication.MedicationID) ?? false
+                )
+                .ToList();
+
+            foreach (var contraindicatedCondition in contraindicatedConditions)
+            {
+                alerts.Add($"CONTRA-INDICATION WARNING: {medication.MedicationName} is contraindicated for " +
+                           $"condition: {contraindicatedCondition.Diagnosis} " +
+                           $"(ICD-10 Code: {contraindicatedCondition.CODE}).");
+            }
+
+
+
                     // Check for interactions with medications in medical history
                     foreach (var historyMed in medicalHistory.MedicalHistoryMedications)
                     {
@@ -242,6 +228,8 @@ namespace Health_Hive_Project_2024.Controllers
 
             return alerts;
         }
+
+
 
 
 

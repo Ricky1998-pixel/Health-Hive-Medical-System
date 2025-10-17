@@ -81,7 +81,7 @@
         }
 
         body {
-            background-image: url('~/images/surgeon dashboard.jpg');
+            background-image: url('/images/surgeon dashboard.jpg');
             background-size: cover;
             background-position: center;
             font-family: Arial, sans-serif;
@@ -173,8 +173,8 @@
 
 </head>
 <body>
-    <div class="container">
-        <div class="dashboard-header">
+    <div class="container-fluid">
+        <div class="dashboard-header rounded-lg bg-gray-100 shadow-md p-4">
             <div class="header-content">
                 <img src="~/images/SurgeonDashboard.png" alt="Surgeon Dashboard" class="dashboard-icon">
                 <h1 class="dashboard-title">
@@ -182,7 +182,6 @@
                 </h1>
                 <h2 class="surgeon-dashboard-text">Surgeon Dashboard:</h2>
             </div>
-
             <div class="datetime-container">
                 <div class="time" id="time"></div>
                 <div class="date" id="date"></div>
@@ -191,8 +190,9 @@
                     <i class="bi bi-calendar"></i> Open Calendar
                 </button>
             </div>
-
         </div>
+
+
         <div class="row">
             <div class="col-md-4 mb-4">
                 <div class="card">
@@ -243,7 +243,7 @@
             </div>
             <div class="col-md-4 mb-4">
                 <div class="card">
-                    <a href="@Url.Action("Index", "PrescriptionRecords")" class="text-decoration-none text-dark">
+                    <a href="@Url.Action("SurgeonPrescription", "PrescriptionRecords")" class="text-decoration-none text-dark">
                         <div class="card-body">
                             <div class="card-icon">
                                 <i class="bi bi-file-medical"></i>

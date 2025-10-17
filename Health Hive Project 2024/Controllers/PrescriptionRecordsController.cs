@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Health_Hive_Project_2024.Data;
 using Health_Hive_Project_2024.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Health_Hive_Project_2024.Controllers
 {
@@ -290,14 +291,14 @@ namespace Health_Hive_Project_2024.Controllers
 
         private List<(string, string)> GetMedicationInteractions()
         {
-            // This could be loaded from a database or a configuration file
+            
             return new List<(string, string)>
     {
         ("Compral", "Aspirin"),
         ("Warfarin", "Aspirin"),
         ("Carbimazole","Doxazosin"),
         ("Doxazosin","Doxylamine Succinate " ),
-        // Add more interactions as needed
+        
     };
         }
 
@@ -310,6 +311,52 @@ namespace Health_Hive_Project_2024.Controllers
 
 
 
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> SurgeonPrescription()
+        {
+            // Get the user's email (you need to ensure that 'userEmail' is available here)
+            string userEmail = User.Identity.Name;
+
+            // Check if the user is a Surgeon
+            var surgeon = await _context.MedicalProfessionalRecords
+                                        .FirstOrDefaultAsync(p => p.EmailAddress == userEmail && p.Specialization == SpecializationType.Surgeon);
+
+            if (surgeon != null)
+            {
+                ViewBag.IsSurgeon = true;
+            }
+
+            var prescriptions = _context.PrescriptionRecords
+                .Include(p => p.Patient)
+                .Include(p => p.Surgeon)
+                .Include(p => p.PrescriptionMedications) // Include related medications
+                .ThenInclude(m => m.MedicationRecords)  // Include nested MedicationRecords
+                .ToList();
+
+            // Assign dynamic status logic here if required
+            foreach (var prescription in prescriptions)
+            {
+                if ((DateTime.Now - prescription.Date).TotalDays <= 2)
+                {
+                    prescription.PrescriptionStatus = "Urgent";
+                }
+                else
+                {
+                    prescription.PrescriptionStatus = "Normal";
+                }
+            }
+
+            // If the user is a surgeon, filter by SurgeonID
+            if (surgeon != null)
+            {
+                prescriptions = prescriptions.Where(p => p.SurgeonID == surgeon.Id).ToList();
+            }
+
+            return View(prescriptions);
+        }
 
 
 
@@ -404,6 +451,7 @@ namespace Health_Hive_Project_2024.Controllers
                 var pharmacists = _context.MedicalProfessionalRecords
                     .Where(m => m.Specialization == SpecializationType.Pharmacist)
                     .Select(m => new { m.Id, FullName = m.Name + " " + m.Surname })
+                    .OrderBy(p => p.FullName)  // Sort pharmacists by name or any other property
                     .ToList();
 
                 // Populate the dropdowns with the required data

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Health_Hive_Project_2024.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241018124423_ConditionChanges")]
-    partial class ConditionChanges
+    [Migration("20241126003349_Remark")]
+    partial class Remark
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -212,12 +212,7 @@ namespace Health_Hive_Project_2024.Migrations
                     b.Property<string>("Diagnosis")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PatientID")
-                        .HasColumnType("int");
-
                     b.HasKey("ConditionID");
-
-                    b.HasIndex("PatientID");
 
                     b.ToTable("Condition");
                 });
@@ -1249,6 +1244,9 @@ namespace Health_Hive_Project_2024.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("AdministeredDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Instructions")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1260,6 +1258,9 @@ namespace Health_Hive_Project_2024.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantityAdministered")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1864,7 +1865,6 @@ namespace Health_Hive_Project_2024.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HealthCouncilRegistrationNumber")
-                        .IsRequired()
                         .HasMaxLength(6)
                         .HasColumnType("nvarchar(6)");
 
@@ -1943,17 +1943,6 @@ namespace Health_Hive_Project_2024.Migrations
                     b.Navigation("Surgeon");
 
                     b.Navigation("Theatre");
-                });
-
-            modelBuilder.Entity("Health_Hive_Project_2024.Models.Condition", b =>
-                {
-                    b.HasOne("Health_Hive_Project_2024.Models.Patient", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("Health_Hive_Project_2024.Models.ConditionDiagnosisRecords", b =>

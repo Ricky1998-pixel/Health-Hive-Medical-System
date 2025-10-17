@@ -77,12 +77,27 @@
 <body>
     <div class="container">
         <h1 class="text-center">Patient Search</h1>
-        <div class="search-form">
+        @* <div class="search-form">
             <form id="searchForm" class="d-flex justify-content-center">
                 <input type="text" id="patientID" name="patientID" class="form-control" placeholder="Enter Patient ID" required>
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
+        </div> *@
+
+        <!-- HTML with Validation -->
+        <div class="search-form">
+            <form id="searchForm" class="d-flex justify-content-center">
+                <input type="text"
+                       id="patientID"
+                       name="patientID"
+                       class="form-control me-2"
+                       placeholder="Enter Patient ID"
+                       pattern="^\d{13}$"
+                       required>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
         </div>
+
         <div id="patientDetails" class="patient-details-container" style="display: none;">
             <h2>Patient Details</h2>
             <div class="patient-info" id="patientInfo"></div>
@@ -110,6 +125,92 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Validation Error Modal -->
+    <div class="modal fade" id="validationErrorModal" tabindex="-1" aria-labelledby="validationErrorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="validationErrorModalLabel">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Invalid Patient ID
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="validationErrorMessage">Patient ID must be exactly 13 digits long.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Custom JavaScript for Advanced Validation -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchForm = document.getElementById('searchForm');
+            const patientIDInput = document.getElementById('patientID');
+            const validationErrorModal = new bootstrap.Modal(document.getElementById('validationErrorModal'));
+            const validationErrorMessage = document.getElementById('validationErrorMessage');
+
+            searchForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                // Remove any existing custom validation classes
+                patientIDInput.classList.remove('is-invalid', 'is-valid');
+
+                // Get the patient ID value
+                const patientID = patientIDInput.value.trim();
+
+                // Validation logic
+                let isValid = true;
+                let errorMessage = '';
+
+                // Check if exactly 13 digits
+                if (!/^\d{13}$/.test(patientID)) {
+                    isValid = false;
+                    errorMessage = 'Patient ID must be exactly 13 digits long.';
+                }
+
+                // Optional: Check if starts with YYMMDD (first 6 digits represent date of birth)
+                const yymmdd = patientID.substring(0, 6);
+                const year = parseInt(yymmdd.substring(0, 2));
+                const month = parseInt(yymmdd.substring(2, 4));
+                const day = parseInt(yymmdd.substring(4, 6));
+
+                // Basic date validation
+                if (month < 1 || month > 12 || day < 1 || day > 31) {
+                    isValid = false;
+                    errorMessage = 'First 6 digits must represent a valid date (YYMMDD).';
+                }
+
+                if (!isValid) {
+                    // Add invalid class
+                    patientIDInput.classList.add('is-invalid');
+
+                    // Set error message in modal
+                    validationErrorMessage.textContent = errorMessage;
+
+                    // Show validation error modal
+                    validationErrorModal.show();
+                } else {
+                    // Add valid class
+                    patientIDInput.classList.add('is-valid');
+
+                    // Proceed with form submission or search
+                    console.log('Patient ID is valid. Proceeding with search...');
+                    // Uncomment and modify the next line to submit the form or perform search
+                    // searchForm.submit();
+                }
+            });
+
+            // Optional: Real-time validation as user types
+            patientIDInput.addEventListener('input', function () {
+                patientIDInput.classList.remove('is-invalid', 'is-valid');
+            });
+        });
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>

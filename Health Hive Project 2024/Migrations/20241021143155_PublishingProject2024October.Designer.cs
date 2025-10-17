@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Health_Hive_Project_2024.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241021081419_PublishingDay")]
-    partial class PublishingDay
+    [Migration("20241021143155_PublishingProject2024October")]
+    partial class PublishingProject2024October
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -212,12 +212,7 @@ namespace Health_Hive_Project_2024.Migrations
                     b.Property<string>("Diagnosis")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PatientID")
-                        .HasColumnType("int");
-
                     b.HasKey("ConditionID");
-
-                    b.HasIndex("PatientID");
 
                     b.ToTable("Condition");
                 });
@@ -1948,17 +1943,6 @@ namespace Health_Hive_Project_2024.Migrations
                     b.Navigation("Surgeon");
 
                     b.Navigation("Theatre");
-                });
-
-            modelBuilder.Entity("Health_Hive_Project_2024.Models.Condition", b =>
-                {
-                    b.HasOne("Health_Hive_Project_2024.Models.Patient", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("Health_Hive_Project_2024.Models.ConditionDiagnosisRecords", b =>

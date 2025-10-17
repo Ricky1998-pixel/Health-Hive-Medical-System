@@ -1,0 +1,203 @@
+﻿@model IEnumerable<Health_Hive_Project_2024.Models.PrescriptionRecords>
+
+@{
+    ViewData["Title"] = "Open Prescriptions";
+    var groupedByPatient = Model.GroupBy(p => p.PatientID);
+}
+
+<!-- External Styles and Scripts -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="~/css/Important-blink.css">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<style>
+    body {
+        background-color: #f7f9fc;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        color: #333;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 40px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .card {
+        width: 100%;
+        margin-bottom: 30px;
+        border-radius: 12px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #007bff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .patient-info {
+        font-size: 0.9rem;
+        color: #888;
+    }
+
+    .table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+
+    .table th {
+        background-color: #007bff;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 5px;
+    }
+
+    .table td {
+        text-align: center;
+        padding: 12px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+    }
+
+    .blinking-icon {
+        font-size: 1.2em;
+        animation: blink 1s infinite;
+    }
+
+    .highlighted-medication {
+        background-color: #ffe5e5;
+    }
+
+    .rounded-container {
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .no-prescriptions-message {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #555;
+        margin-top: 50px;
+    }
+
+    
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1;
+        cursor: pointer;
+        transform: translateY(-3px);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .table td i {
+        font-size: 1.2rem;
+    }
+</style>
+
+<div class="container">
+    <h1>Open Prescriptions</h1>
+
+    @if (groupedByPatient.Any())
+    {
+        @foreach (var patientGroup in groupedByPatient)
+        {
+            var patient = patientGroup.FirstOrDefault()?.Patient;
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <span>@patient.Name @patient.Surname</span>
+                        <span class="patient-info">(@patient.PatientIDNumber)</span>
+                    </h5>
+
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Surgeon</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Medications</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var prescription in patientGroup)
+                            {
+                                <tr>
+                                    <td>@prescription.Surgeon.Name</td>
+                                    <td>@prescription.Date.ToString("dd-MM-yyyy")</td>
+                                    <td>
+                                        @prescription.PrescriptionStatus
+                                        @if (prescription.PrescriptionStatus == "Urgent")
+                                        {
+                                            <span class="blinking-icon text-danger">
+                                                <i class="fas fa-exclamation-circle"></i>
+                                            </span>
+                                        }
+                                        else if (prescription.PrescriptionStatus == "Normal")
+                                        {
+                                            <span class="text-success">
+                                                <i class="fas fa-check-circle"></i>
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="rounded-container">
+                                            <table class="table table-borderless">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Medication</th>
+                                                        <th>Quantity</th>
+                                                        <th>Instructions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var med in prescription.PrescriptionMedications)
+                                                    {
+                                                        <tr class="highlighted-medication">
+                                                            <td>@med.MedicationRecords.MedicationName</td>
+                                                            <td>@med.Quantity</td>
+                                                            <td>@med.Instructions</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="no-prescriptions-message">No open prescriptions available for viewing.</p>
+    }
+</div>
+
+
